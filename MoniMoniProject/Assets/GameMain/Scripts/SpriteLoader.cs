@@ -21,8 +21,6 @@ public class SpriteLoader : MonoBehaviour
 
         for (int i = 0; i < len; i++)
         {
-
-            Debug.Log("AddSprite : " + resources[i].name);
             sprites.Add(resources[i].name, resources[i] as Sprite);
         }
 

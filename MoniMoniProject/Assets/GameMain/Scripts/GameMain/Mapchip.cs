@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class Mapchip : MonoBehaviour
 {
@@ -61,7 +62,10 @@ public class Mapchip : MonoBehaviour
     [SerializeField]
     GameObject player = null;
 
-    // Use this for initialization
+    [SerializeField]
+    PlayerController player_controller = null;
+
+
     void Start()
     {
         // ここはそのうちtxtからデータを読むようにするところ
@@ -70,8 +74,8 @@ public class Mapchip : MonoBehaviour
 
         chipsize = 1.0f;
 
-        SpriteLoader loader = new SpriteLoader();
-        loader.Load("Textures/samplechip");
+        //SpriteLoader loader = new SpriteLoader();
+        //loader.Load("Textures/samplechip");
 
         Sprite[] sprites = Resources.LoadAll<Sprite>("Textures/samplechip");
 
@@ -89,6 +93,7 @@ public class Mapchip : MonoBehaviour
                     System.Array.Find<Sprite>(sprites, (sprite) => sprite.name.Equals("samplechip_" + map_array[y, x].ToString()));
 
                 block.transform.position = new Vector3(chipsize * chip_x, chipsize * chip_y, 0);
+                block.transform.localScale = new Vector3(chipsize, chipsize, 0);
                 block.transform.rotation = Quaternion.identity;
 
                 blocks[y, x] = Instantiate(block);
@@ -107,8 +112,6 @@ public class Mapchip : MonoBehaviour
         //                        大文字小文字の区別はつく
 
         playerPop();
-
-
     }
 
     private void playerPop()
@@ -131,8 +134,54 @@ public class Mapchip : MonoBehaviour
             }
             search_y += 1;
         }
+
+        // StartCoroutine
+        StartCoroutine(playerSelectBlock());
+
     }
-    // Update is called once per frame
+
+    private IEnumerator playerSelectBlock()
+    {
+        while (true)
+        {
+            
+            for (int y = 0; y < chip_num_y; y++)
+            {
+                for (int x = 0; x < chip_num_x; x++)
+                {
+                    blocks[y, x].GetComponent<SpriteRenderer>().material.color = Color.white;
+                }
+            }
+            var select_cell_x = (int)player_controller.retCell().x;
+            var select_cell_y = (int)player_controller.retCell().y;
+            switch (player_controller.player_direction)
+            {
+                case PlayerController.PlayerDirection.UP:
+                    select_cell_y -= 1;
+                    break;
+                case PlayerController.PlayerDirection.DOWN:
+                    select_cell_y += 1;
+                    break;
+                case PlayerController.PlayerDirection.RIGHT:
+                    select_cell_x += 1;
+                    break;
+                case PlayerController.PlayerDirection.LEFT:
+                    select_cell_x -= 1;
+                    break;
+                default:
+                    break;
+            }
+
+            select_cell_x = Mathf.Clamp(select_cell_x, 0, chip_num_x);
+            select_cell_y = Mathf.Clamp(select_cell_y, 0, chip_num_y);
+
+            blocks[select_cell_y, select_cell_x]
+         .GetComponent<SpriteRenderer>().material.color = Color.red;
+
+            yield return null;
+        }
+    }
+
     void Update()
     {
 
