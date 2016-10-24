@@ -3,7 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class Mapchip : MonoBehaviour
+
+/// <summary>
+/// マップチップを管理するクラス
+/// </summary>
+public class MapChipController : MonoBehaviour
 {
     public float chipsize = 0;
     const int chip_num_x = 15;
@@ -48,17 +52,11 @@ public class Mapchip : MonoBehaviour
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-
-
     };
 
-    void Awake()
-    {
-
-    }
 
 
-    GameObject[,] blocks;
+    public GameObject[,] blocks;
     [SerializeField]
     GameObject player = null;
 
@@ -66,14 +64,15 @@ public class Mapchip : MonoBehaviour
     PlayerController player_controller = null;
 
 
-    void Start()
+    void Awake()
     {
-        // ここはそのうちtxtからデータを読むようにするところ
+        // TODO: ここはそのうちtxtからデータを読むようにするところ
 
         blocks = new GameObject[chip_num_y, chip_num_x];
 
         chipsize = 1.0f;
 
+        // FIXME: スプライトまとめて読む感じに失敗・・・修正予定
         //SpriteLoader loader = new SpriteLoader();
         //loader.Load("Textures/samplechip");
 
@@ -87,7 +86,7 @@ public class Mapchip : MonoBehaviour
             {
                 GameObject block;
                 block = Resources.Load<GameObject>("Prefabs/BlockBase");
-                // スプライトまとめて読む感じに失敗・・・修正予定
+
                 //Sprite tempsprite = loader.GetSprite("samplechip_" + map_array[y, x].ToString());
                 block.GetComponent<SpriteRenderer>().sprite = //tempsprite;
                     System.Array.Find<Sprite>(sprites, (sprite) => sprite.name.Equals("samplechip_" + map_array[y, x].ToString()));
@@ -108,12 +107,19 @@ public class Mapchip : MonoBehaviour
             chip_y -= 1;
         }
 
-        // string.IndexOf("") --- 含まれている場合0以上含まれていない場合-1
+        // MEMO: string.IndexOf("") --- 含まれている場合0以上含まれていない場合-1
         //                        大文字小文字の区別はつく
 
+    }
+
+    void Start()
+    {
         playerPop();
     }
 
+    /// <summary>
+    /// プレイヤーをpopさせる位置を決める関数
+    /// </summary>
     private void playerPop()
     {
         int search_y = 0;
@@ -137,14 +143,49 @@ public class Mapchip : MonoBehaviour
 
         // StartCoroutine
         StartCoroutine(playerSelectBlock());
-
+        StartCoroutine(blockUpdate());
     }
 
+    private IEnumerator blockUpdate()
+    {
+        while (true)
+        {
+            if (player.GetComponent<PlayerController>().IsSelect)
+            {
+                blockEventUpdate();
+            }
+            yield return null;
+        }
+    }
+
+    private void blockEventUpdate()
+    {
+        for (int y = 0; y < chip_num_y; y++)
+        {
+            for (int x = 0; x < chip_num_x; x++)
+            {
+                var block = blocks[y, x].GetComponent<Block>();
+
+                if (block.IsSelect)
+                {
+                    if (block.event_manager.eventExists())
+                    {
+                        block.event_manager.eventExecution();
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// プレイヤーがブロックを選ぶコルーチン
+    /// </summary>
+    /// <returns>null</returns>
     private IEnumerator playerSelectBlock()
     {
         while (true)
         {
-            
             for (int y = 0; y < chip_num_y; y++)
             {
                 for (int x = 0; x < chip_num_x; x++)
@@ -172,8 +213,8 @@ public class Mapchip : MonoBehaviour
                     break;
             }
 
-            select_cell_x = Mathf.Clamp(select_cell_x, 0, chip_num_x);
-            select_cell_y = Mathf.Clamp(select_cell_y, 0, chip_num_y);
+            select_cell_x = Mathf.Clamp(select_cell_x, 0, chip_num_x - 1);
+            select_cell_y = Mathf.Clamp(select_cell_y, 0, chip_num_y - 1);
 
             blocks[select_cell_y, select_cell_x]
          .GetComponent<SpriteRenderer>().material.color = Color.red;
@@ -182,8 +223,4 @@ public class Mapchip : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-
-    }
 }
