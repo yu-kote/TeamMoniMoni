@@ -20,7 +20,25 @@ public class EventManager : MonoBehaviour
     // イベントの段階を保持
     public EventStage event_stage = EventStage.ONE_STAGE;
 
+    // イベントの個数を保持
+    public int event_count = 0;
+
     List<EventRepository.EventFunc> eventsfunc = new List<EventRepository.EventFunc>();
+
+    void Start()
+    {
+        event_count = eventsfunc.Count;
+    }
+
+    /// <summary>
+    /// イベントが終了したかどうか
+    /// </summary>
+    private bool is_event_completed = false;
+    public bool IsEventCompleted
+    {
+        get { return is_event_completed; }
+        set { is_event_completed = value; }
+    }
 
     /// <summary>
     /// イベントの追加
@@ -36,7 +54,21 @@ public class EventManager : MonoBehaviour
     /// </summary>
     public void eventExecution()
     {
-        eventsfunc[(int)event_stage]();
+        if (!eventExists(event_stage)) return; // nullcheck
+
+        // イベントの返り値はEventCreate.csを参照
+        int event_status = eventsfunc[(int)event_stage]();
+
+        // イベント続行
+        if (event_status == 0) return;
+
+        // イベント終了
+        is_event_completed = true;
+
+        // イベントの段階をすすめる
+        if (event_status == 2)
+            event_stage++;
+
     }
 
     /// <summary>
@@ -45,8 +77,7 @@ public class EventManager : MonoBehaviour
     /// <returns>イベントが実行可能か</returns>
     public bool eventExists(EventStage now_stage = EventStage.STAGE_MAX)
     {
-        EventRepository.EventFunc func = eventsfunc[(int)now_stage];
-        if (func == null)
+        if (event_count <= (int)now_stage)
             return false;
         return true;
     }

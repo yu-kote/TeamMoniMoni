@@ -49,12 +49,10 @@ public class PlayerController : MonoBehaviour
         while (true)
         {
             if (Input.GetKeyDown(KeyCode.Return))
-            {
-                is_select = true;
-                yield return null;
-            }
+                if (mapchip.eventExists())
+                    is_select = true;
 
-            if (/*イベントが終了したかどうか*/true)
+            if (mapchip.isEventCompleted())
             {
                 is_select = false;
             }
@@ -125,5 +123,6 @@ public class PlayerController : MonoBehaviour
         Vector3 vec_ = new Vector3(vec.x * 0.05f, vec.y * 0.05f, 0);
         transform.Translate(vec_);
     }
+
 }
 
