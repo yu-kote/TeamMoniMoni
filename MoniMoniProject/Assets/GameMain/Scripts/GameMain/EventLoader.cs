@@ -21,7 +21,7 @@ public class EventLoader : MonoBehaviour
     string loadtext = "";
 
     // TODO: データ読み込みもっとスマートなやり方あるかも
-    void Start()
+    void Awake()
     {
         //var testdata = Resources.Load<TextAsset>("MapData/EventData");
 
@@ -45,7 +45,7 @@ public class EventLoader : MonoBehaviour
                 mapcontroller.blocks[y, x].GetComponent<Block>().
                     event_manager.addEvent(
                     eventrepository.getEvent(stData));
-                
+
             }
             count++;
         }

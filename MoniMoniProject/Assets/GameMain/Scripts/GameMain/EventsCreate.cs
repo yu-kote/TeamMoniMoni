@@ -21,7 +21,7 @@ public class EventsCreate : MonoBehaviour
     // イベントが正常に動くかどうかのお試し関数
     public int playerUpEvent()
     {
-        player.transform.Translate(0, 1, 0f, 0);
+        player.transform.Translate(0, 1.0f, 0);
         Debug.Log("EventExecution!!!!!!!!!!!!!!!!!!!!!!");
         return 2;
     }
