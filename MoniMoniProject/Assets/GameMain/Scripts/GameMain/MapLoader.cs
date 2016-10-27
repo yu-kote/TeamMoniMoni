@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// マップをエディタから読むクラス
+/// </summary>
 public class MapLoader : MonoBehaviour {
 
 	// Use this for initialization

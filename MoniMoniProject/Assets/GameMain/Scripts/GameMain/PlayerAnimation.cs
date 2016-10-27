@@ -17,8 +17,8 @@ public class PlayerAnimation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var state = player_controller.player_state;
-        anim.SetInteger("player_state", (int)state);
+        var direction = player_controller.player_direction;
+        anim.SetInteger("player_state", (int)direction);
         var vec = player_controller.vec;
         anim.SetFloat("up_down_vec", vec.y);
         anim.SetFloat("right_left_vec", vec.x);
