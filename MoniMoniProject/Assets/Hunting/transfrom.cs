@@ -12,9 +12,9 @@ public class transfrom : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Transform target = GameObject.Find("Sample").transform;
-        targetPos = target.position;
-        transform.Rotate(new Vector3(0, Random.Range(0, 360), 0), Space.World);
+        //Transform target = GameObject.Find("Sample").transform;
+        //targetPos = target.position;
+        //transform.Rotate(new Vector3(0, Random.Range(0, 360), 0), Space.World);
         
     }
 
