@@ -10,7 +10,7 @@ public class EventRepository : MonoBehaviour
     [SerializeField]
     EventsCreate eventscreate;
 
-    public delegate int EventFunc();
+    public delegate void EventFunc();
     Dictionary<string, EventFunc> eventdic = new Dictionary<string, EventFunc>();
 
     void Awake()

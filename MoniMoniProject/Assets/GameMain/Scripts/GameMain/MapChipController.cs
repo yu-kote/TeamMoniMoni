@@ -115,10 +115,6 @@ public class MapChipController : MonoBehaviour
     void Start()
     {
         playerPop();
-
-        // StartCoroutine
-        StartCoroutine(playerSelectBlock());
-        StartCoroutine(blockUpdate());
     }
 
     /// <summary>
@@ -144,15 +140,48 @@ public class MapChipController : MonoBehaviour
             }
             search_y += 1;
         }
+
+        // StartCoroutine
+        StartCoroutine(playerSelectBlock());
+        StartCoroutine(blockUpdate());
     }
 
-    // プレイヤーが選んでいるブロック
-    private int select_cell_x;
-    private int select_cell_y;
+    private IEnumerator blockUpdate()
+    {
+        while (true)
+        {
+            if (player.GetComponent<PlayerController>().IsSelect)
+            {
+                blockEventUpdate();
+            }
+            yield return null;
+        }
+    }
+
+    private void blockEventUpdate()
+    {
+        for (int y = 0; y < chip_num_y; y++)
+        {
+            for (int x = 0; x < chip_num_x; x++)
+            {
+                var block = blocks[y, x].GetComponent<Block>();
+
+                if (block.IsSelect)
+                {
+                    if (block.event_manager.eventExists())
+                    {
+                        block.event_manager.eventExecution();
+                        return;
+                    }
+                }
+            }
+        }
+    }
 
     /// <summary>
     /// プレイヤーがブロックを選ぶコルーチン
     /// </summary>
+    /// <returns>null</returns>
     private IEnumerator playerSelectBlock()
     {
         while (true)
@@ -164,8 +193,8 @@ public class MapChipController : MonoBehaviour
                     blocks[y, x].GetComponent<SpriteRenderer>().material.color = Color.white;
                 }
             }
-            select_cell_x = (int)player_controller.retCell().x;
-            select_cell_y = (int)player_controller.retCell().y;
+            var select_cell_x = (int)player_controller.retCell().x;
+            var select_cell_y = (int)player_controller.retCell().y;
             switch (player_controller.player_direction)
             {
                 case PlayerController.PlayerDirection.UP:
@@ -189,68 +218,9 @@ public class MapChipController : MonoBehaviour
 
             blocks[select_cell_y, select_cell_x]
          .GetComponent<SpriteRenderer>().material.color = Color.red;
-            blocks[5, 5]
-         .GetComponent<SpriteRenderer>().material.color = Color.red;
-
 
             yield return null;
         }
     }
-
-    /// <summary>
-    /// ブロックのイベントのアップデートコルーチン
-    /// </summary>
-    private IEnumerator blockUpdate()
-    {
-        while (true)
-        {
-            if (player.GetComponent<PlayerController>().IsSelect)
-            {
-                blockEventUpdate();
-            }
-            yield return null;
-        }
-    }
-    private void blockEventUpdate()
-    {
-        var block = blocks[select_cell_y, select_cell_x].GetComponent<Block>();
-        block.event_manager.eventExecution();
-    }
-
-    /// <summary>
-    /// イベントの有無を返す関数
-    /// </summary>
-    public bool eventExists()
-    {
-        var eventmanager = blocks[select_cell_y, select_cell_x].
-                GetComponent<Block>().event_manager;
-        if (eventmanager.eventExists(eventmanager.event_stage) == false)
-            return false;
-        return true;
-    }
-
-    /// <summary>
-    /// イベントが終了したかどうかを返す関数
-    /// </summary>
-    /// <returns>イベントが終了したかどうか</returns>
-    public bool isEventCompleted()
-    {
-        if (player.GetComponent<PlayerController>().IsSelect)
-        {
-            var is_completed = blocks[select_cell_y, select_cell_x].
-                GetComponent<Block>().
-                event_manager.IsEventCompleted;
-            if (is_completed)
-            {
-                blocks[select_cell_y, select_cell_x].
-                GetComponent<Block>().
-                event_manager.IsEventCompleted = false;
-                return true;
-            }
-        }
-        return false;
-    }
-
-
 
 }
