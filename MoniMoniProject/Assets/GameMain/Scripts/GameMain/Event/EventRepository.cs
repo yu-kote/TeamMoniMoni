@@ -12,12 +12,18 @@ public class EventRepository : MonoBehaviour
 
     public delegate int EventFunc();
     Dictionary<int, EventFunc> eventdic = new Dictionary<int, EventFunc>();
-    Dictionary<int, int> event_trigger_type = new Dictionary<int, int>();
+    Dictionary<int, EventTriggerType> event_trigger_type = new Dictionary<int, EventTriggerType>();
+
+    public enum EventTriggerType
+    {
+        CHECK,
+        OVERLAP,
+    }
 
     void Awake()
     {
-        eventAdd(0, eventscreate.playerUpEvent, 1);
-        eventAdd(1, eventscreate.playerZombieHand, 1);
+        eventAdd(0, eventscreate.playerUpEvent, EventTriggerType.CHECK);
+        eventAdd(1, eventscreate.playerZombieHand, EventTriggerType.OVERLAP);
     }
 
     /// <summary>
@@ -26,7 +32,7 @@ public class EventRepository : MonoBehaviour
     /// <param name="key_">イベントの番号</param>
     /// <param name="func_">イベントの関数</param>
     /// <param name="trigger_type_">トリガーの種類( 調べる系(0), 通過系(1) )</param>
-    void eventAdd(int key_, EventFunc func_, int trigger_type_)
+    void eventAdd(int key_, EventFunc func_, EventTriggerType trigger_type_)
     {
         eventdic.Add(key_, func_);
         event_trigger_type.Add(key_, trigger_type_);
@@ -52,7 +58,7 @@ public class EventRepository : MonoBehaviour
     /// </summary>
     /// <param name="key_">トリガーの種類</param>
     /// <returns></returns>
-    public int getEventTriggerType(int key_)
+    public EventTriggerType getEventTriggerType(int key_)
     {
         return event_trigger_type[key_];
     }

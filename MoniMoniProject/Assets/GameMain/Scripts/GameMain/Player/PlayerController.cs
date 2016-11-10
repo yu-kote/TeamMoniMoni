@@ -12,8 +12,11 @@ public class PlayerController : MonoBehaviour
         UP, DOWN, RIGHT, LEFT
     }
 
+    //[SerializeField]
+    //StickController stick;
+
     [SerializeField]
-    StickController stick;
+    MoveButtonController movebutton;
 
     public PlayerDirection player_direction = PlayerDirection.DOWN;
 
@@ -72,7 +75,7 @@ public class PlayerController : MonoBehaviour
             // イベントキーが押されたとき
             if (is_pusheventkey)
                 // 選択しているブロックにイベントがあるかどうか
-                if (mapchip.eventExists())
+                if (mapchip.checkEventExists())
                 {
                     is_select = true;
                     is_event_during = true;
@@ -80,7 +83,7 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Return))
                 // 選択しているブロックにイベントがあるかどうか
-                if (mapchip.eventExists())
+                if (mapchip.checkEventExists())
                 {
                     is_select = true;
                     is_event_during = true;
@@ -142,21 +145,24 @@ public class PlayerController : MonoBehaviour
         float deltaspeed = speed * Time.deltaTime * 60;
 
         // スティックの優先度
-        int priority_vec = 0; // x : 0 , y : 1
+        //int priority_vec = 0; // x : 0 , y : 1
 
-        if (Mathf.Abs(stick.MoveValue.x) > Mathf.Abs(stick.MoveValue.y))
-            priority_vec = 0;
-        else
-            priority_vec = 1;
+        //if (Mathf.Abs(stick.MoveValue.x) > Mathf.Abs(stick.MoveValue.y))
+        //    priority_vec = 0;
+        //else
+        //    priority_vec = 1;
 
-        if (priority_vec == 0)
-        {
-            vec.x = deltaspeed * stick.MoveValue.x;
-        }
-        else if (priority_vec == 1)
-        {
-            vec.y = deltaspeed * stick.MoveValue.y;
-        }
+        //if (priority_vec == 0)
+        //{
+        //    vec.x = deltaspeed * stick.MoveValue.x;
+        //}
+        //else if (priority_vec == 1)
+        //{
+        //    vec.y = deltaspeed * stick.MoveValue.y;
+        //}
+
+        vec = deltaspeed * movebutton.getButtonPushVec();
+
         if (vec.x < 0.11f && vec.x > -0.11f)
             vec.x = 0;
         if (vec.y < 0.11f && vec.y > -0.11f)

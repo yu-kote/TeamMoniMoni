@@ -58,49 +58,7 @@ public class MapChipController : MonoBehaviour
         //loader.Load("Textures/samplechip");
 
         loadMap("test");
-        //using (StreamReader sr = new StreamReader("Assets/Resources/"))
-        //{
-
-        //}
-
-
-        //for (int i = 0; i < (int)LayerController.Layer.LAYER_MAX; i++)
-        //{
-        //    List<List<GameObject>> tempblock_xy = new List<List<GameObject>>();
-
-        //    string layername = LayerController.layernumToString(i);
-        //    Sprite[] sprites = Resources.LoadAll<Sprite>("Textures/" + layername);
-
-        //    for (int y = 0; y < chip_num_y; y++)
-        //    {
-        //        List<GameObject> tempblock_x = new List<GameObject>();
-        //        for (int x = 0; x < chip_num_x; x++)
-        //        {
-        //            GameObject block;
-        //            block = Resources.Load<GameObject>("Prefabs/BlockBase");
-
-        //            {
-        //                block.GetComponent<SpriteRenderer>().sprite =
-        //                    System.Array.Find<Sprite>(
-        //                        sprites, (sprite) => sprite.name.Equals(
-        //                            layername + "_" + map_array[y, x].ToString()));
-
-
-        //            }
-
-        //            block.transform.position = new Vector3(chipsize * x, chipsize * y * -1, -i * 0.2f);
-        //            block.transform.localScale = new Vector3(chipsize, chipsize, 0);
-
-        //            tempblock_x.Add((GameObject)Instantiate(block, gameObject.transform));
-
-        //            // あたり判定付け方
-        //            //blocks[y, x].GetComponent<BoxCollider2D>().isTrigger = false;
-        //        }
-        //        tempblock_xy.Add(tempblock_x);
-        //    }
-        //    blocks.Add(tempblock_xy);
-        //}
-
+        
         // MEMO: string.IndexOf("") --- 含まれている場合0以上含まれていない場合-1
         //                        大文字小文字の区別はつく
 
@@ -215,6 +173,7 @@ public class MapChipController : MonoBehaviour
     {
         while (true)
         {
+            // イベントが起こる前に通る処理
             if (!is_eventstart)
             {
                 if (player.GetComponent<PlayerController>().IsSelect)
@@ -233,14 +192,16 @@ public class MapChipController : MonoBehaviour
                 if (block.number != -1)
                 {
                     if (overLapEventExists(player_cell_x, player_cell_y))
-                        if (block.event_manager.trigger_type == 1)
-                        {
-                            eventplayer_cell_x = player_cell_x;
-                            eventplayer_cell_y = player_cell_y;
-                            is_eventstart = block.event_manager.eventExecution();
-                        }
+                    {
+                        eventplayer_cell_x = player_cell_x;
+                        eventplayer_cell_y = player_cell_y;
+                        is_eventstart = block.event_manager.eventExecution();
+                    }
                 }
             }
+
+            // イベントが続行しているときに通る処理
+            // イベントが原因でプレイヤーの位置がずれたとき用に処理を分ける必要があったため。
             if (is_eventstart)
             {
                 if (player.GetComponent<PlayerController>().IsSelect)
@@ -257,11 +218,10 @@ public class MapChipController : MonoBehaviour
                 if (block.number != -1)
                 {
                     if (overLapEventExists(eventplayer_cell_x, eventplayer_cell_y))
-                        if (block.event_manager.trigger_type == 1)
-                        {
-                            is_eventstart = block.event_manager.eventExecution();
-                            player.GetComponent<PlayerController>().IsEventDuring = true;
-                        }
+                    {
+                        is_eventstart = block.event_manager.eventExecution();
+                        player.GetComponent<PlayerController>().IsEventDuring = true;
+                    }
                 }
 
                 if (is_eventstart == false)
@@ -276,13 +236,15 @@ public class MapChipController : MonoBehaviour
     }
 
     /// <summary>
-    /// イベントの有無を返す関数
+    /// 調べる系のイベントの有無を返す関数
     /// </summary>
-    public bool eventExists()
+    public bool checkEventExists()
     {
         var eventmanager = blocks[eventlayer][select_cell_y][select_cell_x].
                 GetComponent<Block>().event_manager;
         if (eventmanager.eventExists(eventmanager.event_stage) == false)
+            return false;
+        if (eventmanager.trigger_type != EventRepository.EventTriggerType.CHECK)
             return false;
         return true;
     }
@@ -298,6 +260,8 @@ public class MapChipController : MonoBehaviour
         var eventmanager = blocks[eventlayer][celly_][cellx_].
         GetComponent<Block>().event_manager;
         if (eventmanager.eventExists(eventmanager.event_stage) == false)
+            return false;
+        if (eventmanager.trigger_type != EventRepository.EventTriggerType.OVERLAP)
             return false;
         return true;
     }
@@ -354,7 +318,7 @@ public class MapChipController : MonoBehaviour
         for (int i = 0; i < (int)LayerController.Layer.LAYER_MAX; i++)
         {
             string layername = LayerController.layernumToString(i);
-            Sprite[] loadsprite = Resources.LoadAll<Sprite>("Textures/" + layername);
+            Sprite[] loadsprite = Resources.LoadAll<Sprite>("Textures/MapChip/" + layername);
             using (StreamReader sr = new StreamReader("Assets/GameMain/Resources/StageData/" + loadname_ + "_" + layername + "Data.txt"))
             {
 
@@ -419,6 +383,9 @@ public class MapChipController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// マップをクリアする関数
+    /// </summary>
     public void mapClear()
     {
         for (int i = 0; i < (int)LayerController.Layer.LAYER_MAX; i++)
