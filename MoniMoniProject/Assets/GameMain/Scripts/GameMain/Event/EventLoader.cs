@@ -18,7 +18,6 @@ public class EventLoader : MonoBehaviour
     [SerializeField]
     MapChipController mapcontroller = null;
 
-    string loadtext = "";
 
     void Awake()
     {

@@ -113,6 +113,7 @@ public class MapChipController : MonoBehaviour
         // StartCoroutine
         StartCoroutine(playerSelectBlock());
         StartCoroutine(blockUpdate());
+        is_eventstart = false;
     }
 
     /// <summary>
@@ -198,6 +199,15 @@ public class MapChipController : MonoBehaviour
         }
     }
 
+    // プレイヤーでイベントが起こった時に選んでいるブロック
+    private int eventselect_cell_x;
+    private int eventselect_cell_y;
+    // プレイヤーでイベントが起こった時のセル
+    private int eventplayer_cell_x;
+    private int eventplayer_cell_y;
+
+    bool is_eventstart;
+
     /// <summary>
     /// ブロックのイベントのアップデートコルーチン
     /// </summary>
@@ -205,34 +215,64 @@ public class MapChipController : MonoBehaviour
     {
         while (true)
         {
-            if (player.GetComponent<PlayerController>().IsSelect)
+            if (!is_eventstart)
             {
-                blockEventUpdate();
+                if (player.GetComponent<PlayerController>().IsSelect)
+                {
+                    var eventblock = blocks[eventlayer][select_cell_y][select_cell_x].GetComponent<Block>();
+                    eventselect_cell_x = select_cell_x;
+                    eventselect_cell_y = select_cell_y;
+                    is_eventstart = eventblock.event_manager.eventExecution();
+                }
+
+                var block = blocks[(int)LayerController.Layer.EVENT]
+                    [player_cell_y]
+                    [player_cell_x]
+                    .GetComponent<Block>();
+
+                if (block.number != -1)
+                {
+                    if (overLapEventExists(player_cell_x, player_cell_y))
+                        if (block.event_manager.trigger_type == 1)
+                        {
+                            eventplayer_cell_x = player_cell_x;
+                            eventplayer_cell_y = player_cell_y;
+                            is_eventstart = block.event_manager.eventExecution();
+                        }
+                }
             }
-
-            var block = blocks[(int)LayerController.Layer.EVENT]
-                [player_cell_y]
-                [player_cell_x]
-                .GetComponent<Block>();
-
-            if (block.number != -1)
+            if (is_eventstart)
             {
-                if (overLapEventExists())
-                    if (block.event_manager.trigger_type == 1)
-                    {
-                        block.event_manager.eventExecution();
-                        player.GetComponent<PlayerController>().IsEventDuring = true;
-                    }
+                if (player.GetComponent<PlayerController>().IsSelect)
+                {
+                    var eventblock = blocks[eventlayer][eventselect_cell_y][eventselect_cell_x].GetComponent<Block>();
+                    is_eventstart = eventblock.event_manager.eventExecution();
+                }
+
+                var block = blocks[(int)LayerController.Layer.EVENT]
+                    [eventplayer_cell_y]
+                    [eventplayer_cell_x]
+                    .GetComponent<Block>();
+
+                if (block.number != -1)
+                {
+                    if (overLapEventExists(eventplayer_cell_x, eventplayer_cell_y))
+                        if (block.event_manager.trigger_type == 1)
+                        {
+                            is_eventstart = block.event_manager.eventExecution();
+                            player.GetComponent<PlayerController>().IsEventDuring = true;
+                        }
+                }
+
+                if (is_eventstart == false)
+                {
+                    player.GetComponent<PlayerController>().IsEventDuring = false;
+                }
             }
 
 
             yield return null;
         }
-    }
-    private void blockEventUpdate()
-    {
-        var block = blocks[eventlayer][select_cell_y][select_cell_x].GetComponent<Block>();
-        block.event_manager.eventExecution();
     }
 
     /// <summary>
@@ -248,12 +288,14 @@ public class MapChipController : MonoBehaviour
     }
 
     /// <summary>
-    /// 通過系イベントの有無を返す関数
+    /// 通過系のイベントの有無を返す関数
     /// </summary>
+    /// <param name="cellx_"></param>
+    /// <param name="celly_"></param>
     /// <returns></returns>
-    public bool overLapEventExists()
+    public bool overLapEventExists(int cellx_, int celly_)
     {
-        var eventmanager = blocks[eventlayer][player_cell_y][player_cell_x].
+        var eventmanager = blocks[eventlayer][celly_][cellx_].
         GetComponent<Block>().event_manager;
         if (eventmanager.eventExists(eventmanager.event_stage) == false)
             return false;

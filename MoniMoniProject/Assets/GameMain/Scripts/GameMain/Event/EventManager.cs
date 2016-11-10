@@ -25,7 +25,10 @@ public class EventManager : MonoBehaviour
 
     List<EventRepository.EventFunc> eventsfunc = new List<EventRepository.EventFunc>();
 
-    // トリガーが調べる系(0)か通過する系(1)か
+
+    /// <summary>
+    /// トリガーが調べる系(0)か通過する系(1)か
+    /// </summary>
     public int trigger_type;
 
     void Start()
@@ -56,15 +59,16 @@ public class EventManager : MonoBehaviour
     /// <summary>
     /// イベント実行関数
     /// </summary>
-    public void eventExecution()
+    /// <returns>イベントが起こったかどうか</returns>
+    public bool eventExecution()
     {
-        if (!eventExists(event_stage)) return; // nullcheck
+        if (!eventExists(event_stage)) return false; // nullcheck
 
         // イベントの返り値はEventCreate.csを参照
         int event_status = eventsfunc[(int)event_stage]();
 
         // イベント続行
-        if (event_status == 0) return;
+        if (event_status == 0) return true;
 
         // イベント終了
         is_event_completed = true;
@@ -72,7 +76,7 @@ public class EventManager : MonoBehaviour
         // イベントの段階をすすめる
         if (event_status == 2)
             event_stage++;
-
+        return false;
     }
 
     /// <summary>

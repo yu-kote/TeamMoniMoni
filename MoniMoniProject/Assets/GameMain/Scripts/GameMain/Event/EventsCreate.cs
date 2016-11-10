@@ -38,9 +38,28 @@ public class EventsCreate : MonoBehaviour
         return 1;
     }
 
+    float player_z = -0.5f;
 
+    int zombiecount = 0;
+    Vector2 player_start_pos;
+
+    bool is_setup = false;
     public int playerZombieHand()
     {
+        if (is_setup == false)
+        {
+            player_start_pos = player.transform.position;
+            is_setup = true;
+        }
+        zombiecount++;
+        player.transform.position = player_start_pos;
+        Vector3 randompos = Random.insideUnitCircle * 0.1f;
+        player.transform.Translate(randompos + new Vector3(0, 0, player_z));
+
+        if (zombiecount / 60.0f <= 2) return 0;
+        is_setup = false;
+        zombiecount = 0;
+        player.transform.Translate(0, 1, 0);
 
         return 1;
     }
