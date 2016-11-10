@@ -2,6 +2,9 @@
 using System.Collections;
 using UnityEngine.UI;
 
+/// <summary>
+/// プレイヤーを動かすボタンのスクリプト
+/// </summary>
 public class MoveButtonController : MonoBehaviour
 {
 
