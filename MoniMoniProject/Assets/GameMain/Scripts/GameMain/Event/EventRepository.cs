@@ -16,7 +16,8 @@ public class EventRepository : MonoBehaviour
 
     void Awake()
     {
-        eventAdd(0, new EventFunc(eventscreate.playerUpEvent), 1);
+        eventAdd(0, eventscreate.playerUpEvent, 1);
+        eventAdd(1, eventscreate.playerZombieHand, 1);
     }
 
     /// <summary>
