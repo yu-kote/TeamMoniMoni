@@ -8,10 +8,10 @@ using System.Collections.Generic;
 public class EventRepository : MonoBehaviour
 {
     [SerializeField]
-    EventsCreate eventscreate;
+    EventsCreate events;
 
     public delegate int EventFunc();
-    Dictionary<int, EventFunc> eventdic = new Dictionary<int, EventFunc>();
+    Dictionary<int, List<EventFunc>> eventdic = new Dictionary<int, List<EventFunc>>();
     Dictionary<int, EventTriggerType> event_trigger_type = new Dictionary<int, EventTriggerType>();
 
     public enum EventTriggerType
@@ -22,8 +22,8 @@ public class EventRepository : MonoBehaviour
 
     void Awake()
     {
-        eventAdd(0, eventscreate.playerUpEvent, EventTriggerType.CHECK);
-        eventAdd(1, eventscreate.playerZombieHand, EventTriggerType.OVERLAP);
+        eventAdd(0, new List<EventFunc> { events.playerUpEvent }, EventTriggerType.CHECK);
+        eventAdd(1, new List<EventFunc> { events.playerZombieHand1, events.playerZombieHand2 }, EventTriggerType.OVERLAP);
     }
 
     /// <summary>
@@ -32,7 +32,7 @@ public class EventRepository : MonoBehaviour
     /// <param name="key_">イベントの番号</param>
     /// <param name="func_">イベントの関数</param>
     /// <param name="trigger_type_">トリガーの種類( 調べる系(0), 通過系(1) )</param>
-    void eventAdd(int key_, EventFunc func_, EventTriggerType trigger_type_)
+    void eventAdd(int key_, List<EventFunc> func_, EventTriggerType trigger_type_)
     {
         eventdic.Add(key_, func_);
         event_trigger_type.Add(key_, trigger_type_);
@@ -43,10 +43,10 @@ public class EventRepository : MonoBehaviour
     /// </summary>
     /// <param name="tag_">イベントのタグ</param>
     /// <returns>イベント関数</returns>
-    public EventFunc getEvent(int tag_)
+    public List<EventFunc> getEvent(int tag_)
     {
-        EventFunc func = eventdic[tag_];
-        if (func == null)
+        List<EventFunc> func = eventdic[tag_];
+        if (func.Count <= 0)
         {
             Debug.Assert(false, "Not Event Find!!");
         }

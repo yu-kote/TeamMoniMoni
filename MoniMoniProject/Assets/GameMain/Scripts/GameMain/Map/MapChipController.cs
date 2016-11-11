@@ -71,7 +71,7 @@ public class MapChipController : MonoBehaviour
         playerPop();
 
         // StartCoroutine
-        //StartCoroutine(playerSelectBlock());
+        StartCoroutine(playerSelectBlock());
         StartCoroutine(blockUpdate());
 
         is_eventstart = false;
@@ -181,7 +181,7 @@ public class MapChipController : MonoBehaviour
             // イベントが起こる前に通る処理
             if (!is_eventstart)
             {
-                if (player_controller.IsSelect)
+                if (player_controller.state == PlayerController.State.EVENT)
                 {
                     var eventblock = blockcomponents[eventlayer][select_cell_y][select_cell_x];
                     eventselect_cell_x = select_cell_x;
@@ -200,6 +200,7 @@ public class MapChipController : MonoBehaviour
                         eventplayer_cell_x = player_cell_x;
                         eventplayer_cell_y = player_cell_y;
                         is_eventstart = block.event_manager.eventExecution();
+                        player_controller.state = PlayerController.State.EVENT;
                     }
                 }
             }
@@ -208,7 +209,7 @@ public class MapChipController : MonoBehaviour
             // イベントが原因でプレイヤーの位置がずれたとき用に処理を分ける必要があったため。
             if (is_eventstart)
             {
-                if (player_controller.IsSelect)
+                if (player_controller.state == PlayerController.State.EVENT)
                 {
                     var eventblock = blockcomponents[eventlayer][eventselect_cell_y][eventselect_cell_x];
                     is_eventstart = eventblock.event_manager.eventExecution();
@@ -223,16 +224,14 @@ public class MapChipController : MonoBehaviour
                     if (overLapEventExists(eventplayer_cell_x, eventplayer_cell_y))
                     {
                         is_eventstart = block.event_manager.eventExecution();
-                        player_controller.IsEventDuring = true;
                     }
                 }
 
                 if (is_eventstart == false)
                 {
-                    player_controller.IsEventDuring = false;
+                    player_controller.state = PlayerController.State.NORMAL;
                 }
             }
-
 
             yield return null;
         }
@@ -275,24 +274,24 @@ public class MapChipController : MonoBehaviour
     /// <returns>イベントが終了したかどうか</returns>
     public bool isEventCompleted()
     {
-        if (player_controller.IsSelect)
+        if (player_controller.state == PlayerController.State.EVENT)
         {
-            var is_completed = blockcomponents[eventlayer][select_cell_y][select_cell_x]
+            var is_completed = blockcomponents[eventlayer][eventselect_cell_y][eventselect_cell_x]
                 .event_manager.IsEventCompleted;
             if (is_completed)
             {
-                blockcomponents[eventlayer][select_cell_y][select_cell_x]
+                blockcomponents[eventlayer][eventselect_cell_y][eventselect_cell_x]
                 .event_manager.IsEventCompleted = false;
                 return true;
             }
         }
-        if (player_controller.IsEventDuring)
+        if (player_controller.state == PlayerController.State.EVENT)
         {
-            var is_completed = blockcomponents[eventlayer][player_cell_y][player_cell_x]
+            var is_completed = blockcomponents[eventlayer][eventplayer_cell_y][eventplayer_cell_x]
               .event_manager.IsEventCompleted;
             if (is_completed)
             {
-                blockcomponents[eventlayer][player_cell_y][player_cell_x]
+                blockcomponents[eventlayer][eventplayer_cell_y][eventplayer_cell_x]
                 .event_manager.IsEventCompleted = false;
                 return true;
             }

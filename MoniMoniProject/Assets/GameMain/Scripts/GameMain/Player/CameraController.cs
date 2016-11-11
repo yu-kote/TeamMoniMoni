@@ -12,9 +12,10 @@ public class CameraController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
     }
+    int count = 0;
 
+    public bool is_frameview;
     // Update is called once per frame
     void Update()
     {
@@ -27,7 +28,12 @@ public class CameraController : MonoBehaviour
 
         transform.position = camerapos;
 
-        Debug.Log(Time.deltaTime);
+        if (is_frameview)
+        {
+            count++;
+            if (count % 30 == 0)
+                Debug.Log(Time.deltaTime);
+        }
     }
 
 

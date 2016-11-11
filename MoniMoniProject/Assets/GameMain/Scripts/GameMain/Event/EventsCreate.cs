@@ -13,12 +13,17 @@ public class EventsCreate : MonoBehaviour
 {
     [SerializeField]
     GameObject player;
+    [SerializeField]
+    PlayerController playercontroller;
 
     [SerializeField]
     GameObject mapcontroller;
 
     [SerializeField]
     MapChipController chipcontroller;
+
+    [SerializeField]
+    EventTalkManager talkmanager;
 
 
 
@@ -44,23 +49,48 @@ public class EventsCreate : MonoBehaviour
     Vector2 player_start_pos;
 
     bool is_setup = false;
-    public int playerZombieHand()
+    public int playerZombieHand1()
     {
         if (is_setup == false)
         {
             player_start_pos = player.transform.position;
+
             is_setup = true;
         }
         zombiecount++;
-        player.transform.position = player_start_pos;
-        Vector3 randompos = Random.insideUnitCircle * 0.1f;
-        player.transform.Translate(randompos + new Vector3(0, 0, player_z));
+        if (zombiecount / 60.0f <= 2)
+        {
+            player.transform.position = player_start_pos;
+            Vector3 randompos = Random.insideUnitCircle * 0.05f;
+            player.transform.Translate(randompos + new Vector3(0, 0, player_z));
+            return 0;
+        }
+        else if (zombiecount == 60 * 2 + 1)
+        {
+            player.transform.Translate(0, 1, 0);
+            talkmanager.startTalk("testevent");
+            playercontroller.state = PlayerController.State.TALK;
+        }
 
-        if (zombiecount / 60.0f <= 2) return 0;
+        if (talkmanager.is_talknow)
+            return 0;
+        is_setup = false;
+        return 1;
+    }
+
+    public int playerZombieHand2()
+    {
+        if (is_setup)
+        {
+            talkmanager.startTalk("testevent");
+
+            is_setup = false;
+        }
+
+        if (!talkmanager.is_talknow)
+            return 0;
         is_setup = false;
         zombiecount = 0;
-        player.transform.Translate(0, 1, 0);
-
         return 1;
     }
 

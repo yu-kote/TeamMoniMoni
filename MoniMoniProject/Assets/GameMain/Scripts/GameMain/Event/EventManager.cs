@@ -51,10 +51,10 @@ public class EventManager : MonoBehaviour
     /// </summary>
     /// <param name="add_event">イベントの関数</param>
     public void addEvent(
-        EventRepository.EventFunc add_event, 
+        List<EventRepository.EventFunc> add_event,
         EventRepository.EventTriggerType trigger_type_)
     {
-        eventsfunc.Add(add_event);
+        eventsfunc = add_event;
         trigger_type = trigger_type_;
     }
 
