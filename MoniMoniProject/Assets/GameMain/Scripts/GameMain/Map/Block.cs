@@ -20,4 +20,14 @@ public class Block : MonoBehaviour
 
     public int number;
 
+    // カメラに写っていないときの処理
+    public void OnBecameInvisible()
+    {
+        gameObject.SetActive(false);
+    }
+    // カメラに写っているときの処理
+    public void OnBecameVisible()
+    {
+        gameObject.SetActive(true);
+    }
 }

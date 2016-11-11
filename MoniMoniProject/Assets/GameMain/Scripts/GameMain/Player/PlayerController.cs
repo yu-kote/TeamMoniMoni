@@ -41,8 +41,7 @@ public class PlayerController : MonoBehaviour
         get { return is_event_during; }
         set { is_event_during = value; }
     }
-
-
+    
     // イベントキーが押されたかどうか
     bool is_pusheventkey;
     public void pushEventKey()
@@ -142,16 +141,14 @@ public class PlayerController : MonoBehaviour
         if (is_select) return;
         if (is_event_during) return;
 
-        float deltaspeed = speed * Time.deltaTime * 60;
+        float deltaspeed = speed;
 
         // スティックの優先度
         //int priority_vec = 0; // x : 0 , y : 1
-
         //if (Mathf.Abs(stick.MoveValue.x) > Mathf.Abs(stick.MoveValue.y))
         //    priority_vec = 0;
         //else
         //    priority_vec = 1;
-
         //if (priority_vec == 0)
         //{
         //    vec.x = deltaspeed * stick.MoveValue.x;
