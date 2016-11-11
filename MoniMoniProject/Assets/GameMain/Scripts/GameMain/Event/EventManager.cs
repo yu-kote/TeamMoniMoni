@@ -29,7 +29,7 @@ public class EventManager : MonoBehaviour
     /// <summary>
     /// トリガーが調べる系(0)か通過する系(1)か
     /// </summary>
-    public int trigger_type;
+    public EventRepository.EventTriggerType trigger_type;
 
     void Start()
     {
@@ -50,7 +50,9 @@ public class EventManager : MonoBehaviour
     /// イベントの追加
     /// </summary>
     /// <param name="add_event">イベントの関数</param>
-    public void addEvent(EventRepository.EventFunc add_event, int trigger_type_)
+    public void addEvent(
+        EventRepository.EventFunc add_event, 
+        EventRepository.EventTriggerType trigger_type_)
     {
         eventsfunc.Add(add_event);
         trigger_type = trigger_type_;
