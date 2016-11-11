@@ -3,12 +3,14 @@ using System.Collections;
 
 public class touch : MonoBehaviour
 {
+    
 
-    int cout;
+    public int cout;
     // Use this for initialization
     void Start()
     {
         cout = 0;
+        
     }
 
     // Update is called once per frame
@@ -22,9 +24,19 @@ public class touch : MonoBehaviour
             if (collider != null)
             {
                 GameObject obj = collider.transform.gameObject;
-                if (cout == 3) {
-                    Destroy(obj);
+                if(cout == 0)
+                {
+                    cout++;
                 }
+                else if(cout == 1)
+                {
+                    cout--;
+                }
+                else if (cout == 2)
+                {
+                    cout--;
+                }
+
             }
 
 
