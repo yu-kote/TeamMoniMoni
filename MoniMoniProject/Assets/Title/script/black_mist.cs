@@ -6,6 +6,8 @@ public class black_mist : MonoBehaviour {
     private bool on_under_or_left_right;
     [SerializeField]
     private bool move_change;
+
+    private int can_not_look_time;
     private float move;
     private float alpha;
     private bool mist_on;
@@ -15,6 +17,7 @@ public class black_mist : MonoBehaviour {
     // Use this for initialization
 
     void Start () {
+        can_not_look_time = 0;
         move = 0.0f;
         alpha = 0.00f;
         mist_on = false;
@@ -24,7 +27,7 @@ public class black_mist : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
+        can_not_look_time++;
         this.GetComponent<CanvasGroup>().alpha = alpha;
         transform.localPosition = move_pos;
         if (mist_on == true && alpha <= 1.00f)
@@ -68,7 +71,12 @@ public class black_mist : MonoBehaviour {
         }
 	}
     public void OnClick() {
-        mist_on = true;
+        if(can_not_look_time>=60) mist_on = true;
 
+    }
+    public void OnClick_2()
+    {
+        can_not_look_time = 0;
+        
     }
 }

@@ -2,12 +2,12 @@
 using System.Collections;
 
 public class TapButton : MonoBehaviour {
-
-    private bool clicked;
+   private bool clicked;
     private float cahngeAlpha;
 
     // Use this for initialization
     void Start () {
+        
         clicked = false;
         cahngeAlpha = 1.0f;
 
@@ -35,4 +35,5 @@ public class TapButton : MonoBehaviour {
     {
         clicked = true;
     }
+   
 }

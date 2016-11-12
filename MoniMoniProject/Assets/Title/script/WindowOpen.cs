@@ -4,7 +4,7 @@ using System.Collections;
 public class WindowOpen : MonoBehaviour {
     private Vector3 size_window;
 
-    private int local_time;
+     private int local_time;
     private bool display_window;
     private float changesize_window;
 

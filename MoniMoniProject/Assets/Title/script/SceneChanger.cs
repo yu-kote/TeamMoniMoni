@@ -7,6 +7,7 @@ public class SceneChanger : MonoBehaviour {
     [SerializeField]
     private string SceneName;
 
+    private int can_not_click_time;
     private bool clicked;
 
     private string GameMain;
@@ -17,11 +18,12 @@ public class SceneChanger : MonoBehaviour {
     // Use this for initialization
     void Start () {
         clicked = false;
-
+        can_not_click_time = 0;
     }
 	
 	// Update is called once per frame
 	void Update () {
+        can_not_click_time++;
         if (clicked == true) {
             time_effect--;
             if (time_effect == 0)
@@ -36,7 +38,10 @@ public class SceneChanger : MonoBehaviour {
 
 	}
     public void OnClick() {
-        clicked = true;
+        if(can_not_click_time>60)clicked = true;
        
+    }
+    public void OnClick_close() {
+        can_not_click_time = 0;
     }
 }
