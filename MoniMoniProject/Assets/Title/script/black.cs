@@ -2,13 +2,13 @@
 using System.Collections;
 
 public class black : MonoBehaviour {
-    private bool black_on;
-    [SerializeField]
-    private Titleclick title_click = null;
+   // private bool black_on;
+  //  [SerializeField]
+  //  private Titleclick title_click = null;
     
 	// Use this for initialization
 	void Start () {
-        black_on = false;
+   //     black_on = false;
           
 	}
 	
