@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class touch : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class touch : MonoBehaviour
 
     }
 
+    public Action action = null;
+
     // Update is called once per frame
     void Update()
     {
@@ -28,6 +31,8 @@ public class touch : MonoBehaviour
             //if (TouchManager.IsTouchObject(obj))
             if (collider != null)
             {
+                action();
+
                 cout++;
                 Maxcount--;
                 Debug.Log(cout);

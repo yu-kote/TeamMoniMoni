@@ -9,11 +9,14 @@ public class Maxcount : MonoBehaviour
 
     touch touches;
 
+    public int count;
+
 	// Use this for initialization
 	void Start ()
     {
         text = GetComponent<Text>();
         touches = GetComponent<touch>();
+        touches.action = () => { count = 3; };
         text.text = touches.Maxcount.ToString();
     }
 	

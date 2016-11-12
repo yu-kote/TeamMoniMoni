@@ -10,7 +10,8 @@ public class moved : MonoBehaviour
     private Vector3 pos;
     private string SceneName;
 
-    float t;
+    float cir;
+    float zig;
 
     public GameObject obj;
 
@@ -24,8 +25,10 @@ public class moved : MonoBehaviour
     void Start()
     {
         touches = GetComponent<touch>();
-        speed = 3.0f;
+        touches.action = () => { speed = 5; };
 
+        speed = 5.0f;
+          
         target = pos;
         pos = Vector3.zero;
         obj =  gameObject;
@@ -50,12 +53,12 @@ public class moved : MonoBehaviour
         float translation = Time.deltaTime * 30;
         transform.Translate(0, translation, 0);
 
-        t += Time.deltaTime;
-        if (t > 3)
+        cir += Time.deltaTime;
+        if (cir> 3)
         {
             Debug.Log("aaaaa");
             speed = 1.0f;
-            t = 0;
+            cir = 0;
         }
 
         gameObject.transform.position = pos;
@@ -64,17 +67,22 @@ public class moved : MonoBehaviour
     //ジグザグ軌道
     public void Zigzag()
     {
-
-        float speed = 2.0f;
         v += Time.deltaTime * speed;
         Debug.Log(transform.position);
 
         pos.y = Mathf.Sin(v) * 1f;
+        pos.x = Mathf.Cos(v / 9) * 1f;
 
-        pos.x = Mathf.Cos(v / 2) * 1f;
-
-        float translation = Time.deltaTime * 30;
+        float translation = Time.deltaTime * 60;
         transform.Translate(0, translation, 0);
+
+        zig+= Time.deltaTime;
+        if (zig > 3)
+        {
+            Debug.Log("aaaaa");
+            speed = 1.0f;
+            zig = 0;
+        }
 
         gameObject.transform.position = pos;
     }
@@ -88,6 +96,7 @@ public class moved : MonoBehaviour
         float x = Random.Range(-3f, 3f);
         float y = Random.Range(-2.5f, 2.5f);
         transform.position = new Vector3(x, y, transform.position.z);
+
         isWorp = false;
     }
 

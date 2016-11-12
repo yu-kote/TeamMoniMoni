@@ -3,12 +3,6 @@ using System.Collections;
 
 public class TouchManager : MonoBehaviour
 {
-    void Touch()
-    {
-        print(GetInstanceID());
-    }
-
-
     public static bool IsTouchObject(GameObject aObject)
     {
         int srcId = aObject.gameObject.GetInstanceID();
