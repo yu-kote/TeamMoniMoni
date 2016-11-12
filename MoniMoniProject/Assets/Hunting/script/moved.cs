@@ -1,47 +1,44 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class moved : MonoBehaviour
 {
 
     public float angle = 30f;
-    private Vector3 targetPos;
-    private Vector3 target;
+    public Vector3 target;
     private Vector3 pos;
+    private string SceneName;
 
     float t;
 
-    public GameObject prefad;
+    public GameObject obj;
+
 
     private float speed;
+    bool isWorp;
 
     touch touches;
 
     // Use this for initialization
     void Start()
     {
-        //Destroy(gameObject, 5.0f);
-
         touches = GetComponent<touch>();
-
-        //Vector3 position = new Vector3(Random.Range(-10.0f, 10.0f), 0, Random.Range(-10.0f, 10.0f));
-        //Instantiate(prefad, position, Quaternion.identity);
-        //if (Random.RandomRange(10,10,10))
-        //{
-        //    float x = Random.Range(-2.0f, 2.0f);
-        //    float y = Random.Range(-2.0f, 2.0f);
-        //    float z = Random.Range(-2.0f, 2.0f);
-
-        //}
-
         speed = 3.0f;
 
+        target = pos;
         pos = Vector3.zero;
+        obj =  gameObject;
+        SceneName = "GameMain";
+
+
 
     }
 
     private float v;
 
+
+    //円軌道
     public void circle()
     {
         v += Time.deltaTime * speed;
@@ -54,52 +51,72 @@ public class moved : MonoBehaviour
         transform.Translate(0, translation, 0);
 
         t += Time.deltaTime;
-        if (t > 5)
+        if (t > 3)
         {
             Debug.Log("aaaaa");
             speed = 1.0f;
             t = 0;
         }
 
-        target = pos;
         gameObject.transform.position = pos;
     }
 
+    //ジグザグ軌道
     public void Zigzag()
     {
+
+        float speed = 2.0f;
         v += Time.deltaTime * speed;
         Debug.Log(transform.position);
 
         pos.y = Mathf.Sin(v) * 1f;
-        pos.x = Mathf.Cos(v) * 6f;
+
+        pos.x = Mathf.Cos(v / 2) * 1f;
 
         float translation = Time.deltaTime * 30;
         transform.Translate(0, translation, 0);
 
-        target = pos;
         gameObject.transform.position = pos;
+    }
+
+    //テレポート
+    public IEnumerator random()
+    {
+        isWorp = true;
+        yield return new WaitForSeconds(2.0f);
+
+        float x = Random.Range(-3f, 3f);
+        float y = Random.Range(-2.5f, 2.5f);
+        transform.position = new Vector3(x, y, transform.position.z);
+        isWorp = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        GameObject obj = gameObject;
         if (touches.cout == 0)
         {
             circle();
         }
-        else if(touches.cout == 1)
+        else if (touches.cout == 1)
         {
             Zigzag();
         }
-        else if(touches.cout == 2)
+        else if (touches.cout == 2)
         {
-            Destroy(obj);
+            if (!isWorp)
+            {
+                StartCoroutine(random());
+            }
         }
-
-
-        //Vector3 axis = Vector3.forward;
-        //transform.RotateAround(targetPos, axis, angle * Time.deltaTime);
-
+        else if (touches.cout == 3)
+        {
+            //Destroy(gameObject);
+            if (SceneName == "GameMain")
+            {
+                touches.cout = 0;
+                SceneManager.LoadScene("GameMain");
+            }
+        }
     }
 }
