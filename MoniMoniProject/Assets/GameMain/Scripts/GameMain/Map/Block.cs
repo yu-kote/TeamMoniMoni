@@ -18,6 +18,23 @@ public class Block : MonoBehaviour
     [SerializeField]
     public EventManager event_manager = null;
 
+    [SerializeField]
+    SpriteRenderer spriterenderer;
+
     public int number;
 
+    // カメラに写っていないときの処理
+    public void OnBecameInvisible()
+    {
+        Color color = spriterenderer.color;
+        color.a = 0;
+        spriterenderer.color = color;
+    }
+    // カメラに写っているときの処理
+    public void OnBecameVisible()
+    {
+        Color color = spriterenderer.color;
+        color.a = 255.0f;
+        spriterenderer.color = color;
+    }
 }

@@ -48,17 +48,19 @@ public class MapChipController : MonoBehaviour
     [SerializeField]
     PlayerController player_controller = null;
 
+    public List<List<List<Block>>> blockcomponents;
+
 
     void Awake()
     {
         blocks = new List<List<List<GameObject>>>();
 
         // FIXME: スプライトまとめて読む感じに失敗・・・修正予定
-        //SpriteLoader loader = new SpriteLoader();
-        //loader.Load("Textures/samplechip");
+        // SpriteLoader loader = new SpriteLoader();
+        // loader.Load("Textures/samplechip");
 
         loadMap("test");
-        
+
         // MEMO: string.IndexOf("") --- 含まれている場合0以上含まれていない場合-1
         //                        大文字小文字の区別はつく
 
@@ -71,8 +73,13 @@ public class MapChipController : MonoBehaviour
         // StartCoroutine
         StartCoroutine(playerSelectBlock());
         StartCoroutine(blockUpdate());
+
         is_eventstart = false;
     }
+
+
+
+
 
     /// <summary>
     /// プレイヤーをpopさせる位置を決める関数
@@ -119,7 +126,7 @@ public class MapChipController : MonoBehaviour
                 for (int x = 0; x < chip_num_x; x++)
                 {
                     blocks[0][y][x].GetComponent<SpriteRenderer>().material.color = Color.white;
-                    if (blocks[3][y][x].GetComponent<Block>().number != -1)
+                    if (blockcomponents[3][y][x].number != -1)
                         blocks[0][y][x].GetComponent<SpriteRenderer>().material.color = Color.red;
                 }
             }
@@ -151,8 +158,6 @@ public class MapChipController : MonoBehaviour
             blocks[0][select_cell_y][select_cell_x]
          .GetComponent<SpriteRenderer>().material.color = Color.red;
 
-
-
             yield return null;
         }
     }
@@ -176,18 +181,17 @@ public class MapChipController : MonoBehaviour
             // イベントが起こる前に通る処理
             if (!is_eventstart)
             {
-                if (player.GetComponent<PlayerController>().IsSelect)
+                if (player_controller.state == PlayerController.State.EVENT)
                 {
-                    var eventblock = blocks[eventlayer][select_cell_y][select_cell_x].GetComponent<Block>();
+                    var eventblock = blockcomponents[eventlayer][select_cell_y][select_cell_x];
                     eventselect_cell_x = select_cell_x;
                     eventselect_cell_y = select_cell_y;
                     is_eventstart = eventblock.event_manager.eventExecution();
                 }
 
-                var block = blocks[(int)LayerController.Layer.EVENT]
+                var block = blockcomponents[(int)LayerController.Layer.EVENT]
                     [player_cell_y]
-                    [player_cell_x]
-                    .GetComponent<Block>();
+                    [player_cell_x];
 
                 if (block.number != -1)
                 {
@@ -196,6 +200,7 @@ public class MapChipController : MonoBehaviour
                         eventplayer_cell_x = player_cell_x;
                         eventplayer_cell_y = player_cell_y;
                         is_eventstart = block.event_manager.eventExecution();
+                        player_controller.state = PlayerController.State.EVENT;
                     }
                 }
             }
@@ -204,32 +209,29 @@ public class MapChipController : MonoBehaviour
             // イベントが原因でプレイヤーの位置がずれたとき用に処理を分ける必要があったため。
             if (is_eventstart)
             {
-                if (player.GetComponent<PlayerController>().IsSelect)
+                if (player_controller.state == PlayerController.State.EVENT)
                 {
-                    var eventblock = blocks[eventlayer][eventselect_cell_y][eventselect_cell_x].GetComponent<Block>();
+                    var eventblock = blockcomponents[eventlayer][eventselect_cell_y][eventselect_cell_x];
                     is_eventstart = eventblock.event_manager.eventExecution();
                 }
 
-                var block = blocks[(int)LayerController.Layer.EVENT]
+                var block = blockcomponents[(int)LayerController.Layer.EVENT]
                     [eventplayer_cell_y]
-                    [eventplayer_cell_x]
-                    .GetComponent<Block>();
+                    [eventplayer_cell_x];
 
                 if (block.number != -1)
                 {
                     if (overLapEventExists(eventplayer_cell_x, eventplayer_cell_y))
                     {
                         is_eventstart = block.event_manager.eventExecution();
-                        player.GetComponent<PlayerController>().IsEventDuring = true;
                     }
                 }
 
                 if (is_eventstart == false)
                 {
-                    player.GetComponent<PlayerController>().IsEventDuring = false;
+                    player_controller.state = PlayerController.State.NORMAL;
                 }
             }
-
 
             yield return null;
         }
@@ -240,8 +242,8 @@ public class MapChipController : MonoBehaviour
     /// </summary>
     public bool checkEventExists()
     {
-        var eventmanager = blocks[eventlayer][select_cell_y][select_cell_x].
-                GetComponent<Block>().event_manager;
+        var eventmanager = blockcomponents[eventlayer][select_cell_y][select_cell_x]
+                .event_manager;
         if (eventmanager.eventExists(eventmanager.event_stage) == false)
             return false;
         if (eventmanager.trigger_type != EventRepository.EventTriggerType.CHECK)
@@ -257,8 +259,8 @@ public class MapChipController : MonoBehaviour
     /// <returns></returns>
     public bool overLapEventExists(int cellx_, int celly_)
     {
-        var eventmanager = blocks[eventlayer][celly_][cellx_].
-        GetComponent<Block>().event_manager;
+        var eventmanager = blockcomponents[eventlayer][celly_][cellx_]
+        .event_manager;
         if (eventmanager.eventExists(eventmanager.event_stage) == false)
             return false;
         if (eventmanager.trigger_type != EventRepository.EventTriggerType.OVERLAP)
@@ -272,29 +274,25 @@ public class MapChipController : MonoBehaviour
     /// <returns>イベントが終了したかどうか</returns>
     public bool isEventCompleted()
     {
-        if (player.GetComponent<PlayerController>().IsSelect)
+        if (player_controller.state == PlayerController.State.EVENT)
         {
-            var is_completed = blocks[eventlayer][select_cell_y][select_cell_x].
-                GetComponent<Block>().
-                event_manager.IsEventCompleted;
+            var is_completed = blockcomponents[eventlayer][eventselect_cell_y][eventselect_cell_x]
+                .event_manager.IsEventCompleted;
             if (is_completed)
             {
-                blocks[eventlayer][select_cell_y][select_cell_x].
-                GetComponent<Block>().
-                event_manager.IsEventCompleted = false;
+                blockcomponents[eventlayer][eventselect_cell_y][eventselect_cell_x]
+                .event_manager.IsEventCompleted = false;
                 return true;
             }
         }
-        if (player.GetComponent<PlayerController>().IsEventDuring)
+        if (player_controller.state == PlayerController.State.EVENT)
         {
-            var is_completed = blocks[eventlayer][player_cell_y][player_cell_x].
-              GetComponent<Block>().
-              event_manager.IsEventCompleted;
+            var is_completed = blockcomponents[eventlayer][eventplayer_cell_y][eventplayer_cell_x]
+              .event_manager.IsEventCompleted;
             if (is_completed)
             {
-                blocks[eventlayer][player_cell_y][player_cell_x].
-                GetComponent<Block>().
-                event_manager.IsEventCompleted = false;
+                blockcomponents[eventlayer][eventplayer_cell_y][eventplayer_cell_x]
+                .event_manager.IsEventCompleted = false;
                 return true;
             }
         }
@@ -381,6 +379,23 @@ public class MapChipController : MonoBehaviour
 
             }
         }
+
+        blockcomponents = new List<List<List<Block>>>();
+        for (int i = 0; i < (int)LayerController.Layer.LAYER_MAX; i++)
+        {
+            List<List<Block>> component_block_temp_xy = new List<List<Block>>();
+            for (int y = 0; y < chip_num_y; y++)
+            {
+                List<Block> commponent_block_temp_x = new List<Block>();
+                for (int x = 0; x < chip_num_x; x++)
+                {
+                    commponent_block_temp_x.Add(blocks[i][y][x].GetComponent<Block>());
+                }
+                component_block_temp_xy.Add(commponent_block_temp_x);
+            }
+            blockcomponents.Add(component_block_temp_xy);
+        }
+
     }
 
     /// <summary>
@@ -395,10 +410,12 @@ public class MapChipController : MonoBehaviour
                 for (int x = 0; x < chip_num_x; x++)
                 {
                     Destroy(blocks[i][y][x]);
+                    Destroy(blockcomponents[i][y][x]);
                 }
             }
         }
         blocks.Clear();
+        blockcomponents.Clear();
     }
 
 
