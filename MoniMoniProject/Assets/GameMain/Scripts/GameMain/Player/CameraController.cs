@@ -13,7 +13,6 @@ public class CameraController : MonoBehaviour
     void Start()
     {
     }
-    int count = 0;
 
     public bool is_frameview;
 
@@ -36,9 +35,7 @@ public class CameraController : MonoBehaviour
 
         if (is_frameview)
         {
-            count++;
-            if (count % 30 == 0)
-                Debug.Log(Time.deltaTime);
+            Debug.Log(Time.deltaTime);
         }
     }
 

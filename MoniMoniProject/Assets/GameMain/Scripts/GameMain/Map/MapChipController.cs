@@ -161,8 +161,8 @@ public class MapChipController : MonoBehaviour
             player_cell_x = Mathf.Clamp(player_cell_x, 0, chip_num_x - 1);
             player_cell_y = Mathf.Clamp(player_cell_y, 0, chip_num_y - 1);
 
-            blocks[0][select_cell_y][select_cell_x]
-         .GetComponent<SpriteRenderer>().material.color = Color.red;
+            //   blocks[0][select_cell_y][select_cell_x]
+            //.GetComponent<SpriteRenderer>().material.color = Color.red;
 
             yield return null;
         }
@@ -322,22 +322,31 @@ public class MapChipController : MonoBehaviour
 
     int framecount = 0;
     int drawcount = 0;
+    Vector2 prev_camerapos;
     /// <summary>
     /// カメラに映っているブロックのアクティブを制御する関数
     /// </summary>
     public void chipsIsActive()
     {
+        drawcount = 8;
+        framecount++;
         Vector2 camerapos = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, camera.camera_follow_z));
+
+        if (prev_camerapos == camerapos)
+            return;
+        if (framecount % drawcount != 0)
+            return;
+        prev_camerapos = camerapos;
+
         Vector2 camerahalfsize = camerapos - new Vector2(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, camera.camera_follow_z)).x,
             Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, camera.camera_follow_z)).y);
 
         Vector2 camerasize = new Vector2(Mathf.Abs(camerahalfsize.x * 2), Mathf.Abs(camerahalfsize.y * 2));
-        camerapos = camerapos + (camerasize / 2);
-        drawcount = 3;
-        framecount++;
 
-        float check_time = Time.realtimeSinceStartup;
-        //if (framecount % drawcount == 0)
+        camerapos = camerapos + (camerasize / 2);
+        camerasize += new Vector2(1, 1);
+
+        Debug.Log("Test");
         for (int i = 0; i < (int)LayerController.Layer.LAYER_MAX; i++)
         {
             for (int y = 0; y < chip_num_y; y++)
@@ -355,10 +364,6 @@ public class MapChipController : MonoBehaviour
                 }
             }
         }
-        check_time = Time.realtimeSinceStartup - check_time;
-
-        Debug.Log(check_time);
-
     }
 
 

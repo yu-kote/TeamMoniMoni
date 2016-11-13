@@ -37,6 +37,8 @@ public class PlayerController : MonoBehaviour
 
     public Vector2 vec;
 
+    public bool is_move;
+
     [SerializeField]
     private float speed;
 
@@ -55,6 +57,7 @@ public class PlayerController : MonoBehaviour
 
         vec = new Vector2(0, 0);
         is_pusheventkey = false;
+        is_move = false;
 
         StartCoroutine(moveMethod());
         StartCoroutine(fieldCheck());
@@ -176,6 +179,11 @@ public class PlayerController : MonoBehaviour
             vec.y = 0;
         Vector3 vec_ = new Vector3(vec.x * 0.05f, vec.y * 0.05f, 0);
         transform.Translate(vec_);
+
+        if (vec != Vector2.zero)
+            is_move = true;
+        else
+            is_move = false;
     }
 
     /// <summary>
