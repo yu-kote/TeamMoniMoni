@@ -10,6 +10,16 @@ using System.IO;
 /// </summary>
 public class MapChipController : MonoBehaviour
 {
+
+    [SerializeField]
+    GameObject player = null;
+
+    [SerializeField]
+    PlayerController player_controller = null;
+
+    [SerializeField]
+    CameraController camera = null;
+
     public float chip_size;
     public float chip_scale;
 
@@ -23,14 +33,14 @@ public class MapChipController : MonoBehaviour
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-        new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
+        new string[] { "0", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
 
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-        new string[] { "0", "0", "0", "0", "0", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
+        new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
 
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
@@ -42,11 +52,7 @@ public class MapChipController : MonoBehaviour
 
 
     public List<List<List<GameObject>>> blocks;
-    [SerializeField]
-    GameObject player = null;
 
-    [SerializeField]
-    PlayerController player_controller = null;
 
     public List<List<List<Block>>> blockcomponents;
 
@@ -59,11 +65,12 @@ public class MapChipController : MonoBehaviour
         // SpriteLoader loader = new SpriteLoader();
         // loader.Load("Textures/samplechip");
 
-        loadMap("test");
+        loadMap("school1");
+        //loadMap("test");
 
         // MEMO: string.IndexOf("") --- 含まれている場合0以上含まれていない場合-1
         //                        大文字小文字の区別はつく
-
+        chipsIsActive();
     }
 
     void Start()
@@ -72,14 +79,11 @@ public class MapChipController : MonoBehaviour
 
         // StartCoroutine
         StartCoroutine(playerSelectBlock());
-        StartCoroutine(blockUpdate());
+        StartCoroutine(blockEventUpdate());
+        StartCoroutine(blockDrawController());
 
         is_eventstart = false;
     }
-
-
-
-
 
     /// <summary>
     /// プレイヤーをpopさせる位置を決める関数
@@ -121,15 +125,15 @@ public class MapChipController : MonoBehaviour
     {
         while (true)
         {
-            for (int y = 0; y < chip_num_y; y++)
-            {
-                for (int x = 0; x < chip_num_x; x++)
-                {
-                    blocks[0][y][x].GetComponent<SpriteRenderer>().material.color = Color.white;
-                    if (blockcomponents[3][y][x].number != -1)
-                        blocks[0][y][x].GetComponent<SpriteRenderer>().material.color = Color.red;
-                }
-            }
+            //for (int y = 0; y < chip_num_y; y++)
+            //{
+            //    for (int x = 0; x < chip_num_x; x++)
+            //    {
+            //        blocks[0][y][x].GetComponent<SpriteRenderer>().material.color = Color.white;
+            //        if (blockcomponents[3][y][x].number != -1)
+            //            blocks[0][y][x].GetComponent<SpriteRenderer>().material.color = Color.red;
+            //    }
+            //}
             player_cell_x = (int)player_controller.retCell().x;
             player_cell_y = (int)player_controller.retCell().y;
             select_cell_x = player_cell_x;
@@ -154,6 +158,8 @@ public class MapChipController : MonoBehaviour
 
             select_cell_x = Mathf.Clamp(select_cell_x, 0, chip_num_x - 1);
             select_cell_y = Mathf.Clamp(select_cell_y, 0, chip_num_y - 1);
+            player_cell_x = Mathf.Clamp(player_cell_x, 0, chip_num_x - 1);
+            player_cell_y = Mathf.Clamp(player_cell_y, 0, chip_num_y - 1);
 
             blocks[0][select_cell_y][select_cell_x]
          .GetComponent<SpriteRenderer>().material.color = Color.red;
@@ -174,7 +180,7 @@ public class MapChipController : MonoBehaviour
     /// <summary>
     /// ブロックのイベントのアップデートコルーチン
     /// </summary>
-    private IEnumerator blockUpdate()
+    private IEnumerator blockEventUpdate()
     {
         while (true)
         {
@@ -297,6 +303,80 @@ public class MapChipController : MonoBehaviour
             }
         }
         return false;
+    }
+
+
+    /// <summary>
+    /// ブロックをオンオフするコルーチン
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator blockDrawController()
+    {
+        while (true)
+        {
+            chipsIsActive();
+            yield return null;
+        }
+    }
+
+
+    int framecount = 0;
+    int drawcount = 0;
+    /// <summary>
+    /// カメラに映っているブロックのアクティブを制御する関数
+    /// </summary>
+    public void chipsIsActive()
+    {
+        Vector2 camerapos = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, camera.camera_follow_z));
+        Vector2 camerahalfsize = camerapos - new Vector2(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, camera.camera_follow_z)).x,
+            Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, camera.camera_follow_z)).y);
+
+        Vector2 camerasize = new Vector2(Mathf.Abs(camerahalfsize.x * 2), Mathf.Abs(camerahalfsize.y * 2));
+        camerapos = camerapos + (camerasize / 2);
+        drawcount = 3;
+        framecount++;
+
+        float check_time = Time.realtimeSinceStartup;
+        //if (framecount % drawcount == 0)
+        for (int i = 0; i < (int)LayerController.Layer.LAYER_MAX; i++)
+        {
+            for (int y = 0; y < chip_num_y; y++)
+            {
+                for (int x = 0; x < chip_num_x; x++)
+                {
+                    if (pointToCenterBox(blocks[i][y][x].transform.position, camerapos, camerasize))
+                    {
+                        blocks[i][y][x].SetActive(true);
+                    }
+                    else
+                    {
+                        blocks[i][y][x].SetActive(false);
+                    }
+                }
+            }
+        }
+        check_time = Time.realtimeSinceStartup - check_time;
+
+        Debug.Log(check_time);
+
+    }
+
+
+    bool pointToBottomLeftBox(Vector2 pointpos_, Vector2 boxpos_, Vector2 boxsize_)
+    {
+        return (
+            pointpos_.x > boxpos_.x &&
+            pointpos_.x < boxpos_.x + boxsize_.x &&
+            pointpos_.y > boxpos_.y &&
+            pointpos_.y < boxpos_.y + boxsize_.y);
+    }
+    bool pointToCenterBox(Vector2 pointpos_, Vector2 boxpos_, Vector2 boxsize_)
+    {
+        return (
+            pointpos_.x > boxpos_.x - boxsize_.x / 2 &&
+            pointpos_.x < boxpos_.x + boxsize_.x / 2 &&
+            pointpos_.y > boxpos_.y - boxsize_.y / 2 &&
+            pointpos_.y < boxpos_.y + boxsize_.y / 2);
     }
 
 
