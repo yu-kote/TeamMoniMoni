@@ -55,7 +55,7 @@ public class TitleMenuContinue : MonoBehaviour {
     }
     public void OnClick()
     {
-        if (first_open_time >= 56 && local_time >= 56) local_time = 0;
+        if (first_open_time >= 56 && local_time >= 60) local_time = 0;
     }
     public void OnClick_2()
     {
