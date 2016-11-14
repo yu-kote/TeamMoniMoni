@@ -22,8 +22,34 @@ public class EventRepository : MonoBehaviour
 
     void Awake()
     {
-        eventAdd(0, new List<EventFunc> { events.playerUpEvent }, EventTriggerType.CHECK);
-        eventAdd(1, new List<EventFunc> { events.playerZombieHand1, events.playerZombieHand2 }, EventTriggerType.OVERLAP);
+        eventAdd(0, new List<EventFunc> { events.schoolEvent00 }, EventTriggerType.CHECK);
+
+        //eventAdd(1, new List<EventFunc> { events.playerZombieHand1, events.playerZombieHand2 }, EventTriggerType.OVERLAP);
+        eventAdd(1, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
+
+        eventAdd(2, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
+        eventAdd(3, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
+        eventAdd(4, new List<EventFunc> { events.schoolEvent05 }, EventTriggerType.CHECK);
+        eventAdd(5, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK);
+        eventAdd(6, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
+        eventAdd(7, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK);
+        eventAdd(8, new List<EventFunc> { events.schoolEvent08 }, EventTriggerType.CHECK);
+        eventAdd(9, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
+        eventAdd(10, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
+        eventAdd(11, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
+        eventAdd(12, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
+        eventAdd(13, new List<EventFunc> { events.schoolEvent14 }, EventTriggerType.CHECK);
+        eventAdd(14, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK);
+        eventAdd(15, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
+        eventAdd(16, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
+        eventAdd(17, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
+        eventAdd(18, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
+        eventAdd(19, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
+        eventAdd(20, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
+        eventAdd(21, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
+
+        eventAdd(24, new List<EventFunc> { events.schoolBossEvent }, EventTriggerType.CHECK);
+
     }
 
     /// <summary>

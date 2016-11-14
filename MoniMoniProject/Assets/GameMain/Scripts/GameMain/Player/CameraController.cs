@@ -13,9 +13,11 @@ public class CameraController : MonoBehaviour
     void Start()
     {
     }
-    int count = 0;
 
     public bool is_frameview;
+
+    public Vector3 test;
+
     // Update is called once per frame
     void Update()
     {
@@ -27,12 +29,10 @@ public class CameraController : MonoBehaviour
         camerapos.z = camera_follow_z * -1;
 
         transform.position = camerapos;
-
+        
         if (is_frameview)
         {
-            count++;
-            if (count % 30 == 0)
-                Debug.Log(Time.deltaTime);
+            Debug.Log(Time.deltaTime);
         }
     }
 

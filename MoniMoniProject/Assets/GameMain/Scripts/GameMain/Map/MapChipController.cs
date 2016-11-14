@@ -10,6 +10,16 @@ using System.IO;
 /// </summary>
 public class MapChipController : MonoBehaviour
 {
+
+    [SerializeField]
+    GameObject player = null;
+
+    [SerializeField]
+    PlayerController player_controller = null;
+
+    [SerializeField]
+    CameraController cameracontroller;
+
     public float chip_size;
     public float chip_scale;
 
@@ -23,14 +33,14 @@ public class MapChipController : MonoBehaviour
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-        new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
+        new string[] { "0", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
 
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-        new string[] { "0", "0", "0", "0", "0", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
+        new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
 
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
         new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
@@ -42,11 +52,7 @@ public class MapChipController : MonoBehaviour
 
 
     public List<List<List<GameObject>>> blocks;
-    [SerializeField]
-    GameObject player = null;
 
-    [SerializeField]
-    PlayerController player_controller = null;
 
     public List<List<List<Block>>> blockcomponents;
 
@@ -59,11 +65,27 @@ public class MapChipController : MonoBehaviour
         // SpriteLoader loader = new SpriteLoader();
         // loader.Load("Textures/samplechip");
 
-        loadMap("test");
+        loadMap("school1");
+        //loadMap("test");
 
         // MEMO: string.IndexOf("") --- 含まれている場合0以上含まれていない場合-1
         //                        大文字小文字の区別はつく
+        chipsIsActive();
 
+
+        for (int y = 0; y < chip_num_y; y++)
+        {
+            for (int x = 0; x < chip_num_x; x++)
+            {
+                if (blockcomponents[3][y][x].number != -1)
+                {
+                    for (int i = 0; i < (int)LayerController.Layer.LAYER_MAX; i++)
+                    {
+                        blocks[i][y][x].GetComponent<SpriteRenderer>().material.color = Color.red;
+                    }
+                }
+            }
+        }
     }
 
     void Start()
@@ -72,37 +94,30 @@ public class MapChipController : MonoBehaviour
 
         // StartCoroutine
         StartCoroutine(playerSelectBlock());
-        StartCoroutine(blockUpdate());
+        StartCoroutine(blockEventUpdate());
+        StartCoroutine(blockDrawController());
 
         is_eventstart = false;
     }
-
-
-
-
 
     /// <summary>
     /// プレイヤーをpopさせる位置を決める関数
     /// </summary>
     private void playerPop()
     {
-        int search_y = 0;
-        foreach (var y in event_array)
+        for (int y = 0; y < chip_num_y; y++)
         {
-            int search_x = 0;
-            foreach (var x in y)
+            for (int x = 0; x < chip_num_x; x++)
             {
-                if (x.ToString() == "1")
+                var block = blockcomponents[(int)LayerController.Layer.EVENT][y][x];
+                if (block.number == 0)
                 {
-                    // プレイヤーがpopする位置
-                    var v = blocks[0][search_y][search_x].transform.position;
-                    // playerが手前に描画されるようにするため
-                    v.z += -0.5f;
-                    player.transform.position = v;
+                    var pop = blocks[(int)LayerController.Layer.EVENT][y][x].transform.position;
+                    pop.z += -0.5f;
+                    player.transform.position = pop;
                 }
-                search_x += 1;
+
             }
-            search_y += 1;
         }
     }
 
@@ -121,15 +136,7 @@ public class MapChipController : MonoBehaviour
     {
         while (true)
         {
-            for (int y = 0; y < chip_num_y; y++)
-            {
-                for (int x = 0; x < chip_num_x; x++)
-                {
-                    blocks[0][y][x].GetComponent<SpriteRenderer>().material.color = Color.white;
-                    if (blockcomponents[3][y][x].number != -1)
-                        blocks[0][y][x].GetComponent<SpriteRenderer>().material.color = Color.red;
-                }
-            }
+
             player_cell_x = (int)player_controller.retCell().x;
             player_cell_y = (int)player_controller.retCell().y;
             select_cell_x = player_cell_x;
@@ -154,9 +161,11 @@ public class MapChipController : MonoBehaviour
 
             select_cell_x = Mathf.Clamp(select_cell_x, 0, chip_num_x - 1);
             select_cell_y = Mathf.Clamp(select_cell_y, 0, chip_num_y - 1);
+            player_cell_x = Mathf.Clamp(player_cell_x, 0, chip_num_x - 1);
+            player_cell_y = Mathf.Clamp(player_cell_y, 0, chip_num_y - 1);
 
-            blocks[0][select_cell_y][select_cell_x]
-         .GetComponent<SpriteRenderer>().material.color = Color.red;
+            //   blocks[0][select_cell_y][select_cell_x]
+            //.GetComponent<SpriteRenderer>().material.color = Color.red;
 
             yield return null;
         }
@@ -174,22 +183,29 @@ public class MapChipController : MonoBehaviour
     /// <summary>
     /// ブロックのイベントのアップデートコルーチン
     /// </summary>
-    private IEnumerator blockUpdate()
+    private IEnumerator blockEventUpdate()
     {
         while (true)
         {
             // イベントが起こる前に通る処理
             if (!is_eventstart)
             {
-                if (player_controller.state == PlayerController.State.EVENT)
+                if (player_controller.state != PlayerController.State.NORMAL)
                 {
                     var eventblock = blockcomponents[eventlayer][select_cell_y][select_cell_x];
-                    eventselect_cell_x = select_cell_x;
-                    eventselect_cell_y = select_cell_y;
-                    is_eventstart = eventblock.event_manager.eventExecution();
+                    if (eventblock.number != -1)
+                    {
+                        if (checkEventExists(select_cell_x, select_cell_y))
+                        {
+                            eventselect_cell_x = select_cell_x;
+                            eventselect_cell_y = select_cell_y;
+                            is_eventstart = eventblock.event_manager.eventExecution();
+                        }
+                    }
                 }
 
-                var block = blockcomponents[(int)LayerController.Layer.EVENT]
+
+                var block = blockcomponents[eventlayer]
                     [player_cell_y]
                     [player_cell_x];
 
@@ -209,13 +225,16 @@ public class MapChipController : MonoBehaviour
             // イベントが原因でプレイヤーの位置がずれたとき用に処理を分ける必要があったため。
             if (is_eventstart)
             {
-                if (player_controller.state == PlayerController.State.EVENT)
+                var eventblock = blockcomponents[eventlayer][eventselect_cell_y][eventselect_cell_x];
+                if (eventblock.number != -1)
                 {
-                    var eventblock = blockcomponents[eventlayer][eventselect_cell_y][eventselect_cell_x];
-                    is_eventstart = eventblock.event_manager.eventExecution();
+                    if (checkEventExists(eventselect_cell_x, eventselect_cell_y))
+                    {
+                        is_eventstart = eventblock.event_manager.eventExecution();
+                    }
                 }
 
-                var block = blockcomponents[(int)LayerController.Layer.EVENT]
+                var block = blockcomponents[eventlayer]
                     [eventplayer_cell_y]
                     [eventplayer_cell_x];
 
@@ -238,11 +257,25 @@ public class MapChipController : MonoBehaviour
     }
 
     /// <summary>
-    /// 調べる系のイベントの有無を返す関数
+    /// 調べる系のイベントの有無をプレイヤーに返す関数
     /// </summary>
     public bool checkEventExists()
     {
         var eventmanager = blockcomponents[eventlayer][select_cell_y][select_cell_x]
+                .event_manager;
+        if (eventmanager.eventExists(eventmanager.event_stage) == false)
+            return false;
+        if (eventmanager.trigger_type != EventRepository.EventTriggerType.CHECK)
+            return false;
+        return true;
+    }
+
+    /// <summary>
+    /// 調べる系のイベントの有無を返す関数
+    /// </summary>
+    public bool checkEventExists(int cellx_, int celly_)
+    {
+        var eventmanager = blockcomponents[eventlayer][celly_][cellx_]
                 .event_manager;
         if (eventmanager.eventExists(eventmanager.event_stage) == false)
             return false;
@@ -274,7 +307,7 @@ public class MapChipController : MonoBehaviour
     /// <returns>イベントが終了したかどうか</returns>
     public bool isEventCompleted()
     {
-        if (player_controller.state == PlayerController.State.EVENT)
+        if (player_controller.state != PlayerController.State.NORMAL)
         {
             var is_completed = blockcomponents[eventlayer][eventselect_cell_y][eventselect_cell_x]
                 .event_manager.IsEventCompleted;
@@ -285,7 +318,7 @@ public class MapChipController : MonoBehaviour
                 return true;
             }
         }
-        if (player_controller.state == PlayerController.State.EVENT)
+        if (player_controller.state != PlayerController.State.NORMAL)
         {
             var is_completed = blockcomponents[eventlayer][eventplayer_cell_y][eventplayer_cell_x]
               .event_manager.IsEventCompleted;
@@ -297,6 +330,84 @@ public class MapChipController : MonoBehaviour
             }
         }
         return false;
+    }
+
+
+    /// <summary>
+    /// ブロックをオンオフするコルーチン
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator blockDrawController()
+    {
+        while (true)
+        {
+            chipsIsActive();
+            yield return null;
+        }
+    }
+
+
+    int framecount = 0;
+    int drawcount = 0;
+    Vector2 prev_camerapos;
+    /// <summary>
+    /// カメラに映っているブロックのアクティブを制御する関数
+    /// </summary>
+    public void chipsIsActive()
+    {
+        drawcount = 8;
+        framecount++;
+        Vector2 camerapos = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, cameracontroller.camera_follow_z));
+
+        if (prev_camerapos == camerapos)
+            return;
+        if (framecount % drawcount != 0)
+            return;
+        prev_camerapos = camerapos;
+
+        Vector2 camerahalfsize = camerapos - new Vector2(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, cameracontroller.camera_follow_z)).x,
+            Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, cameracontroller.camera_follow_z)).y);
+
+        Vector2 camerasize = new Vector2(Mathf.Abs(camerahalfsize.x * 2), Mathf.Abs(camerahalfsize.y * 2));
+
+        camerapos = camerapos + (camerasize / 2);
+        camerasize += new Vector2(1, 1);
+
+        for (int i = 0; i < (int)LayerController.Layer.LAYER_MAX; i++)
+        {
+            for (int y = 0; y < chip_num_y; y++)
+            {
+                for (int x = 0; x < chip_num_x; x++)
+                {
+                    if (pointToCenterBox(blocks[i][y][x].transform.position, camerapos, camerasize))
+                    {
+                        blocks[i][y][x].SetActive(true);
+                    }
+                    else
+                    {
+                        blocks[i][y][x].SetActive(false);
+                    }
+                }
+            }
+        }
+    }
+
+
+    bool pointToBottomLeftBox(Vector2 pointpos_, Vector2 boxpos_, Vector2 boxsize_)
+    {
+        return (
+            pointpos_.x > boxpos_.x &&
+            pointpos_.x < boxpos_.x + boxsize_.x &&
+            pointpos_.y > boxpos_.y &&
+            pointpos_.y < boxpos_.y + boxsize_.y);
+    }
+    bool pointToCenterBox(Vector2 pointpos_, Vector2 boxpos_, Vector2 boxsize_)
+    {
+        return (
+            pointpos_.x > boxpos_.x - boxsize_.x / 2 &&
+            pointpos_.x < boxpos_.x + boxsize_.x / 2 &&
+            pointpos_.y > boxpos_.y - boxsize_.y / 2 &&
+            pointpos_.y < boxpos_.y + boxsize_.y / 2);
     }
 
 
