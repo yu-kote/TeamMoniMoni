@@ -8,16 +8,16 @@ public class touch : MonoBehaviour
 
     public int cout;
     public int Maxcount;
+    public Action action;
 
     // Use this for initialization
     void Start()
     {
         cout = 0;
         Maxcount = 3;
-
     }
 
-    public Action action = null;
+    
 
     // Update is called once per frame
     void Update()
@@ -31,7 +31,8 @@ public class touch : MonoBehaviour
             //if (TouchManager.IsTouchObject(obj))
             if (collider != null)
             {
-                action();
+
+                if(action != null) { action(); Debug.Log("aaaaaa"); }
 
                 cout++;
                 Maxcount--;
