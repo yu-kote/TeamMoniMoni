@@ -29,10 +29,7 @@ public class CameraController : MonoBehaviour
         camerapos.z = camera_follow_z * -1;
 
         transform.position = camerapos;
-
-        Vector3 pos = Camera.main.ViewportToWorldPoint(new Vector3(test.x, test.y, camera_follow_z));
-
-
+        
         if (is_frameview)
         {
             Debug.Log(Time.deltaTime);

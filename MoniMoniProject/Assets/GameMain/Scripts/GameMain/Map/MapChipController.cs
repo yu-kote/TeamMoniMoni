@@ -18,7 +18,7 @@ public class MapChipController : MonoBehaviour
     PlayerController player_controller = null;
 
     [SerializeField]
-    CameraController camera = null;
+    CameraController cameracontroller;
 
     public float chip_size;
     public float chip_scale;
@@ -71,6 +71,21 @@ public class MapChipController : MonoBehaviour
         // MEMO: string.IndexOf("") --- 含まれている場合0以上含まれていない場合-1
         //                        大文字小文字の区別はつく
         chipsIsActive();
+
+
+        for (int y = 0; y < chip_num_y; y++)
+        {
+            for (int x = 0; x < chip_num_x; x++)
+            {
+                if (blockcomponents[3][y][x].number != -1)
+                {
+                    for (int i = 0; i < (int)LayerController.Layer.LAYER_MAX; i++)
+                    {
+                        blocks[i][y][x].GetComponent<SpriteRenderer>().material.color = Color.red;
+                    }
+                }
+            }
+        }
     }
 
     void Start()
@@ -90,23 +105,19 @@ public class MapChipController : MonoBehaviour
     /// </summary>
     private void playerPop()
     {
-        int search_y = 0;
-        foreach (var y in event_array)
+        for (int y = 0; y < chip_num_y; y++)
         {
-            int search_x = 0;
-            foreach (var x in y)
+            for (int x = 0; x < chip_num_x; x++)
             {
-                if (x.ToString() == "1")
+                var block = blockcomponents[(int)LayerController.Layer.EVENT][y][x];
+                if (block.number == 0)
                 {
-                    // プレイヤーがpopする位置
-                    var v = blocks[0][search_y][search_x].transform.position;
-                    // playerが手前に描画されるようにするため
-                    v.z += -0.5f;
-                    player.transform.position = v;
+                    var pop = blocks[(int)LayerController.Layer.EVENT][y][x].transform.position;
+                    pop.z += -0.5f;
+                    player.transform.position = pop;
                 }
-                search_x += 1;
+
             }
-            search_y += 1;
         }
     }
 
@@ -125,15 +136,7 @@ public class MapChipController : MonoBehaviour
     {
         while (true)
         {
-            //for (int y = 0; y < chip_num_y; y++)
-            //{
-            //    for (int x = 0; x < chip_num_x; x++)
-            //    {
-            //        blocks[0][y][x].GetComponent<SpriteRenderer>().material.color = Color.white;
-            //        if (blockcomponents[3][y][x].number != -1)
-            //            blocks[0][y][x].GetComponent<SpriteRenderer>().material.color = Color.red;
-            //    }
-            //}
+
             player_cell_x = (int)player_controller.retCell().x;
             player_cell_y = (int)player_controller.retCell().y;
             select_cell_x = player_cell_x;
@@ -187,15 +190,22 @@ public class MapChipController : MonoBehaviour
             // イベントが起こる前に通る処理
             if (!is_eventstart)
             {
-                if (player_controller.state == PlayerController.State.EVENT)
+                if (player_controller.state != PlayerController.State.NORMAL)
                 {
                     var eventblock = blockcomponents[eventlayer][select_cell_y][select_cell_x];
-                    eventselect_cell_x = select_cell_x;
-                    eventselect_cell_y = select_cell_y;
-                    is_eventstart = eventblock.event_manager.eventExecution();
+                    if (eventblock.number != -1)
+                    {
+                        if (checkEventExists(select_cell_x, select_cell_y))
+                        {
+                            eventselect_cell_x = select_cell_x;
+                            eventselect_cell_y = select_cell_y;
+                            is_eventstart = eventblock.event_manager.eventExecution();
+                        }
+                    }
                 }
 
-                var block = blockcomponents[(int)LayerController.Layer.EVENT]
+
+                var block = blockcomponents[eventlayer]
                     [player_cell_y]
                     [player_cell_x];
 
@@ -215,13 +225,16 @@ public class MapChipController : MonoBehaviour
             // イベントが原因でプレイヤーの位置がずれたとき用に処理を分ける必要があったため。
             if (is_eventstart)
             {
-                if (player_controller.state == PlayerController.State.EVENT)
+                var eventblock = blockcomponents[eventlayer][eventselect_cell_y][eventselect_cell_x];
+                if (eventblock.number != -1)
                 {
-                    var eventblock = blockcomponents[eventlayer][eventselect_cell_y][eventselect_cell_x];
-                    is_eventstart = eventblock.event_manager.eventExecution();
+                    if (checkEventExists(eventselect_cell_x, eventselect_cell_y))
+                    {
+                        is_eventstart = eventblock.event_manager.eventExecution();
+                    }
                 }
 
-                var block = blockcomponents[(int)LayerController.Layer.EVENT]
+                var block = blockcomponents[eventlayer]
                     [eventplayer_cell_y]
                     [eventplayer_cell_x];
 
@@ -244,11 +257,25 @@ public class MapChipController : MonoBehaviour
     }
 
     /// <summary>
-    /// 調べる系のイベントの有無を返す関数
+    /// 調べる系のイベントの有無をプレイヤーに返す関数
     /// </summary>
     public bool checkEventExists()
     {
         var eventmanager = blockcomponents[eventlayer][select_cell_y][select_cell_x]
+                .event_manager;
+        if (eventmanager.eventExists(eventmanager.event_stage) == false)
+            return false;
+        if (eventmanager.trigger_type != EventRepository.EventTriggerType.CHECK)
+            return false;
+        return true;
+    }
+
+    /// <summary>
+    /// 調べる系のイベントの有無を返す関数
+    /// </summary>
+    public bool checkEventExists(int cellx_, int celly_)
+    {
+        var eventmanager = blockcomponents[eventlayer][celly_][cellx_]
                 .event_manager;
         if (eventmanager.eventExists(eventmanager.event_stage) == false)
             return false;
@@ -280,7 +307,7 @@ public class MapChipController : MonoBehaviour
     /// <returns>イベントが終了したかどうか</returns>
     public bool isEventCompleted()
     {
-        if (player_controller.state == PlayerController.State.EVENT)
+        if (player_controller.state != PlayerController.State.NORMAL)
         {
             var is_completed = blockcomponents[eventlayer][eventselect_cell_y][eventselect_cell_x]
                 .event_manager.IsEventCompleted;
@@ -291,7 +318,7 @@ public class MapChipController : MonoBehaviour
                 return true;
             }
         }
-        if (player_controller.state == PlayerController.State.EVENT)
+        if (player_controller.state != PlayerController.State.NORMAL)
         {
             var is_completed = blockcomponents[eventlayer][eventplayer_cell_y][eventplayer_cell_x]
               .event_manager.IsEventCompleted;
@@ -330,7 +357,7 @@ public class MapChipController : MonoBehaviour
     {
         drawcount = 8;
         framecount++;
-        Vector2 camerapos = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, camera.camera_follow_z));
+        Vector2 camerapos = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, cameracontroller.camera_follow_z));
 
         if (prev_camerapos == camerapos)
             return;
@@ -338,15 +365,14 @@ public class MapChipController : MonoBehaviour
             return;
         prev_camerapos = camerapos;
 
-        Vector2 camerahalfsize = camerapos - new Vector2(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, camera.camera_follow_z)).x,
-            Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, camera.camera_follow_z)).y);
+        Vector2 camerahalfsize = camerapos - new Vector2(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, cameracontroller.camera_follow_z)).x,
+            Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, cameracontroller.camera_follow_z)).y);
 
         Vector2 camerasize = new Vector2(Mathf.Abs(camerahalfsize.x * 2), Mathf.Abs(camerahalfsize.y * 2));
 
         camerapos = camerapos + (camerasize / 2);
         camerasize += new Vector2(1, 1);
 
-        Debug.Log("Test");
         for (int i = 0; i < (int)LayerController.Layer.LAYER_MAX; i++)
         {
             for (int y = 0; y < chip_num_y; y++)

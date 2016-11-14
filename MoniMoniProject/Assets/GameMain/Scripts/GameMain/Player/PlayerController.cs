@@ -94,6 +94,7 @@ public class PlayerController : MonoBehaviour
                 if (mapchip.checkEventExists())
                 {
                     state = State.EVENT;
+                    mapchip.isEventCompleted();
                 }
 
             if (Input.GetKeyDown(KeyCode.Return))
@@ -109,6 +110,7 @@ public class PlayerController : MonoBehaviour
             }
 
             is_pusheventkey = false;
+
             yield return null;
         }
     }

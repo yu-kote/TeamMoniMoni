@@ -20,13 +20,26 @@ public class EventTalkManager : MonoBehaviour
     [SerializeField]
     Text talktext;
 
+    [SerializeField]
+    Image charaimage1;
+
     public bool is_talknow;
+
+    // 会話の種類
+    public enum TalkMode
+    {
+        NORMAL,
+        SELECT,
+    }
+    public TalkMode talkmode;
 
     string loadtextpath;
     string loadtextdata;
     string draw_name;
     string draw_talk;
+    string texturename;
 
+    Sprite[] sprites;
 
     int current_read_line;
 
@@ -44,6 +57,7 @@ public class EventTalkManager : MonoBehaviour
                 loadtextdata = sr.ReadToEnd();
             }
             loadTalk(textname_);
+            player.state = PlayerController.State.TALK;
         }
     }
 
@@ -58,11 +72,24 @@ public class EventTalkManager : MonoBehaviour
         {
             draw_name = null;
             draw_talk = null;
+            texturename = null;
 
             textDataCheck(loadtextdata);
 
             nametext.text = draw_name;
             talktext.text = draw_talk;
+
+            charaimage1.sprite =
+                System.Array.Find<Sprite>(
+                                    sprites, (sprite) => sprite.name.Equals(
+                                        texturename));
+            if (charaimage1.sprite == null)
+            {
+                charaimage1.sprite = System.Array.Find<Sprite>(
+                                    sprites, (sprite) => sprite.name.Equals(
+                                        "none"));
+            }
+
         }
     }
 
@@ -88,29 +115,72 @@ public class EventTalkManager : MonoBehaviour
             else if (chara_array[i] == '#')
             {
                 draw_name = commandSearch(loadtext_, i);
-                i += draw_name.Length + 2;
+                if (draw_name != null)
+                    i += draw_name.Length + 1;
+                else
+                {
+                    draw_name = " ";
+                    for (int k = i + 1; k < chara_array.Length; k++)
+                    {
+                        if (chara_array[k] == '#')
+                        {
+                            i = k;
+                            break;
+                        }
+                    }
+                }
+                continue;
             }
 
-            // コマンドを探すswitch文
-            switch (command)
+            // 会話の種類 (普通の会話や選択肢など)
+            if (command == "text")
             {
-                case "p":
-                    draw_talk += "\n";
-                    continue;
-                case "n":
-                    current_read_line = i;
-                    return;
-                case "end":
-                    is_talknow = false;
-                    return;
+                talkmode = TalkMode.NORMAL;
+            }
+            else if (command == "root")
+            {
+                talkmode = TalkMode.SELECT;
             }
 
-            if (chara_array[i] == ' ' ||
-                chara_array[i] == '\r' ||
-                chara_array[i] == '\n') continue;
+            if (talkmode == TalkMode.NORMAL)
+            {
+                // コマンドを探すswitch文
+                switch (command)
+                {
+                    case "p":
+                        draw_talk += "\n";
+                        continue;
+                    case "n":
+                        current_read_line = i;
+                        return;
+                    case "end":
+                        is_talknow = false;
+                        return;
+                }
 
-            // 会話文に追加
-            draw_talk += chara_array[i];
+                if (command != null)
+                {
+                    // キャラを表示させるコマンドが来たら通る
+                    if (command.IndexOf("chara") != -1)
+                    {
+                        texturename = commandPickOutTextureName(command);
+                    }
+                    // エフェクトが来たら通る
+                    if (command.IndexOf("effect") != -1)
+                    {
+
+                    }
+                }
+
+
+                if (chara_array[i] == ' ' ||
+                    chara_array[i] == '\r' ||
+                    chara_array[i] == '\n') continue;
+
+                // 会話文に追加
+                draw_talk += chara_array[i];
+            }
+
         }
 
     }
@@ -142,9 +212,45 @@ public class EventTalkManager : MonoBehaviour
         return command;
     }
 
+    /// <summary>
+    /// コマンドの中からtextureの情報を引き出す関数
+    /// </summary>
+    /// <param name="command_"></param>
+    /// <returns></returns>
+    string commandPickOutTextureName(string command_)
+    {
+        char[] c = command_.ToCharArray();
+        char texturestart = '\'';
+        bool is_texturestart = false;
+        string texturename = null;
+        int commandcount = 0;
+
+        for (int i = 0; i < c.Length; i++)
+        {
+            if (c[i] == texturestart)
+            {
+                is_texturestart = !is_texturestart;
+                commandcount++;
+                continue;
+            }
+
+            if (is_texturestart)
+            {
+                texturename += c[i];
+            }
+            if (commandcount >= 2)
+            {
+                texturename += c[i];
+            }
+        }
+        return texturename;
+    }
+
+
     void Start()
     {
         is_talknow = false;
+        sprites = Resources.LoadAll<Sprite>("Textures/Talk");
     }
 
     void Update()
@@ -157,10 +263,10 @@ public class EventTalkManager : MonoBehaviour
                 {
                     loadTalk(loadtextpath);
 
-                    if (is_talknow == false)
-                    {
-                        player.state = PlayerController.State.NORMAL;
-                    }
+                }
+                if (is_talknow == false)
+                {
+                    player.state = PlayerController.State.NORMAL;
                 }
             }
         }

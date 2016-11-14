@@ -25,7 +25,11 @@ public class EventsCreate : MonoBehaviour
     [SerializeField]
     EventTalkManager talkmanager;
 
+    [SerializeField]
+    StagingController staging;
 
+    [SerializeField]
+    EnemyManager enemys;
 
     int upcount = 0;
     // イベントが正常に動くかどうかのお試し関数
@@ -33,13 +37,37 @@ public class EventsCreate : MonoBehaviour
     {
         player.transform.Translate(0, chipcontroller.chip_size, 0);
         upcount++;
-        if (upcount < 3)
+        if (upcount < 1)
             return 1;
         return 2;
     }
 
+    public int playerDirectionEvent()
+    {
+        if (playercontroller.player_direction == PlayerController.PlayerDirection.UP)
+        {
+            player.transform.Translate(0, 1.5f, 0);
+        }
+        if (playercontroller.player_direction == PlayerController.PlayerDirection.DOWN)
+        {
+            player.transform.Translate(0, -1.5f, 0);
+        }
+        upcount++;
+        if (upcount < 1)
+            return 1;
+        return 1;
+    }
+
     public int emptyEvent()
     {
+        if (is_setup == false)
+        {
+            talkmanager.startTalk("none");
+            is_setup = true;
+        }
+        if (talkmanager.is_talknow)
+            return 0;
+        is_setup = false;
         return 1;
     }
 
@@ -87,13 +115,91 @@ public class EventsCreate : MonoBehaviour
             is_setup = false;
         }
 
-        if (!talkmanager.is_talknow)
+        if (talkmanager.is_talknow)
             return 0;
-        is_setup = false;
         zombiecount = 0;
         return 1;
     }
 
+    public int schoolEvent05()
+    {
+        if (is_setup == false)
+        {
+            talkmanager.startTalk("school_05");
+            is_setup = true;
+        }
+        if (talkmanager.is_talknow)
+            return 0;
+        is_setup = false;
+        return 1;
+    }
 
+    public int schoolEvent08()
+    {
+        if (is_setup == false)
+        {
+            talkmanager.startTalk("school_08");
+            is_setup = true;
+        }
+        if (talkmanager.is_talknow)
+            return 0;
+        is_setup = false;
+        return 1;
+    }
 
+    public int schoolEvent14()
+    {
+        if (is_setup == false)
+        {
+            talkmanager.startTalk("school_14");
+            is_setup = true;
+        }
+        if (talkmanager.is_talknow)
+            return 0;
+        is_setup = false;
+        return 1;
+    }
+
+    public int schoolEvent00()
+    {
+        if (is_setup == false)
+        {
+            talkmanager.startTalk("school_00");
+            is_setup = true;
+        }
+        if (talkmanager.is_talknow)
+            return 0;
+        is_setup = false;
+        return 1;
+    }
+
+    bool is_enemypop = false;
+    public int schoolBossEvent()
+    {
+        if (is_enemypop == false)
+        {
+            if (staging.flushStart())
+            {
+                is_enemypop = true;
+                enemys.nightmareRePop();
+            }
+            return 0;
+        }
+        else
+        {
+            if (staging.flushEnd())
+            {
+                if (is_setup == false)
+                {
+                    talkmanager.startTalk("school_00");
+                    is_setup = true;
+                }
+                if (talkmanager.is_talknow)
+                    return 0;
+                is_setup = false;
+                return 1;
+            }
+            return 0;
+        }
+    }
 }
