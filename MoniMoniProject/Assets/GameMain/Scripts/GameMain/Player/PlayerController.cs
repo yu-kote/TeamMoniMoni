@@ -7,41 +7,40 @@ using System;
 /// </summary>
 public class PlayerController : MonoBehaviour
 {
-    public enum PlayerDirection
-    {
-        UP, DOWN, RIGHT, LEFT
-    }
-
     //[SerializeField]
     //StickController stick;
 
     [SerializeField]
     MoveButtonController movebutton;
 
+    [SerializeField]
+    CanvasController canvascontroller;
+
+    // プレイヤーの向き
+    public enum PlayerDirection
+    {
+        UP, DOWN, RIGHT, LEFT
+    }
+
     public PlayerDirection player_direction = PlayerDirection.DOWN;
+
+    // プレイヤーの状態
+    public enum State
+    {
+        NORMAL,
+        EVENT,
+        TALK,
+    }
+
+    public State state;
+    public State current_state;
 
     public Vector2 vec;
 
+    public bool is_move;
+
     [SerializeField]
     private float speed;
-
-    /// <summary>
-    /// 何かしら選択しているかどうか
-    /// </summary>
-    private bool is_select;
-    public bool IsSelect
-    {
-        get { return is_select; }
-        set { is_select = value; }
-    }
-
-    private bool is_event_during;
-    public bool IsEventDuring
-    {
-        get { return is_event_during; }
-        set { is_event_during = value; }
-    }
-
 
     // イベントキーが押されたかどうか
     bool is_pusheventkey;
@@ -53,19 +52,36 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         player_direction = PlayerDirection.DOWN;
+        state = State.NORMAL;
         transform.position = new Vector3(0, 0, -1.0f);
 
         vec = new Vector2(0, 0);
-        is_select = false;
-        is_event_during = false;
         is_pusheventkey = false;
+        is_move = false;
 
         StartCoroutine(moveMethod());
         StartCoroutine(fieldCheck());
+        StartCoroutine(stateCoroutine());
     }
 
     /// <summary>
-    /// フィールドを選択しているかどうかのフラグを変更する関数
+    /// プレイヤーの状態が変わった時だけ通るif文があるコルーチン
+    /// </summary>
+    private IEnumerator stateCoroutine()
+    {
+        while (true)
+        {
+            if (current_state != state)
+            {
+                current_state = state;
+                canvascontroller.playerStateChangeCanvas();
+            }
+            yield return null;
+        }
+    }
+
+    /// <summary>
+    /// フィールドを選択しているかどうかのフラグを変更するコルーチン
     /// </summary>
     /// <returns>null</returns>
     private IEnumerator fieldCheck()
@@ -77,25 +93,24 @@ public class PlayerController : MonoBehaviour
                 // 選択しているブロックにイベントがあるかどうか
                 if (mapchip.checkEventExists())
                 {
-                    is_select = true;
-                    is_event_during = true;
+                    state = State.EVENT;
+                    mapchip.isEventCompleted();
                 }
 
             if (Input.GetKeyDown(KeyCode.Return))
                 // 選択しているブロックにイベントがあるかどうか
                 if (mapchip.checkEventExists())
                 {
-                    is_select = true;
-                    is_event_during = true;
+                    state = State.EVENT;
                 }
 
             if (mapchip.isEventCompleted())
             {
-                is_select = false;
-                is_event_during = false;
+                state = State.NORMAL;
             }
 
             is_pusheventkey = false;
+
             yield return null;
         }
     }
@@ -139,19 +154,16 @@ public class PlayerController : MonoBehaviour
     private void move()
     {
         vec = Vector2.zero;
-        if (is_select) return;
-        if (is_event_during) return;
+        if (state != State.NORMAL) return;
 
-        float deltaspeed = speed * Time.deltaTime * 60;
+        float deltaspeed = speed;
 
         // スティックの優先度
         //int priority_vec = 0; // x : 0 , y : 1
-
         //if (Mathf.Abs(stick.MoveValue.x) > Mathf.Abs(stick.MoveValue.y))
         //    priority_vec = 0;
         //else
         //    priority_vec = 1;
-
         //if (priority_vec == 0)
         //{
         //    vec.x = deltaspeed * stick.MoveValue.x;
@@ -169,6 +181,11 @@ public class PlayerController : MonoBehaviour
             vec.y = 0;
         Vector3 vec_ = new Vector3(vec.x * 0.05f, vec.y * 0.05f, 0);
         transform.Translate(vec_);
+
+        if (vec != Vector2.zero)
+            is_move = true;
+        else
+            is_move = false;
     }
 
     /// <summary>

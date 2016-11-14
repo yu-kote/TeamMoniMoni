@@ -18,6 +18,10 @@ public class Block : MonoBehaviour
     [SerializeField]
     public EventManager event_manager = null;
 
+    [SerializeField]
+    SpriteRenderer spriterenderer;
+
     public int number;
+
 
 }
