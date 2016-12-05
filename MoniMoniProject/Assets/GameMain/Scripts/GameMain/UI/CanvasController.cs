@@ -27,6 +27,9 @@ public class CanvasController : MonoBehaviour
             case PlayerController.State.TALK:
                 talkcanvas.SetActive(true);
                 break;
+            case PlayerController.State.SKILL:
+                uicanvas.SetActive(true);
+                break;
         }
     }
 

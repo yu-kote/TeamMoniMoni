@@ -9,9 +9,12 @@ public class EnemyManager : MonoBehaviour
     [SerializeField]
     PlayerController player;
 
+
+    public bool is_bosshit;
+
     void Start()
     {
-
+        is_bosshit = false;
     }
 
     public void nightmareRePop()
@@ -26,7 +29,7 @@ public class EnemyManager : MonoBehaviour
         if (nightmare.is_move)
             if (pointToCircle(player.transform.position, 0.6f, nightmare.transform.position))
             {
-                Debug.Log("hit");
+                is_bosshit = true;
             }
     }
 
