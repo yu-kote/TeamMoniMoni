@@ -32,7 +32,7 @@ public class moved : MonoBehaviour
         target = pos;
         pos = Vector3.zero;
         obj =  gameObject;
-        SceneName = "GameMain";
+        SceneName = "Eater";
 
 
 
@@ -121,10 +121,10 @@ public class moved : MonoBehaviour
         else if (touches.cout == 3)
         {
             //Destroy(gameObject);
-            if (SceneName == "GameMain")
+            if (SceneName == "Eater")
             {
                 touches.cout = 0;
-                SceneManager.LoadScene("GameMain");
+                SceneManager.LoadScene("Eater");
             }
         }
     }
