@@ -190,7 +190,7 @@ public class MapChipController : MonoBehaviour
             // イベントが起こる前に通る処理
             if (!is_eventstart)
             {
-                if (player_controller.state != PlayerController.State.NORMAL)
+                if (player_controller.state == PlayerController.State.EVENT)
                 {
                     var eventblock = blockcomponents[eventlayer][select_cell_y][select_cell_x];
                     if (eventblock.number != -1)
@@ -371,7 +371,7 @@ public class MapChipController : MonoBehaviour
         Vector2 camerasize = new Vector2(Mathf.Abs(camerahalfsize.x * 2), Mathf.Abs(camerahalfsize.y * 2));
 
         camerapos = camerapos + (camerasize / 2);
-        camerasize += new Vector2(1, 1);
+        camerasize += new Vector2(2, 2);
 
         for (int i = 0; i < (int)LayerController.Layer.LAYER_MAX; i++)
         {
