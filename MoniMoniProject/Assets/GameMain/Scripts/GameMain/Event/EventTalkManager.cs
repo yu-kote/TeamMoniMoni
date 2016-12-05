@@ -104,6 +104,20 @@ public class EventTalkManager : MonoBehaviour
         {
             string command = null;
 
+            // メモ書きの判定
+            if (chara_array[i] == '/' && chara_array[i + 1] == '/')
+            {
+                while (true)
+                {
+                    i++;
+                    if (chara_array[i] == '\n')
+                    {
+                        break;
+                    }
+                }
+                continue;
+            }
+
             // コマンド開始
             if (chara_array[i] == '[')
             {
@@ -172,7 +186,6 @@ public class EventTalkManager : MonoBehaviour
                     }
                 }
 
-
                 if (chara_array[i] == ' ' ||
                     chara_array[i] == '\r' ||
                     chara_array[i] == '\n') continue;
@@ -180,7 +193,11 @@ public class EventTalkManager : MonoBehaviour
                 // 会話文に追加
                 draw_talk += chara_array[i];
             }
+            if (talkmode == TalkMode.SELECT)
+            {
 
+
+            }
         }
 
     }
@@ -255,7 +272,7 @@ public class EventTalkManager : MonoBehaviour
 
     void Update()
     {
-        if (player.state != PlayerController.State.NORMAL)
+        if (player.state == PlayerController.State.TALK)
         {
             if (is_talknow)
             {
