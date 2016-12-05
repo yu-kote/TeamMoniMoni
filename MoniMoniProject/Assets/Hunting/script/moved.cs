@@ -21,6 +21,8 @@ public class moved : MonoBehaviour
 
     touch touches;
 
+    Vector3 _pos;
+
     // Use this for initialization
     void Start()
     {
@@ -31,6 +33,7 @@ public class moved : MonoBehaviour
           
         target = pos;
         pos = Vector3.zero;
+        _pos = transform.localPosition; 
         obj =  gameObject;
         SceneName = "Eater";
 
@@ -120,12 +123,14 @@ public class moved : MonoBehaviour
         }
         else if (touches.cout == 3)
         {
-            //Destroy(gameObject);
-            if (SceneName == "Eater")
-            {
-                touches.cout = 0;
-                SceneManager.LoadScene("Eater");
-            }
+
+            transform.localPosition = new Vector3(0, 20, 0);
+            ////Destroy(gameObject);
+            //if (SceneName == "Eater")
+            //{
+            //    touches.cout = 0;
+            //    SceneManager.LoadScene("Eater");
+            //}
         }
     }
 }
