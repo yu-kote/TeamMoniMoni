@@ -2,6 +2,30 @@
 using System.Collections;
 using System;
 
+public class RayTest : MonoBehaviour
+{
+    public float floatHeight;
+    public float liftFroce;
+    public float damping;
+    public Rigidbody2D rd2D;
+    void Start()
+    {
+        rd2D = GetComponent<Rigidbody2D>();
+    }
+
+    void FixedUpdate()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, -Vector2.up);
+        if(hit.collider != null)
+        {
+            float distance = Mathf.Abs(hit.point.y - transform.position.y);
+            float heightError = floatHeight - distance;
+            float force = liftFroce * heightError - rd2D.velocity.y * damping;
+            rd2D.AddForce(Vector3.up * force);
+        }
+    }
+}
+
 public class touch : MonoBehaviour
 {
 
@@ -27,16 +51,14 @@ public class touch : MonoBehaviour
             Vector2 tapPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Collider2D collider = Physics2D.OverlapPoint(tapPoint);
 
-            //GameObject obj = GameObject.Find("40f4e887-5b48-5fb7-ce5d-9fc444f38ff7");
-            //if (TouchManager.IsTouchObject(obj))
             if (collider != null)
             {
 
-                if(action != null) { action(); Debug.Log("aaaaaa"); }
+                if(action != null) { action();}
 
                 cout++;
                 Maxcount--;
-                Debug.Log(cout);
+                //Debug.Log(cout);
             }
         }
     }
