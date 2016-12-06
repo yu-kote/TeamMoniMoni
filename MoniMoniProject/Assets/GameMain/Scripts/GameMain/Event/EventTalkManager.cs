@@ -2,7 +2,7 @@
 using System.Collections;
 using System.IO;
 using UnityEngine.UI;
-
+using System;
 
 /// <summary>
 /// イベントが起こった時に話をするところのスクリプト
@@ -12,16 +12,54 @@ public class EventTalkManager : MonoBehaviour
     [SerializeField]
     PlayerController player;
 
-    [SerializeField]
-    GameObject talkcanvas;
 
     [SerializeField]
     Text nametext;
     [SerializeField]
     Text talktext;
-
     [SerializeField]
     Image charaimage1;
+
+    [SerializeField]
+    Button root1button;
+    [SerializeField]
+    Button root2button;
+    [SerializeField]
+    Button root3button;
+    [SerializeField]
+    Button root4button;
+
+    public int selectbuttonnum;
+
+    public void selectRoot1()
+    {
+        selectbuttonnum = 1;
+        rootButtonClear();
+    }
+    public void selectRoot2()
+    {
+        selectbuttonnum = 2;
+        rootButtonClear();
+    }
+    public void selectRoot3()
+    {
+        selectbuttonnum = 3;
+        rootButtonClear();
+    }
+    public void selectRoot4()
+    {
+        selectbuttonnum = 4;
+        rootButtonClear();
+    }
+
+    void rootButtonClear()
+    {
+        root1button.gameObject.SetActive(false);
+        root2button.gameObject.SetActive(false);
+        root3button.gameObject.SetActive(false);
+        root4button.gameObject.SetActive(false);
+    }
+
 
     public bool is_talknow;
 
@@ -33,16 +71,25 @@ public class EventTalkManager : MonoBehaviour
     }
     public TalkMode talkmode;
 
+    // テキストのパス
     string loadtextpath;
+    // 読んだテキストの中身全部
     string loadtextdata;
+    // 会話の時に表示される名前
     string draw_name;
+    // 会話の時に表示される文
     string draw_talk;
+    // 会話の時に表示されるキャラの画像
     string texturename;
 
     Sprite[] sprites;
 
     int current_read_line;
 
+    /// <summary>
+    /// イベントの時に会話を呼ぶための関数
+    /// </summary>
+    /// <param name="textname_"></param>
     public void startTalk(string textname_)
     {
         loadtextpath = textname_;
@@ -50,7 +97,7 @@ public class EventTalkManager : MonoBehaviour
         if (is_talknow == false)
         {
             is_talknow = true;
-
+            rootButtonClear();
             current_read_line = 0;
             using (var sr = new StreamReader("Assets/GameMain/Resources/EventData/" + textname_ + ".txt"))
             {
@@ -100,22 +147,27 @@ public class EventTalkManager : MonoBehaviour
     void textDataCheck(string loadtext_)
     {
         char[] chara_array = loadtext_.ToCharArray();
+
+
         for (int i = current_read_line; i < chara_array.Length; i++)
         {
             string command = null;
 
             // メモ書きの判定
-            if (chara_array[i] == '/' && chara_array[i + 1] == '/')
+            if (chara_array[i] == '/')
             {
-                while (true)
+                if (chara_array[i + 1] == '/')
                 {
-                    i++;
-                    if (chara_array[i] == '\n')
+                    while (true)
                     {
-                        break;
+                        i++;
+                        if (chara_array[i] == '\n')
+                        {
+                            break;
+                        }
                     }
+                    continue;
                 }
-                continue;
             }
 
             // コマンド開始
@@ -186,6 +238,33 @@ public class EventTalkManager : MonoBehaviour
                     }
                 }
 
+                if (chara_array[i] == '(')
+                {
+                    string rootnum_st = commandSearch(loadtext_, i);
+                    i += rootnum_st.Length + 1;
+                    int rootnum = int.Parse(rootnum_st);
+
+                    if (rootnum == selectbuttonnum)
+                    {
+                        while (true)
+                        {
+                            i++;
+                            if (chara_array[i] == '{')
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        while (true)
+                        {
+                            i++;
+                            if (chara_array[i] == '}')
+                                break;
+                        }
+                    }
+                    continue;
+                }
+
                 if (chara_array[i] == ' ' ||
                     chara_array[i] == '\r' ||
                     chara_array[i] == '\n') continue;
@@ -195,8 +274,16 @@ public class EventTalkManager : MonoBehaviour
             }
             if (talkmode == TalkMode.SELECT)
             {
+                string rootcommand = null;
+                if (chara_array[i] == '(')
+                {
+                    rootcommand = commandSearch(loadtext_, i);
 
+                    rootButtonSetting(rootcommand);
 
+                    i += rootcommand.Length + 2;
+                    continue;
+                }
             }
         }
 
@@ -222,7 +309,7 @@ public class EventTalkManager : MonoBehaviour
         {
             i++;
             if (c[i] == ' ') continue;
-            if (c[i] == ']' || c[i] == '#') break;
+            if (c[i] == ']' || c[i] == '#' || c[i] == ')') break;
             command += c[i];
         }
 
@@ -240,22 +327,15 @@ public class EventTalkManager : MonoBehaviour
         char texturestart = '\'';
         bool is_texturestart = false;
         string texturename = null;
-        int commandcount = 0;
 
         for (int i = 0; i < c.Length; i++)
         {
             if (c[i] == texturestart)
             {
                 is_texturestart = !is_texturestart;
-                commandcount++;
                 continue;
             }
-
             if (is_texturestart)
-            {
-                texturename += c[i];
-            }
-            if (commandcount >= 2)
             {
                 texturename += c[i];
             }
@@ -263,6 +343,79 @@ public class EventTalkManager : MonoBehaviour
         return texturename;
     }
 
+    /// <summary>
+    /// 選択肢のコマンドの中身を調べて選択肢を表示させる関数
+    /// </summary>
+    /// <param name="rootcommand_"></param>
+    void rootButtonSetting(string rootcommand_)
+    {
+        int rootcount = 0;
+
+        bool is_countget = true;
+        int textcount = 0;
+        for (int i = 0; i < rootcommand_.Length; i++)
+        {
+            char[] root_c = rootcommand_.ToCharArray();
+            if (root_c[i] == ' ') continue;
+
+            if (is_countget)
+            {
+                rootcount = int.Parse(root_c[i].ToString());
+                is_countget = false;
+                while (true)
+                {
+                    i++;
+                    if (root_c[i] == ',')
+                        break;
+                }
+            }
+            else
+            {
+                string buttontext = null;
+
+                while (true)
+                {
+                    if (i >= rootcommand_.Length
+                        || root_c[i] == ',')
+                    {
+                        textcount += 1;
+                        break;
+                    }
+
+                    if (root_c[i] == ' ') continue;
+                    buttontext += root_c[i];
+                    i++;
+                }
+
+                Text text = null;
+                if (textcount == 1)
+                {
+                    root1button.gameObject.SetActive(true);
+                    text = root1button.transform.FindChild("Text").GetComponent<Text>();
+                }
+                if (textcount == 2)
+                {
+                    root2button.gameObject.SetActive(true);
+                    text = root2button.transform.FindChild("Text").GetComponent<Text>();
+                }
+                if (textcount == 3)
+                {
+                    root3button.gameObject.SetActive(true);
+                    text = root3button.transform.FindChild("Text").GetComponent<Text>();
+                }
+                if (textcount == 4)
+                {
+                    root4button.gameObject.SetActive(true);
+                    text = root4button.transform.FindChild("Text").GetComponent<Text>();
+                }
+
+                text.text = buttontext;
+
+                if (textcount >= rootcount)
+                    break;
+            }
+        }
+    }
 
     void Start()
     {
@@ -276,10 +429,10 @@ public class EventTalkManager : MonoBehaviour
         {
             if (is_talknow)
             {
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButtonUp(0))
                 {
+                    Debug.Log(selectbuttonnum);
                     loadTalk(loadtextpath);
-
                 }
                 if (is_talknow == false)
                 {
