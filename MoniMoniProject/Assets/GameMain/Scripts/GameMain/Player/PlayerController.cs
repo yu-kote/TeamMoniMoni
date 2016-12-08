@@ -146,6 +146,7 @@ public class PlayerController : MonoBehaviour
         return cell_i;
     }
 
+
     /// <summary>
     /// プレイヤー移動メソッド
     /// </summary>
@@ -154,6 +155,7 @@ public class PlayerController : MonoBehaviour
     {
         while (true)
         {
+
             move();
 
             directionChange();
@@ -181,7 +183,6 @@ public class PlayerController : MonoBehaviour
     private void vecChange()
     {
         if (state != State.NORMAL) return;
-
 
         vec = speed * movebutton.getButtonPushVec();
 
@@ -223,6 +224,22 @@ public class PlayerController : MonoBehaviour
     {
         state = State.SKILL;
     }
+    public void skillHitWall()
+    {
+        animstate = AnimationState.ATTACKSKILL_HIT;
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision != null)
+        {
+            skillHitWall();
+            dashhit_frame = 0;
+        }
+    }
+
+
+
 
     // ダッシュの速さ
     [SerializeField]
@@ -262,6 +279,7 @@ public class PlayerController : MonoBehaviour
             state = State.NORMAL;
             animstate = AnimationState.IDLE;
             dashcount = 0;
+            vec = Vector2.zero;
         }
 
         // スキル発動アニメーション
@@ -296,6 +314,7 @@ public class PlayerController : MonoBehaviour
 
             return;
         }
+
 
         animstate = AnimationState.ATTACKSKILLEND;
         return;
