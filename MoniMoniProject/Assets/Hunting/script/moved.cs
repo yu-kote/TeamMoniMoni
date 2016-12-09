@@ -34,7 +34,6 @@ public class moved : MonoBehaviour
             if (touches.Count == 2)
             {
                 touches.SetInvalidInterval(10);
-                if(touches.Count == 0);
         
             }
         };
