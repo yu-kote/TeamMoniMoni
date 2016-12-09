@@ -18,6 +18,7 @@ public class moved : MonoBehaviour
 
     private float speed;
     bool isWorp;
+    bool ones;
 
     touch touches;
 
@@ -27,7 +28,15 @@ public class moved : MonoBehaviour
     void Start()
     {
         touches = GetComponent<touch>();
-        touches.action = () => { speed = 5; };
+        touches.Touched = () => 
+        {
+            speed = 5;
+            if (touches.Count == 2)
+            {
+                touches.SetInvalidInterval(10);
+        
+            }
+        };
 
         speed = 5.0f;
           
@@ -48,7 +57,7 @@ public class moved : MonoBehaviour
     public void circle()
     {
         v += Time.deltaTime * speed;
-        Debug.Log(transform.position);
+        //Debug.Log(transform.position);
 
         pos.y = Mathf.Sin(v) * 2f;
         pos.x = Mathf.Cos(v) * 2f;
@@ -59,7 +68,7 @@ public class moved : MonoBehaviour
         cir += Time.deltaTime;
         if (cir> 3)
         {
-            Debug.Log("aaaaa");
+            //Debug.Log("aaaaa");
             speed = 1.0f;
             cir = 0;
         }
@@ -71,7 +80,7 @@ public class moved : MonoBehaviour
     public void Zigzag()
     {
         v += Time.deltaTime * speed;
-        Debug.Log(transform.position);
+        //Debug.Log(transform.position);
 
         pos.y = Mathf.Sin(v) * 1f;
         pos.x = Mathf.Cos(v / 9) * 1f;
@@ -100,32 +109,33 @@ public class moved : MonoBehaviour
         float y = Random.Range(-2.5f, 2.5f);
         transform.position = new Vector3(x, y, transform.position.z);
 
+
         isWorp = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (touches.cout == 0)
+        if (touches.Count == 0)
         {
             circle();
         }
-        else if (touches.cout == 1)
+        else if (touches.Count == 1)
         {
             Zigzag();
         }
-        else if (touches.cout == 2)
+        else if (touches.Count == 2)
         {
             if (!isWorp)
             {
                 StartCoroutine(random());
             }
         }
-        else if (touches.cout == 3)
+        else if (touches.Count == 3)
         {
 
-            transform.localPosition = new Vector3(0, 20, 0);
-            ////Destroy(gameObject);
+            //transform.localPosition = new Vector3(0, 20, 0);
+            Destroy(gameObject);
             //if (SceneName == "Eater")
             //{
             //    touches.cout = 0;
