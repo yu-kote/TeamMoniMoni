@@ -28,36 +28,49 @@ public class RayTest : MonoBehaviour
 
 public class touch : MonoBehaviour
 {
+    [SerializeField]
+    private Collider2D _collider2D = null;
 
+    [SerializeField]
+    private CounterView _counterView = null;
 
-    public int cout;
-    public int Maxcount;
-    public Action action;
+    public int Count { get; private set; }
+
+    public Action Touched { get; set; }
+
+    private float _invalidInterval = 0;
+
+    public void SetInvalidInterval(float interval) { _invalidInterval = interval; }
 
     // Use this for initialization
     void Start()
     {
-        cout = 0;
-        Maxcount = 3;
+        Count = 0;
+        _counterView.Count = 3;
     }
-
-    
 
     // Update is called once per frame
     void Update()
     {
+        if (_invalidInterval > 0)
+        {
+            Debug.Log("Interval: " + _invalidInterval);
+            _invalidInterval -= Time.deltaTime;
+            return;
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
             Vector2 tapPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Collider2D collider = Physics2D.OverlapPoint(tapPoint);
 
-            if (collider != null)
+            if (collider == _collider2D)
             {
+                if (Touched != null) { Touched(); }
 
-                if(action != null) { action();}
-
-                cout++;
-                Maxcount--;
+                Debug.Log("Pass");
+                Count++;
+                _counterView.Count--;
                 //Debug.Log(cout);
             }
         }
