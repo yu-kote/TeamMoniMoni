@@ -51,7 +51,6 @@ public class EventTalkManager : MonoBehaviour
         selectbuttonnum = 4;
         rootButtonClear();
     }
-
     void rootButtonClear()
     {
         root1button.gameObject.SetActive(false);
@@ -431,7 +430,6 @@ public class EventTalkManager : MonoBehaviour
             {
                 if (Input.GetMouseButtonUp(0))
                 {
-                    Debug.Log(selectbuttonnum);
                     loadTalk(loadtextpath);
                 }
                 if (is_talknow == false)
