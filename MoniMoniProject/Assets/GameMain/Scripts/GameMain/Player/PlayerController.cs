@@ -30,17 +30,30 @@ public class PlayerController : MonoBehaviour
         NORMAL,
         EVENT,
         TALK,
+        SKILL,
     }
 
     public State state;
     public State current_state;
 
-    public Vector2 vec;
+    public enum AnimationState
+    {
+        IDLE,
+        WORK,
+        ATTACKSKILL_START,
+        ATTACKSKILL,
+        ATTACKSKILLEND,
+        ATTACKSKILL_HIT,
+    }
 
-    public bool is_move;
+    public AnimationState animstate;
+
+    public Vector2 vec;
 
     [SerializeField]
     private float speed;
+
+
 
     // イベントキーが押されたかどうか
     bool is_pusheventkey;
@@ -57,7 +70,6 @@ public class PlayerController : MonoBehaviour
 
         vec = new Vector2(0, 0);
         is_pusheventkey = false;
-        is_move = false;
 
         StartCoroutine(moveMethod());
         StartCoroutine(fieldCheck());
@@ -134,6 +146,7 @@ public class PlayerController : MonoBehaviour
         return cell_i;
     }
 
+
     /// <summary>
     /// プレイヤー移動メソッド
     /// </summary>
@@ -142,7 +155,9 @@ public class PlayerController : MonoBehaviour
     {
         while (true)
         {
+
             move();
+
             directionChange();
             yield return null;
         }
@@ -154,38 +169,32 @@ public class PlayerController : MonoBehaviour
     private void move()
     {
         vec = Vector2.zero;
+
+        vecChange();
+        skillUpdate();
+
+        Vector3 vec_ = new Vector3(vec.x * 0.05f, vec.y * 0.05f, 0);
+        transform.Translate(vec_);
+    }
+
+    /// <summary>
+    /// プレイヤーのベクトルをGUIからもらう関数
+    /// </summary>
+    private void vecChange()
+    {
         if (state != State.NORMAL) return;
 
-        float deltaspeed = speed;
-
-        // スティックの優先度
-        //int priority_vec = 0; // x : 0 , y : 1
-        //if (Mathf.Abs(stick.MoveValue.x) > Mathf.Abs(stick.MoveValue.y))
-        //    priority_vec = 0;
-        //else
-        //    priority_vec = 1;
-        //if (priority_vec == 0)
-        //{
-        //    vec.x = deltaspeed * stick.MoveValue.x;
-        //}
-        //else if (priority_vec == 1)
-        //{
-        //    vec.y = deltaspeed * stick.MoveValue.y;
-        //}
-
-        vec = deltaspeed * movebutton.getButtonPushVec();
+        vec = speed * movebutton.getButtonPushVec();
 
         if (vec.x < 0.11f && vec.x > -0.11f)
             vec.x = 0;
         if (vec.y < 0.11f && vec.y > -0.11f)
             vec.y = 0;
-        Vector3 vec_ = new Vector3(vec.x * 0.05f, vec.y * 0.05f, 0);
-        transform.Translate(vec_);
 
-        if (vec != Vector2.zero)
-            is_move = true;
+        if (vec.x != 0 || vec.y != 0)
+            animstate = AnimationState.WORK;
         else
-            is_move = false;
+            animstate = AnimationState.IDLE;
     }
 
     /// <summary>
@@ -209,6 +218,107 @@ public class PlayerController : MonoBehaviour
         {
             player_direction = PlayerDirection.LEFT;
         }
+    }
+
+    public void pushSkillKey()
+    {
+        state = State.SKILL;
+    }
+    public void skillHitWall()
+    {
+        animstate = AnimationState.ATTACKSKILL_HIT;
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision != null)
+        {
+            skillHitWall();
+            dashhit_frame = 0;
+        }
+    }
+
+
+
+
+    // ダッシュの速さ
+    [SerializeField]
+    private int dashSpeed;
+
+
+    // ダッシュするための準備時間
+    [SerializeField]
+    int dashstart_anim_frame = 0;
+
+    // ダッシュしてる合計時間
+    [SerializeField]
+    int dash_anim_frame = 0;
+
+    // ダッシュしてる最中の時間
+    [SerializeField]
+    int dashend_anim_frame = 0;
+
+    // ダッシュ中に障害物に当たった時に発生するアニメーションの時間
+    [SerializeField]
+    int dashhit_frame = 0;
+
+    // ダッシュ中に増える値
+    int dashcount = 0;
+
+    /// <summary>
+    /// ダッシュスキルのアニメーションとダッシュの処理をする関数
+    /// </summary>
+    void skillUpdate()
+    {
+        if (state != State.SKILL) return;
+
+        int skillendtime = dashstart_anim_frame + dash_anim_frame + dashend_anim_frame;
+        dashcount++;
+        if (dashcount > skillendtime)
+        {
+            state = State.NORMAL;
+            animstate = AnimationState.IDLE;
+            dashcount = 0;
+            vec = Vector2.zero;
+        }
+
+        // スキル発動アニメーション
+        if (dashcount < dashstart_anim_frame)
+        {
+            animstate = AnimationState.ATTACKSKILL_START;
+            return;
+        }
+
+        // スキル発動して移動するアニメーション
+        if (dashcount < dash_anim_frame + dashstart_anim_frame)
+        {
+            animstate = AnimationState.ATTACKSKILL;
+
+            switch (player_direction)
+            {
+                case PlayerDirection.UP:
+                    vec.y = speed;
+                    break;
+                case PlayerDirection.DOWN:
+                    vec.y = -speed;
+                    break;
+                case PlayerDirection.RIGHT:
+                    vec.x = speed;
+                    break;
+                case PlayerDirection.LEFT:
+                    vec.x = -speed;
+                    break;
+            }
+            vec.x *= dashSpeed;
+            vec.y *= dashSpeed;
+
+            return;
+        }
+
+
+        animstate = AnimationState.ATTACKSKILLEND;
+        return;
+
     }
 
 }
