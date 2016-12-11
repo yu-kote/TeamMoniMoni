@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour
     bool is_pusheventkey;
     public void pushEventKey()
     {
-        is_pusheventkey = true;
+        is_pusheventkey = true; ;
     }
 
     void Start()
@@ -73,6 +73,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(fieldCheck());
         StartCoroutine(stateCoroutine());
     }
+
 
     /// <summary>
     /// プレイヤーの状態が変わった時だけ通るif文があるコルーチン
@@ -175,7 +176,7 @@ public class PlayerController : MonoBehaviour
         transform.Translate(vec_);
         //var rigidbody = GetComponent<Rigidbody2D>();
         //rigidbody.velocity = vec;
-        
+
 
     }
 
@@ -225,6 +226,7 @@ public class PlayerController : MonoBehaviour
     public void pushSkillKey()
     {
         state = State.SKILL;
+        animstate = AnimationState.ATTACKSKILL_START;
     }
     public void skillHitWall()
     {

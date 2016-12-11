@@ -28,34 +28,11 @@ public class MapChipController : MonoBehaviour
 
     const int eventlayer = (int)LayerController.Layer.EVENT;
 
-    public string[][] event_array = new string[][]
-    {
-        new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-        new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-        new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-        new string[] { "0", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-        new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-
-        new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-        new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-        new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-        new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-        new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-
-        new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-        new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-        new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-        new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-        new string[] { "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", },
-    };
-
-
-
     public List<List<List<GameObject>>> blocks;
-
 
     public List<List<List<Block>>> blockcomponents;
 
+    public string select_map_name;
 
     void Awake()
     {
@@ -65,7 +42,9 @@ public class MapChipController : MonoBehaviour
         // SpriteLoader loader = new SpriteLoader();
         // loader.Load("Textures/samplechip");
 
-        loadMap("school1");
+        select_map_name = "school1";
+
+        loadMap(select_map_name);
         //loadMap("test");
 
         // MEMO: string.IndexOf("") --- 含まれている場合0以上含まれていない場合-1
@@ -307,7 +286,8 @@ public class MapChipController : MonoBehaviour
     /// <returns>イベントが終了したかどうか</returns>
     public bool isEventCompleted()
     {
-        if (player_controller.state != PlayerController.State.NORMAL)
+        if (player_controller.state == PlayerController.State.EVENT ||
+            player_controller.state == PlayerController.State.TALK)
         {
             var is_completed = blockcomponents[eventlayer][eventselect_cell_y][eventselect_cell_x]
                 .event_manager.IsEventCompleted;
@@ -318,7 +298,8 @@ public class MapChipController : MonoBehaviour
                 return true;
             }
         }
-        if (player_controller.state != PlayerController.State.NORMAL)
+        if (player_controller.state == PlayerController.State.EVENT ||
+            player_controller.state == PlayerController.State.TALK)
         {
             var is_completed = blockcomponents[eventlayer][eventplayer_cell_y][eventplayer_cell_x]
               .event_manager.IsEventCompleted;
@@ -410,6 +391,17 @@ public class MapChipController : MonoBehaviour
             pointpos_.y < boxpos_.y + boxsize_.y / 2);
     }
 
+    /// <summary>
+    /// 渡された座標が範囲外かどうか返す関数
+    /// </summary>
+    public bool isOutOfRange(int x_, int y_)
+    {
+        if (x_ < 0 || y_ < 0)
+            return true;
+        if (x_ > chip_num_x - 1 || y_ > chip_num_y - 1)
+            return true;
+        return false;
+    }
 
     /// <summary>
     /// マップを読み込む関数
@@ -417,7 +409,7 @@ public class MapChipController : MonoBehaviour
     /// <param name="loadname_"></param>
     public void loadMap(string loadname_)
     {
-        using (StreamReader sr = new StreamReader("Assets/GameMain/Resources/StageData/" + loadname_ + "_StatusData.txt"))
+        using (StreamReader sr = new StreamReader(Application.dataPath + "/GameMain/Resources/StageData/" + loadname_ + "_StatusData.txt"))
         {
             string line = sr.ReadLine();
             chip_num_x = stringToInt(line, 0);
@@ -428,9 +420,9 @@ public class MapChipController : MonoBehaviour
         {
             string layername = LayerController.layernumToString(i);
             Sprite[] loadsprite = Resources.LoadAll<Sprite>("Textures/MapChip/" + layername);
-            using (StreamReader sr = new StreamReader("Assets/GameMain/Resources/StageData/" + loadname_ + "_" + layername + "Data.txt"))
+            using (StreamReader sr = new StreamReader(Application.dataPath + "/GameMain/Resources/StageData/" + loadname_ + "_" + layername + "Data.txt"))
             {
-
+                int index = 0;
                 List<List<GameObject>> tempblock_xy = new List<List<GameObject>>();
                 for (int y = 0; y < chip_num_y; y++)
                 {
@@ -464,11 +456,14 @@ public class MapChipController : MonoBehaviour
                         }
 
                         block.GetComponent<Block>().number = number;
+                        // Astarで使う一次元配列番号
+                        block.GetComponent<Block>().index = index;
+                        index++;
 
                         block.transform.position = new Vector3(
                             chip_size * x,
                             chip_size * y * -1,
-                            -i * 0.01f);
+                            -i * 0.005f);
 
                         block.transform.localScale = new Vector2(chip_scale, chip_scale);
 

@@ -47,9 +47,18 @@ public class EventRepository : MonoBehaviour
         eventAdd(19, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
         eventAdd(20, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
         eventAdd(21, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
+        eventAdd(22, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
+        eventAdd(23, new List<EventFunc> { events.playerDirectionEvent }, EventTriggerType.CHECK);
 
         eventAdd(24, new List<EventFunc> { events.schoolBossEvent }, EventTriggerType.CHECK);
-
+        eventAdd(25, new List<EventFunc> { events.schoolBossEvent }, EventTriggerType.CHECK);
+        eventAdd(26, new List<EventFunc> { events.schoolBossEvent }, EventTriggerType.CHECK);
+        eventAdd(27, new List<EventFunc> { events.schoolBossEvent }, EventTriggerType.CHECK);
+        eventAdd(28, new List<EventFunc> { events.schoolBossEvent }, EventTriggerType.CHECK);
+        eventAdd(29, new List<EventFunc> { events.schoolBossEvent }, EventTriggerType.CHECK);
+        eventAdd(30, new List<EventFunc> { events.schoolBossEvent }, EventTriggerType.CHECK);
+        eventAdd(31, new List<EventFunc> { events.schoolBossEvent }, EventTriggerType.CHECK);
+        eventAdd(32, new List<EventFunc> { events.schoolBossEvent }, EventTriggerType.CHECK);
     }
 
     /// <summary>
@@ -62,6 +71,7 @@ public class EventRepository : MonoBehaviour
     {
         eventdic.Add(key_, func_);
         event_trigger_type.Add(key_, trigger_type_);
+
     }
 
     /// <summary>
