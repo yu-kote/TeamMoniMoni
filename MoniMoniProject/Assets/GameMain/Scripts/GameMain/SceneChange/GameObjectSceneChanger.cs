@@ -8,6 +8,9 @@ public class GameObjectSceneChanger : MonoBehaviour
     [SerializeField]
     EnemyManager enemymanager;
 
+    [SerializeField]
+    StagingController staging;
+
     void Start()
     {
 
@@ -18,7 +21,8 @@ public class GameObjectSceneChanger : MonoBehaviour
     {
         if (enemymanager.is_bosshit)
         {
-            SceneManager.LoadScene("Hunting");
+            if (staging.flushStart())
+                SceneManager.LoadScene("Hunting");
         }
     }
 }

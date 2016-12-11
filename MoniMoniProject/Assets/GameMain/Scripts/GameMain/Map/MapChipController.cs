@@ -56,7 +56,7 @@ public class MapChipController : MonoBehaviour
         {
             for (int x = 0; x < chip_num_x; x++)
             {
-                if (blockcomponents[3][y][x].number != -1)
+                if (blockcomponents[eventlayer][y][x].number != -1)
                 {
                     for (int i = 0; i < (int)LayerController.Layer.LAYER_MAX; i++)
                     {

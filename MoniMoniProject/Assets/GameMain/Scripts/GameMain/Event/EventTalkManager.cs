@@ -427,8 +427,7 @@ public class EventTalkManager : MonoBehaviour
             }
         }
     }
-
-    AudioClip audioclip;
+    
     AudioSource audiosource;
 
     void Start()

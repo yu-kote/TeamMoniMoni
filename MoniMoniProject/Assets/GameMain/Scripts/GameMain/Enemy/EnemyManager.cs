@@ -6,6 +6,8 @@ public class EnemyManager : MonoBehaviour
 {
     [SerializeField]
     NightMareController nightmare;
+    [SerializeField]
+    EnemyAI nightmareAI;
 
     [SerializeField]
     PlayerController player;
@@ -25,19 +27,47 @@ public class EnemyManager : MonoBehaviour
     {
         is_bosshit = false;
         dreamersPop();
+
+        for (int y = 0; y < mapchip.chip_num_y; y++)
+        {
+            for (int x = 0; x < mapchip.chip_num_x; x++)
+            {
+                if (mapchip.blockcomponents[(int)LayerController.Layer.EVENT][y][x].number == 22)
+                {
+                    nightmare.transform.position =
+                    new Vector3(mapchip.blocks[(int)LayerController.Layer.FLOOR][y][x].transform.position.x,
+                    mapchip.blocks[(int)LayerController.Layer.FLOOR][y][x].transform.position.y,
+                    nightmare.transform.position.z);
+                    break;
+                }
+
+            }
+        }
     }
 
-    public void nightmareRePop()
+    public void nightmareRePop(int selectnum_)
     {
-        nightmare.transform.position = new Vector3(9, -8, nightmare.transform.position.z);
-        nightmare.is_move = true;
-        nightmare.prev_cell = nightmare.retCell();
+        if (selectnum_ == 2)
+        {
+            nightmareAI.state = EnemyAI.State.ROOT_CHANGE;
+            for (int i = 0; i < enemy_num; i++)
+            {
+                Destroy(enemys[i]);
+            }
+            enemys.Clear();
+            nightmare.is_move = true;
+            nightmare.prev_cell = nightmare.retCell();
+        }
+
     }
 
     void Update()
     {
+
+        if (nightmare.is_move == false)
+            nightmareAI.state = EnemyAI.State.IDLE;
         if (nightmare.is_move)
-            if (pointToCircle(player.transform.position, 0.6f, nightmare.transform.position))
+            if (pointToCircle(player.transform.position, 0.3f, nightmare.transform.position))
             {
                 is_bosshit = true;
             }

@@ -34,7 +34,7 @@ public class EnemyAI : MonoBehaviour
         SPENT_TRAP,             // トラップにかかった状態
     }
 
-    State state;
+    public State state;
     State currentstate;
 
     public MapChipController mapchip;
@@ -69,6 +69,7 @@ public class EnemyAI : MonoBehaviour
         mapchip = GameObject.Find("MapManager").GetComponent<MapChipController>();
         player = GameObject.Find("Player").GetComponent<PlayerController>();
 
+        vec = new Vector2();
         currentstate = State.IDLE;
         state = State.ROOT_CHANGE;
         anim = GetComponent<Animator>();
@@ -580,10 +581,11 @@ public class EnemyAI : MonoBehaviour
 
     void lookForPlayer()
     {
-        if (searchPlayer())
-        {
-            state = State.ROOT_LOCATEPLAYERMOVE;
-        }
+        if (state == State.ROOT_NORMALMOVE)
+            if (searchPlayer())
+            {
+                state = State.ROOT_LOCATEPLAYERMOVE;
+            }
     }
 
     /// <summary>
