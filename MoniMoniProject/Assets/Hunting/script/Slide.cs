@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 public class Slide : MonoBehaviour
 {
+    float end_time;
+    [SerializeField]
+    Image white_image;
 
     [SerializeField]
     private GameObject slide_text;
@@ -11,7 +14,19 @@ public class Slide : MonoBehaviour
     [SerializeField]
     private GameObject eat_end_text;
     Text text_eat_end;
+
+    AudioSource mogu_sound;
+
+    [SerializeField]
+    private GameObject BGMer;
+    AudioSource touch_sound;
+
     Vector3 text_eat_end_pos;
+    
+    public GameObject mogu;
+    public int call_mogu;
+    public int call_mogu_pos;
+
     public bool text_eat_end_look;
     float text_eat_end_move;
 
@@ -25,9 +40,7 @@ public class Slide : MonoBehaviour
     private Image image_eat;
     [SerializeField]
     private int chew_number;
-    float pos_upper;
     public static Vector3 mousePosition;
-    Vector3 touch_pos;
     private bool eating_1;
     private bool eating_2;
     private bool eating_yet;
@@ -37,8 +50,8 @@ public class Slide : MonoBehaviour
 
     public Sprite eat_1;
     public Sprite eat_2;
-    public Sprite eat_3;
-    public Sprite eat_4;
+    //public Sprite eat_3;
+    //public Sprite eat_4;
     public bool chew_halo;
     public int effect_time;
 
@@ -48,17 +61,22 @@ public class Slide : MonoBehaviour
     float eat_effect_alpha;
     void Start()
     {
+        end_time = 0.0f;
+        mogu_sound = GetComponent<AudioSource>();
+        touch_sound = BGMer.GetComponent<AudioSource>();
+        call_mogu_pos = 0;
+        call_mogu = 5;
+        text_slide = slide_text.GetComponent<Text>();
+        text_eat_end = eat_end_text.GetComponent<Text>();
+       
         text_eat_end_pos = new Vector3(0, 1, 0);
         text_eat_end_look = false;
         text_eat_end_move = 0.0f;
-        text_slide = slide_text.GetComponent<Text>();
-        text_eat_end = eat_end_text.GetComponent<Text>();
+        
         pos = transform.localPosition;
         starter = false;
         eat_end = false;
         mousePosition = Vector3.zero;
-        touch_pos = Vector3.zero;
-        pos_upper = 0.0f;
         eating_1 = false;
         eating_2 = false;
         eating_yet = false;
@@ -79,13 +97,14 @@ public class Slide : MonoBehaviour
 
     void Update()
     {
-        if (starter == false) {
+        if (starter == false)
+        {
             transform.localPosition = new Vector3(200, 0, 0);
-            
+
         }
         if (starter == true)
         {
-            
+
             mousePosition = Input.mousePosition;
             eat_effect.GetComponent<CanvasGroup>().alpha = eat_effect_alpha;
             eat_effect.transform.localEulerAngles = new Vector3(0, 180, effect_rotate);
@@ -116,6 +135,7 @@ public class Slide : MonoBehaviour
                 eating_yet = false;
                 turning = false;
                 eat_count = 0;
+                call_mogu = 5;
             }
             if (chew_halo == true)
             {
@@ -130,6 +150,7 @@ public class Slide : MonoBehaviour
             }
             if (eat_end == false)
             {
+                call_mogu++;
                 if (eating_1 == true)
                 {
                     if (mousePosition.y > 190.0f && mousePosition.y < 313.0f)
@@ -202,22 +223,71 @@ public class Slide : MonoBehaviour
                     else { };
                 }
 
+                //switch (eat_count)
+                //{
+                //    case 0:
+                //        if (eating_yet == true)
+                //        image_eat.sprite = eat_2;
+                //    else
+                //        image_eat.sprite = eat_1;
+                //    break;
+                //    case 1:
+                //        image_eat.sprite = eat_2;
+                //    break;
+                //    case 2:
+                //        image_eat.sprite = eat_1;
+                //    break;
+                //    case 3:
+                //        image_eat.sprite = eat_2;
+                //    break;
+                //}
                 switch (eat_count)
                 {
                     case 0:
-                        if (eating_yet == true) image_eat.sprite = eat_4;
-                        else image_eat.sprite = eat_1;
+                        if (eating_yet == true)
+                        {
+                            image_eat.sprite = eat_2;
+                        }
+                        else
+                            image_eat.sprite = eat_1;
                         break;
                     case 1:
-                        image_eat.sprite = eat_2;
+                        call_mogu = 0;
+                        image_eat.sprite = eat_1;
                         break;
                     case 2:
-                        image_eat.sprite = eat_3;
+                       
+                        image_eat.sprite = eat_2;
                         break;
                     case 3:
-                        image_eat.sprite = eat_4;
+                        call_mogu = 0;
+                        image_eat.sprite = eat_2;
                         break;
                 }
+            }
+            if (call_mogu == 2) {
+                mogu_sound.Play();
+                switch (call_mogu_pos)
+                {
+                    case 0:
+                        Instantiate(mogu, new Vector3(0 + Random.Range(-1.5f, 1.5f), 1.7f + Random.Range(-0.2f, 0.5f), 0), Quaternion.Euler(Vector3.zero));
+                        call_mogu_pos = 1;
+                        break;
+                    case 1:
+                        Instantiate(mogu, new Vector3(2.2f + Random.Range(-0.2f, 0.5f), 0 + Random.Range(-1.5f, 1.5f), 0), Quaternion.Euler(Vector3.zero));
+                        call_mogu_pos = 2;
+                        break;
+                    case 2:
+                        Instantiate(mogu, new Vector3(0 + Random.Range(-1.5f, 1.5f), -1.2f + Random.Range(-0.5f, 0.5f), 0), Quaternion.Euler(Vector3.zero));
+                        call_mogu_pos = 3;
+                        break;
+                    case 3:
+                        Instantiate(mogu, new Vector3(-2.2f + Random.Range(-0.5f, 0.2f), 0 + Random.Range(-1.5f, 1.5f), 0), Quaternion.Euler(Vector3.zero));
+                        call_mogu_pos = 0;
+                        break;
+
+                }
+                
             }
             if (eat_end == true)
             {
@@ -227,8 +297,8 @@ public class Slide : MonoBehaviour
                 text_eat_end.transform.localPosition = text_eat_end_pos;
                 if (text_eat_end_look == false)
                 {
-                    if (text_eat_end_pos.y > -4)text_eat_end_pos.y -= 0.05f;
-                    if(text_eat_end_pos.y  > -3) text_eat_end_pos.y -= 0.02f;
+                    if (text_eat_end_pos.y > -4) text_eat_end_pos.y -= 0.05f;
+                    if (text_eat_end_pos.y > -3) text_eat_end_pos.y -= 0.02f;
                     if (text_eat_end_pos.y > -2) text_eat_end_pos.y -= 0.015f;
                     if (text_eat_end_pos.y > -1) text_eat_end_pos.y -= 0.015f;
                     if (text_eat_end_pos.y > 0) text_eat_end_pos.y -= 0.01f;
@@ -238,6 +308,17 @@ public class Slide : MonoBehaviour
                 {
                     text_eat_end_move += 0.10f;
                     text_eat_end_pos.y = -4 + Mathf.Sin(-text_eat_end_move) / 4;
+                    end_time++;
+                    var color = white_image.color;
+                    color.b = 0.0f;
+                    color.r = 0.0f;
+                    color.g = 0.0f;
+                    if (end_time >= 100) {
+                        
+                        color.a = 0.0f + (end_time - 100.0f) / 100;
+                        white_image.color = color;
+                    }
+                    if(text_eat_end_move>=20.0f)SceneManager.LoadScene("Ending");
                 }
             }
             if (chew_count == chew_number)
@@ -248,8 +329,8 @@ public class Slide : MonoBehaviour
                 text_slide.fontSize = 40;
                 text_slide.text = " ";
                 text_eat_end.text = "ごちそうさまでした！";
-               
-               
+                touch_sound.Stop();
+
             }
 
 
@@ -295,7 +376,8 @@ public class Slide : MonoBehaviour
             //    }
         }
     }
-    public void SlideStart() {
+    public void SlideStart()
+    {
         starter = true;
         transform.localPosition = pos;
         text_slide.text = "し縦てに食スべラてイねド";

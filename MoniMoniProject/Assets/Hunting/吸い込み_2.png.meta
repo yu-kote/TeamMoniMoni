@@ -1,16 +1,13 @@
 fileFormatVersion: 2
-guid: 0b65f1224ae053c47a3505f5d388b82d
-timeCreated: 1480933400
+guid: 139d9ad765802384ea0cfdbd11fe927c
+timeCreated: 1481508992
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: 40f4e887-5b48-5fb7-ce5d-9fc444f38ff7_0
-    21300002: 40f4e887-5b48-5fb7-ce5d-9fc444f38ff7_1
-    21300004: 40f4e887-5b48-5fb7-ce5d-9fc444f38ff7_2
-    21300006: 40f4e887-5b48-5fb7-ce5d-9fc444f38ff7_3
-    21300008: 40f4e887-5b48-5fb7-ce5d-9fc444f38ff7_4
-    21300010: 40f4e887-5b48-5fb7-ce5d-9fc444f38ff7_5
-    21300012: 40f4e887-5b48-5fb7-ce5d-9fc444f38ff7_6
+    21300000: "\u5438\u3044\u8FBC\u307F_2_0"
+    21300002: "\u5438\u3044\u8FBC\u307F_2_1"
+    21300004: "\u5438\u3044\u8FBC\u307F_2_2"
+    21300006: "\u5438\u3044\u8FBC\u307F_2_3"
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -60,55 +57,55 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 40f4e887-5b48-5fb7-ce5d-9fc444f38ff7_0
+      name: "\u5438\u3044\u8FBC\u307F_2_0"
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 114
-        height: 114
+        x: 22
+        y: 10
+        width: 205
+        height: 385
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 14, y: 16, z: 34, w: 56}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: 40f4e887-5b48-5fb7-ce5d-9fc444f38ff7_1
+      name: "\u5438\u3044\u8FBC\u307F_2_1"
       rect:
         serializedVersion: 2
-        x: 114
-        y: 0
-        width: 114
-        height: 114
+        x: 278
+        y: 7
+        width: 205
+        height: 385
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 14, y: 16, z: 34, w: 56}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: 40f4e887-5b48-5fb7-ce5d-9fc444f38ff7_2
+      name: "\u5438\u3044\u8FBC\u307F_2_2"
       rect:
         serializedVersion: 2
-        x: 228
-        y: 0
-        width: 114
-        height: 114
+        x: 534
+        y: 9
+        width: 205
+        height: 385
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 14, y: 16, z: 34, w: 56}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: 40f4e887-5b48-5fb7-ce5d-9fc444f38ff7_3
+      name: "\u5438\u3044\u8FBC\u307F_2_3"
       rect:
         serializedVersion: 2
-        x: 342
-        y: 0
-        width: 114
-        height: 114
+        x: 791
+        y: 10
+        width: 205
+        height: 385
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 14, y: 16, z: 34, w: 56}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     outline: []

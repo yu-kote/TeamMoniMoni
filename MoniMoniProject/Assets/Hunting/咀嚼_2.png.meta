@@ -1,10 +1,11 @@
 fileFormatVersion: 2
-guid: d0345ea511241894da2280cbe12f7e5f
-timeCreated: 1478591268
+guid: ec5c0f5764467c944bb60aee95a1da99
+timeCreated: 1481511017
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: 44c8d28f-2498-dd82-9851-f0b4e65166f3_0
+    21300000: "\u5480\u56BC_2_0"
+    21300002: "\u5480\u56BC_2_1"
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -54,13 +55,26 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 44c8d28f-2498-dd82-9851-f0b4e65166f3_0
+      name: "\u5480\u56BC_2_0"
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 114
-        height: 114
+        width: 256
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: "\u5480\u56BC_2_1"
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 256
+        height: 512
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
