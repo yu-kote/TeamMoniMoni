@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: d0345ea511241894da2280cbe12f7e5f
-timeCreated: 1478591268
+guid: 139d9ad765802384ea0cfdbd11fe927c
+timeCreated: 1481508992
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: 44c8d28f-2498-dd82-9851-f0b4e65166f3_0
+    21300000: "\u5438\u3044\u8FBC\u307F_2_0"
+    21300002: "\u5438\u3044\u8FBC\u307F_2_1"
+    21300004: "\u5438\u3044\u8FBC\u307F_2_2"
+    21300006: "\u5438\u3044\u8FBC\u307F_2_3"
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -54,13 +57,52 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 44c8d28f-2498-dd82-9851-f0b4e65166f3_0
+      name: "\u5438\u3044\u8FBC\u307F_2_0"
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 114
-        height: 114
+        x: 22
+        y: 10
+        width: 205
+        height: 385
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: "\u5438\u3044\u8FBC\u307F_2_1"
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 7
+        width: 205
+        height: 385
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: "\u5438\u3044\u8FBC\u307F_2_2"
+      rect:
+        serializedVersion: 2
+        x: 534
+        y: 9
+        width: 205
+        height: 385
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: "\u5438\u3044\u8FBC\u307F_2_3"
+      rect:
+        serializedVersion: 2
+        x: 791
+        y: 10
+        width: 205
+        height: 385
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
