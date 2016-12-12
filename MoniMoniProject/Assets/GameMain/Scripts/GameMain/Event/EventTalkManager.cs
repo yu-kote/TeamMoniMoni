@@ -30,34 +30,44 @@ public class EventTalkManager : MonoBehaviour
     Button root4button;
 
     public int selectbuttonnum;
+    // セレクトボタンが出て、押してない場合を判定する変数
+    public bool is_selectbuttonpush;
 
     public void selectRoot1()
     {
         selectbuttonnum = 1;
-        rootButtonClear();
+        rootButtonSetup();
+        rootSelectSoundPlay();
     }
     public void selectRoot2()
     {
         selectbuttonnum = 2;
-        rootButtonClear();
+        rootButtonSetup();
+        rootSelectSoundPlay();
     }
     public void selectRoot3()
     {
         selectbuttonnum = 3;
-        rootButtonClear();
+        rootButtonSetup();
+        rootSelectSoundPlay();
     }
     public void selectRoot4()
     {
         selectbuttonnum = 4;
-        rootButtonClear();
+        rootButtonSetup();
+        rootSelectSoundPlay();
     }
-
-    void rootButtonClear()
+    void rootButtonSetup()
     {
         root1button.gameObject.SetActive(false);
         root2button.gameObject.SetActive(false);
         root3button.gameObject.SetActive(false);
         root4button.gameObject.SetActive(false);
+        is_selectbuttonpush = true;
+    }
+    void rootSelectSoundPlay()
+    {
+        audiosource.Play();
     }
 
 
@@ -97,9 +107,9 @@ public class EventTalkManager : MonoBehaviour
         if (is_talknow == false)
         {
             is_talknow = true;
-            rootButtonClear();
+            rootButtonSetup();
             current_read_line = 0;
-            using (var sr = new StreamReader("Assets/GameMain/Resources/EventData/" + textname_ + ".txt"))
+            using (var sr = new StreamReader(Application.dataPath + "/GameMain/Resources/EventData/" + textname_ + ".txt"))
             {
                 loadtextdata = sr.ReadToEnd();
             }
@@ -282,6 +292,7 @@ public class EventTalkManager : MonoBehaviour
                     rootButtonSetting(rootcommand);
 
                     i += rootcommand.Length + 2;
+                    is_selectbuttonpush = false;
                     continue;
                 }
             }
@@ -416,11 +427,15 @@ public class EventTalkManager : MonoBehaviour
             }
         }
     }
+    
+    AudioSource audiosource;
 
     void Start()
     {
         is_talknow = false;
         sprites = Resources.LoadAll<Sprite>("Textures/Talk");
+        audiosource = GetComponent<AudioSource>();
+        //audiosource.clip = audioclip;
     }
 
     void Update()
@@ -431,8 +446,8 @@ public class EventTalkManager : MonoBehaviour
             {
                 if (Input.GetMouseButtonUp(0))
                 {
-                    Debug.Log(selectbuttonnum);
-                    loadTalk(loadtextpath);
+                    if (is_selectbuttonpush)
+                        loadTalk(loadtextpath);
                 }
                 if (is_talknow == false)
                 {

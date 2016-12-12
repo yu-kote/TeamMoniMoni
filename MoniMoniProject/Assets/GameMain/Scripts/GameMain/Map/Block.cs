@@ -23,5 +23,5 @@ public class Block : MonoBehaviour
 
     public int number;
 
-
+    public int index;
 }

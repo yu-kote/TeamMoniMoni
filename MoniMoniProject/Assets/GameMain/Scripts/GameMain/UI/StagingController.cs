@@ -40,14 +40,16 @@ public class StagingController : MonoBehaviour
         }
     }
 
-    int flushcount = 0;
+    public int flushcount = 0;
     public bool flushStart()
     {
-        if (flushcount < 30)
+        if (flushcount < 80)
         {
             stagingcanvas.SetActive(true);
             var color = fadewhite.color;
-            color.a += 0.1f;
+            color.a += 0.05f;
+            if (color.a >= 1.0f)
+                color.a = 1.0f;
             fadewhite.color = color;
             flushcount++;
             return false;
@@ -57,11 +59,43 @@ public class StagingController : MonoBehaviour
     }
     public bool flushEnd()
     {
-        if (flushcount < 30)
+        if (flushcount < 80)
         {
             var color = fadewhite.color;
-            color.a -= 0.1f;
+            color.a -= 0.05f;
+            if (color.a <= 0.0f)
+                color.a = 0.0f;
             fadewhite.color = color;
+            flushcount++;
+            return false;
+        }
+        flushcount = 0;
+        stagingcanvas.SetActive(false);
+        return true;
+    }
+
+    public bool fadeOutBlack()
+    {
+        if (flushcount < 200)
+        {
+            stagingcanvas.SetActive(true);
+            var color = fadeblack.color;
+            color.a += 0.01f;
+            fadeblack.color = color;
+            flushcount++;
+            return false;
+        }
+        flushcount = 0;
+        return true;
+    }
+
+    public bool fadeInBlack()
+    {
+        if (flushcount < 200)
+        {
+            var color = fadeblack.color;
+            color.a -= 0.01f;
+            fadeblack.color = color;
             flushcount++;
             return false;
         }
