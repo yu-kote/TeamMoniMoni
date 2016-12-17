@@ -208,6 +208,18 @@ public class EventsCreate : MonoBehaviour
         if (talkmanager.is_talknow)
             return 0;
         is_setup = false;
+        return 2;
+    }
+    public int schoolEvent06_2()
+    {
+        if (is_setup == false)
+        {
+            talkmanager.startTalk("school_06-1");
+            is_setup = true;
+        }
+        if (talkmanager.is_talknow)
+            return 0;
+        is_setup = false;
         return 1;
     }
 
@@ -271,6 +283,18 @@ public class EventsCreate : MonoBehaviour
         if (talkmanager.is_talknow)
             return 0;
         is_setup = false;
+        return 2;
+    }
+    public int schoolEvent09_2()
+    {
+        if (is_setup == false)
+        {
+            talkmanager.startTalk("school_09-2");
+            is_setup = true;
+        }
+        if (talkmanager.is_talknow)
+            return 0;
+        is_setup = false;
         return 1;
     }
 
@@ -279,6 +303,42 @@ public class EventsCreate : MonoBehaviour
         if (is_setup == false)
         {
             talkmanager.startTalk("school_10");
+            is_setup = true;
+        }
+        if (talkmanager.is_talknow)
+            return 0;
+        is_setup = false;
+        return 1;
+    }
+    public int schoolEvent11()
+    {
+        if (is_setup == false)
+        {
+            talkmanager.startTalk("school_11");
+            is_setup = true;
+        }
+        if (talkmanager.is_talknow)
+            return 0;
+        is_setup = false;
+        return 2;
+    }
+    public int schoolEvent11_2()
+    {
+        if (is_setup == false)
+        {
+            talkmanager.startTalk("school_11-2");
+            is_setup = true;
+        }
+        if (talkmanager.is_talknow)
+            return 0;
+        is_setup = false;
+        return 2;
+    }
+    public int schoolEvent11_3()
+    {
+        if (is_setup == false)
+        {
+            talkmanager.startTalk("school_11-3");
             is_setup = true;
         }
         if (talkmanager.is_talknow)
@@ -361,12 +421,36 @@ public class EventsCreate : MonoBehaviour
         is_setup = false;
         return 1;
     }
+    public int schoolEvent16()
+    {
+        if (is_setup == false)
+        {
+            talkmanager.startTalk("school_16");
+            is_setup = true;
+        }
+        if (talkmanager.is_talknow)
+            return 0;
+        is_setup = false;
+        return 1;
+    }
 
     public int schoolEvent17()
     {
         if (is_setup == false)
         {
             talkmanager.startTalk("school_17");
+            is_setup = true;
+        }
+        if (talkmanager.is_talknow)
+            return 0;
+        is_setup = false;
+        return 1;
+    }
+    public int schoolEvent18()
+    {
+        if (is_setup == false)
+        {
+            talkmanager.startTalk("school_18");
             is_setup = true;
         }
         if (talkmanager.is_talknow)
@@ -387,6 +471,33 @@ public class EventsCreate : MonoBehaviour
         is_setup = false;
         return 1;
     }
+
+    public int schoolEvent20()
+    {
+        if (is_setup == false)
+        {
+            talkmanager.startTalk("school_20");
+            is_setup = true;
+        }
+        if (talkmanager.is_talknow)
+            return 0;
+        is_setup = false;
+        return 2;
+    }
+
+    public int schoolEvent20_2()
+    {
+        if (is_setup == false)
+        {
+            talkmanager.startTalk("school_20_2");
+            is_setup = true;
+        }
+        if (talkmanager.is_talknow)
+            return 0;
+        is_setup = false;
+        return 1;
+    }
+
     public int schoolEvent21()
     {
         if (is_setup == false)
