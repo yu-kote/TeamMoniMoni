@@ -3,23 +3,23 @@ using System.Collections;
 using System.IO;
 using UnityEngine.UI;
 using System;
+using UnityEngine.SceneManagement;
 
-/// <summary>
-/// イベントが起こった時に話をするところのスクリプト
-/// </summary>
-public class EventTalkManager : MonoBehaviour
+public class EndingTalkManager : MonoBehaviour
 {
-    [SerializeField]
-    PlayerController player;
-
 
     [SerializeField]
     Text nametext;
-
+    [SerializeField]
+    Text talktext;
     [SerializeField]
     Image charaimage1;
+
     [SerializeField]
-    Image charaimage2;
+    Sprite roombackground;
+
+    [SerializeField]
+    SpriteRenderer background;
 
     [SerializeField]
     Button root1button;
@@ -71,29 +71,16 @@ public class EventTalkManager : MonoBehaviour
         audiosource.Play();
     }
 
-    [SerializeField]
-    GameObject talktextmanager;
-    // 文字の基準位置
-    Vector2 talkstartpos;
-    // 文字の今の位置
-    Vector2 talkcurrentpos;
-
-    [SerializeField]
-    int font_defaultsize;
-    [SerializeField]
-    int font_bigsize;
-
-    int fontsize;
-
-    Color fontcolor;
-
     public bool is_talknow;
+
+    public bool is_event;
 
     // 会話の種類
     public enum TalkMode
     {
         NORMAL,
         SELECT,
+        EVENT,
     }
     public TalkMode talkmode;
 
@@ -103,35 +90,14 @@ public class EventTalkManager : MonoBehaviour
     string loadtextdata;
     // 会話の時に表示される名前
     string draw_name;
+    // 会話の時に表示される文
+    string draw_talk;
     // 会話の時に表示されるキャラの画像
-    string texturename1;
-    string texturename2;
+    string texturename;
 
     Sprite[] sprites;
 
     int current_read_line;
-
-    /// <summary>
-    /// イベントの時に会話を呼ぶための関数
-    /// </summary>
-    /// <param name="textname_"></param>
-    public void startTalk(string textname_)
-    {
-        loadtextpath = textname_;
-        // 会話してなかったらテキストを読む
-        if (is_talknow == false)
-        {
-            is_talknow = true;
-            rootButtonSetup();
-            current_read_line = 0;
-            using (var sr = new StreamReader(Application.dataPath + "/GameMain/Resources/EventData/" + textname_ + ".txt"))
-            {
-                loadtextdata = sr.ReadToEnd();
-            }
-            loadTalk(textname_);
-            player.state = PlayerController.State.TALK;
-        }
-    }
 
     /// <summary>
     /// テキストファイルを開いて名前と会話を取り出す関数
@@ -143,36 +109,25 @@ public class EventTalkManager : MonoBehaviour
         if (is_talknow)
         {
             draw_name = null;
-            texturename1 = null;
-            texturename2 = null;
-            talkTextClear();
+            draw_talk = null;
+            texturename = null;
+
             textDataCheck(loadtextdata);
 
             nametext.text = draw_name;
+            talktext.text = draw_talk;
 
             charaimage1.sprite =
                 System.Array.Find<Sprite>(
                                     sprites, (sprite) => sprite.name.Equals(
-                                        texturename1));
-            charaimage2.sprite =
-                System.Array.Find<Sprite>(
-                                    sprites, (sprite) => sprite.name.Equals(
-                                        texturename2));
-
+                                        texturename));
             if (charaimage1.sprite == null)
             {
                 charaimage1.sprite = System.Array.Find<Sprite>(
                                     sprites, (sprite) => sprite.name.Equals(
                                         "none"));
+            }
 
-            }
-            if (charaimage2.sprite == null)
-            {
-                charaimage2.sprite =
-                System.Array.Find<Sprite>(
-                                    sprites, (sprite) => sprite.name.Equals(
-                                        "none"));
-            }
         }
     }
 
@@ -184,7 +139,7 @@ public class EventTalkManager : MonoBehaviour
     {
         char[] chara_array = loadtext_.ToCharArray();
 
-        int texturecount = 0;
+
         for (int i = current_read_line; i < chara_array.Length; i++)
         {
             string command = null;
@@ -243,6 +198,10 @@ public class EventTalkManager : MonoBehaviour
             {
                 talkmode = TalkMode.SELECT;
             }
+            else if (command == "event")
+            {
+                talkmode = TalkMode.EVENT;
+            }
 
             if (talkmode == TalkMode.NORMAL)
             {
@@ -250,14 +209,13 @@ public class EventTalkManager : MonoBehaviour
                 switch (command)
                 {
                     case "p":
-                        talkCharInstance('\n', font_defaultsize, Color.white);
+                        draw_talk += "\n";
                         continue;
                     case "n":
                         current_read_line = i;
                         return;
                     case "end":
-                        is_talknow = false;
-                        talkTextClear();
+                        SceneManager.LoadScene("Title");
                         return;
                 }
 
@@ -266,44 +224,12 @@ public class EventTalkManager : MonoBehaviour
                     // キャラを表示させるコマンドが来たら通る
                     if (command.IndexOf("chara") != -1)
                     {
-                        if (texturecount == 0)
-                            texturename1 = commandPickOutName(command);
-                        else if (texturecount == 1)
-                            texturename2 = commandPickOutName(command);
-                        texturecount++;
+                        texturename = commandPickOutTextureName(command);
                     }
-                    // エフェクトのコマンドが来たら通る
+                    // エフェクトが来たら通る
                     if (command.IndexOf("effect") != -1)
                     {
 
-                    }
-
-                    string pickoutcommand = null;
-                    // サイズを変えるコマンドが来たら通る
-                    if (command.IndexOf("size") != -1)
-                    {
-                        pickoutcommand = commandPickOutName(command);
-                        if (pickoutcommand == "start")
-                            fontsize = font_bigsize;
-                        else if (pickoutcommand == "end")
-                            fontsize = font_defaultsize;
-                    }
-
-                    // 色変えるコマンドが来たら通る
-                    bool is_colorchange = false;
-                    Color changecolor = Color.white;
-                    if (command.IndexOf("red") != -1)
-                    {
-                        changecolor = Color.red;
-                        is_colorchange = true;
-                    }
-                    if (is_colorchange)
-                    {
-                        pickoutcommand = commandPickOutName(command);
-                        if (pickoutcommand == "start")
-                            fontcolor = changecolor;
-                        else if (pickoutcommand == "end")
-                            fontcolor = Color.black;
                     }
                 }
 
@@ -339,7 +265,7 @@ public class EventTalkManager : MonoBehaviour
                     chara_array[i] == '\n') continue;
 
                 // 会話文に追加
-                talkCharInstance(chara_array[i], fontsize, fontcolor);
+                draw_talk += chara_array[i];
             }
             if (talkmode == TalkMode.SELECT)
             {
@@ -354,6 +280,12 @@ public class EventTalkManager : MonoBehaviour
                     is_selectbuttonpush = false;
                     continue;
                 }
+            }
+
+            if (talkmode == TalkMode.EVENT)
+            {
+                current_read_line = i;
+                return;
             }
         }
 
@@ -391,73 +323,26 @@ public class EventTalkManager : MonoBehaviour
     /// </summary>
     /// <param name="command_"></param>
     /// <returns></returns>
-    string commandPickOutName(string command_)
+    string commandPickOutTextureName(string command_)
     {
         char[] c = command_.ToCharArray();
-        char start = '\'';
-        bool is_start = false;
-        string name = null;
+        char texturestart = '\'';
+        bool is_texturestart = false;
+        string texturename = null;
 
         for (int i = 0; i < c.Length; i++)
         {
-            if (c[i] == start)
+            if (c[i] == texturestart)
             {
-                is_start = !is_start;
+                is_texturestart = !is_texturestart;
                 continue;
             }
-            if (is_start)
+            if (is_texturestart)
             {
-                name += c[i];
+                texturename += c[i];
             }
         }
-        return name;
-    }
-
-    /// <summary>
-    /// 会話画面に文字をインスタンスする関数
-    /// </summary>
-    /// <param name="drawchar_"></param>
-    /// <param name="fontsize_"></param>
-    /// <param name="fontcolor_"></param>
-    void talkCharInstance(char drawchar_, int fontsize_, Color fontcolor_)
-    {
-        var drawchar = Resources.Load<GameObject>("Prefabs/TalkChar");
-        var text = drawchar.GetComponent<Text>();
-
-        text.text = drawchar_.ToString();
-        text.color = fontcolor_;
-        text.fontSize = fontsize_;
-        if (drawchar_ == '\n')
-        {
-            talkcurrentpos.x = talkstartpos.x;
-            talkcurrentpos.y -= fontsize_ + 10;
-        }
-        else
-        {
-            talkcurrentpos.x += fontsize_ + 6;
-        }
-        drawchar = (GameObject)Instantiate(drawchar, talktextmanager.transform);
-
-        drawchar.transform.position = talkcurrentpos;
-        drawchar.transform.localScale = new Vector3(1, 1, 1);
-    }
-
-    /// <summary>
-    /// 会話の文字をクリアする関数
-    /// </summary>
-    void talkTextClear()
-    {
-        if (talktextmanager.transform.childCount >= 0)
-            foreach (Transform child in talktextmanager.transform)
-            {
-                Destroy(child.gameObject);
-            }
-
-        talkstartpos = talktextmanager.transform.position;
-        talkcurrentpos = talkstartpos;
-        fontsize = font_defaultsize;
-        fontcolor = Color.black;
-
+        return texturename;
     }
 
     /// <summary>
@@ -535,38 +420,83 @@ public class EventTalkManager : MonoBehaviour
     }
 
     AudioSource audiosource;
+    [SerializeField]
+    AudioClip select_sound;
+    [SerializeField]
+    AudioClip bgm_sound;
+    [SerializeField]
+    AudioClip doorclose_sound;
 
     [SerializeField]
-    GameObject talkmanager;
+    StagingController staging;
+
+    int currentevent;
+    void eventModeUpdate()
+    {
+        if (audiosource.isPlaying == false)
+        {
+            if (currentevent <= 1)
+            {
+                audiosource.clip = bgm_sound;
+                audiosource.Play();
+            }
+        }
+        if (talkmode != TalkMode.EVENT) return;
+
+        if (currentevent == 0)
+        {
+            talktext.text = null;
+            if (staging.fadeOutBlack())
+            {
+                currentevent++;
+            }
+            return;
+        }
+        if (currentevent == 1)
+        {
+            if (staging.fadeInBlack())
+            {
+                talkmode = TalkMode.NORMAL;
+                currentevent++;
+                return;
+            }
+        }
+
+    }
 
     void Start()
     {
-        is_talknow = false;
+        talkStart();
+    }
+
+    public void talkStart()
+    {
+        is_talknow = true;
+        is_selectbuttonpush = true;
         sprites = Resources.LoadAll<Sprite>("Textures/Talk");
         audiosource = GetComponent<AudioSource>();
-        //audiosource.clip = audioclip;
-        talkmanager.SetActive(true);
-        talkTextClear();
-        talkmanager.SetActive(false);
+        loadtextpath = "Ending";
+        using (var sr = new StreamReader(Application.dataPath +
+            "/Ending/Resources/" + loadtextpath + ".txt"))
+        {
+            loadtextdata = sr.ReadToEnd();
+        }
+        loadTalk(loadtextpath);
+        currentevent = 0;
+        audiosource.clip = bgm_sound;
+        audiosource.Play();
     }
 
     void Update()
     {
-        if (player.state == PlayerController.State.TALK)
+        if (is_talknow)
         {
-            if (is_talknow)
+            if (Input.GetMouseButtonUp(0))
             {
-                if (Input.GetMouseButtonUp(0))
-                {
-                    if (is_selectbuttonpush)
-                        loadTalk(loadtextpath);
-                }
-                if (is_talknow == false)
-                {
-                    player.state = PlayerController.State.NORMAL;
-                }
+                if (is_selectbuttonpush)
+                    loadTalk(loadtextpath);
             }
+            eventModeUpdate();
         }
     }
-
 }
