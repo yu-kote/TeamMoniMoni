@@ -70,7 +70,7 @@ public class Slide : MonoBehaviour
     float start_time;
     void Start()
     {
-        if (size_y_use == null) size_y_use = 0;
+        if (size_y_use == null) size_y_use = 0.0f;
         end_time = 0.0f;
         mogu_sound = GetComponent<AudioSource>();
         touch_sound = BGMer.GetComponent<AudioSource>();
@@ -151,7 +151,7 @@ public class Slide : MonoBehaviour
 
                 //スマホの解像度は375*667らしい
                 if (mousePosition.y > size_y_use/3*2 && mousePosition.y < size_y_use+5.0f) eating_1 = true;
-                else if (mousePosition.y > -5.0f && mousePosition.y < size_y_use/4) eating_2 = true;
+                else if (mousePosition.y > -5.0f && mousePosition.y < size_y_use/3) eating_2 = true;
                 else if (mousePosition.y >= size_y_use/3 && mousePosition.y <= size_y_use) eating_yet = true;
                 else
                 {
@@ -214,14 +214,10 @@ public class Slide : MonoBehaviour
                     }
 
                 }
-                if (eating_2 == true)
-                {
-                    if (mousePosition.y > -5.0f && mousePosition.y < size_y_use/3)
-                    {
+                if (eating_2 == true){
+                    if (mousePosition.y > -5.0f && mousePosition.y < size_y_use/3){
                         eat_count = 0;
-
-                        if (turning == true)
-                        {
+                        if (turning == true){
                             call_mogu = 0;
                             chew_halo = true;
                             chew_count++;
@@ -229,23 +225,16 @@ public class Slide : MonoBehaviour
                             eat_effect_alpha = 0.5f;
                         }
                     }
-                    if (mousePosition.y > size_y_use/3 && mousePosition.y < size_y_use/3*2)
-                    {
+                    if (mousePosition.y > size_y_use/3 && mousePosition.y < size_y_use/3*2){
                         eat_count = 1;
-                        if (turning == true)
-                        {
-                            eat_count = 3;
-                        }
+                        if (turning == true)eat_count = 3;
                     }
-                    if (mousePosition.y > size_y_use/3*2 && mousePosition.y < size_y_use+5.0f)
-                    {
+                    if (mousePosition.y > size_y_use/3*2 && mousePosition.y < size_y_use+5.0f){
                         eat_count = 2;
-                        if (turning == false)
-                        {
+                        if (turning == false){
                             call_mogu = 0;
                             turning = true;
                         }
-
                     }
                 }
 
