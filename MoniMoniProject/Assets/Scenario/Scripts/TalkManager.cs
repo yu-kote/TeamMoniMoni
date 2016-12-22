@@ -546,8 +546,10 @@ public class TalkManager : MonoBehaviour
         sprites = Resources.LoadAll<Sprite>("Textures/Talk");
         audiosource = GetComponent<AudioSource>();
         loadtextpath = "Prologue";
-        using (var sr = new StreamReader(Application.dataPath +
-            "/Scenario/Resources/TextData/" + loadtextpath + ".txt"))
+
+        var scenariotext = Resources.Load<TextAsset>("TextData/" + loadtextpath);
+
+        using (var sr = new StringReader(scenariotext.text))
         {
             loadtextdata = sr.ReadToEnd();
         }
@@ -567,6 +569,11 @@ public class TalkManager : MonoBehaviour
                     loadTalk(loadtextpath);
             }
             eventModeUpdate();
+        }
+
+        if (Input.GetKey(KeyCode.Return))
+        {
+            SceneManager.LoadScene("GameMain");
         }
     }
 }
