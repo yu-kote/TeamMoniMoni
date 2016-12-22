@@ -532,6 +532,10 @@ public class TalkManager : MonoBehaviour
                 return;
             }
         }
+        if (currentevent == 7)
+        {
+
+        }
     }
 
     void Start()
