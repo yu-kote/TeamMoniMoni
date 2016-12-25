@@ -433,6 +433,8 @@ public class TalkManager : MonoBehaviour
 
     [SerializeField]
     StagingController staging;
+    [SerializeField]
+    GameObject nowloadingtexture;
 
     int currentevent;
     void eventModeUpdate()
@@ -534,7 +536,13 @@ public class TalkManager : MonoBehaviour
         }
         if (currentevent == 7)
         {
-
+            if (staging.fadeOutBlack())
+            {
+                nowloadingtexture.SetActive(true);
+                talkmode = TalkMode.NORMAL;
+                currentevent++;
+                return;
+            }
         }
     }
 
