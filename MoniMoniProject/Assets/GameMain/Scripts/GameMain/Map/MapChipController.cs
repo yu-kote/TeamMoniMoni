@@ -331,17 +331,19 @@ public class MapChipController : MonoBehaviour
     /// <summary>
     /// カメラに映っているブロックのアクティブを制御する関数
     /// </summary>
-    public void chipsIsActive()
+    public void chipsIsActive(bool is_setup = false)
     {
         drawcount = 8;
         framecount++;
         Vector2 camerapos = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, cameracontroller.camera_follow_z));
-
-        if (prev_camerapos == camerapos)
-            return;
-        if (framecount % drawcount != 0)
-            return;
-        prev_camerapos = camerapos;
+        if (is_setup == false)
+        {
+            if (prev_camerapos == camerapos)
+                return;
+            if (framecount % drawcount != 0)
+                return;
+            prev_camerapos = camerapos;
+        }
 
         Vector2 camerahalfsize = camerapos - new Vector2(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, cameracontroller.camera_follow_z)).x,
             Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, cameracontroller.camera_follow_z)).y);
@@ -414,6 +416,17 @@ public class MapChipController : MonoBehaviour
             chip_num_y = stringToInt(line, 1);
         }
 
+        // ブロックの映る範囲を決める
+        Vector2 camerapos = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, cameracontroller.camera_follow_z));
+
+        Vector2 camerahalfsize = camerapos - new Vector2(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, cameracontroller.camera_follow_z)).x,
+            Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, cameracontroller.camera_follow_z)).y);
+
+        Vector2 camerasize = new Vector2(Mathf.Abs(camerahalfsize.x * 2), Mathf.Abs(camerahalfsize.y * 2));
+
+        camerapos = camerapos + (camerasize / 2);
+        camerasize += new Vector2(2, 2);
+
         for (int i = 0; i < (int)LayerController.Layer.LAYER_MAX; i++)
         {
             string layername = LayerController.layernumToString(i);
@@ -478,6 +491,15 @@ public class MapChipController : MonoBehaviour
 
                         tempblock_x.Add(Instantiate(block));
                         tempblock_x[x].transform.parent = gameObject.transform;
+
+                        if (pointToCenterBox(tempblock_x[x].transform.position, camerapos, camerasize))
+                        {
+                            tempblock_x[x].SetActive(true);
+                        }
+                        else
+                        {
+                            tempblock_x[x].SetActive(false);
+                        }
                     }
                     tempblock_xy.Add(tempblock_x);
                 }
