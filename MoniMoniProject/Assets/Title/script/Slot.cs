@@ -88,7 +88,7 @@ public class Slot : MonoBehaviour
             pos_1.y += 0.0075f;
             slot_1.transform.localPosition = pos_1;
         }
-        if (time == 210) time = 90;
+        if (time == 209) time = 89;
     }
     public void OnClick()
     {

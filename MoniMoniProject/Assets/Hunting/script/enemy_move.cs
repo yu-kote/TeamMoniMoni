@@ -4,6 +4,22 @@ using UnityEngine.UI;
 
 public class enemy_move : MonoBehaviour
 {
+    public int backgound_number;
+    public Sprite school_1;
+    public Sprite school_2;
+    public Sprite school_boss;
+    public Sprite hospital_1;
+    public Sprite hospital_2;
+    public Sprite hospital_boss;
+
+
+    int Anime_one_number; //１回目に行う動きの番号
+    int Anime_two_number;//２回目に行う動きの番号　１回目と同じ番号が出たら振り直し
+    int Anime_three_number;//３回目に行う動きの番号　１，２回目と同じ番号が出たら振り直し
+    int Anime_number; //現在の動き
+    [SerializeField]
+    Image background;
+
     public float start_time;
 
     [SerializeField]
@@ -28,6 +44,9 @@ public class enemy_move : MonoBehaviour
     private int touch_count;
     public bool enemy_eat;
     private Vector3 enemy_pos;
+    float anime_pos_x;
+    float anime_pos_y;
+
     private Vector3 enemy_end_pos;
     private Vector3 animation_eat_end_pos = new Vector3(3.0f, 0.5f, -6);
     private float size;
@@ -39,6 +58,30 @@ public class enemy_move : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        Anime_one_number = Random.Range(1, 9);
+        Anime_two_number = 0;
+        Anime_three_number = 0;
+        switch (backgound_number)
+        {
+            case 1:
+             background.sprite = school_1;
+                break;
+            case 2:
+                background.sprite = school_2;
+                break;
+            case 3:
+                background.sprite = school_boss;
+                break;
+            case 4:
+                background.sprite = hospital_1;
+                break;
+            case 5:
+                background.sprite = hospital_2;
+                break;
+            case 6:
+                background.sprite = hospital_boss;
+                break;
+        }
         start_time = 0.0f;
 
         touch_sound = BGMer.GetComponent<AudioSource>();
@@ -57,12 +100,17 @@ public class enemy_move : MonoBehaviour
         speed_regulation = 3;
         touch_sound.Play();
         touch_sound.loop = true;
-        
+        anime_pos_x = -5.0f;
+        anime_pos_y = -3.2f;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Anime_two_number == Anime_one_number) Anime_two_number = Random.Range(1, 9);
+        if (Anime_three_number == Anime_one_number || Anime_three_number == Anime_two_number) Anime_three_number = Random.Range(1, 9);
+        
+
         start_time++;
         if (start_time < 100)
         {
@@ -77,6 +125,32 @@ public class enemy_move : MonoBehaviour
                 }
         if (start_time >= 100)
         {
+            switch (Anime_number) {//x=-5~5 y=-3.2~3.2 モーション切り替えすべし
+                case 1:
+                    transform.localPosition = enemy_pos;
+                    if (time < 150 && speed_regulation < 5.0f) speed_regulation += 0.04f;
+                    if (time >= 150 && speed_regulation >= 1.0f) speed_regulation -= 0.04f;
+                    speed += 0.03f * speed_regulation;
+                    anime_pos_x += 0.05f;
+                    if (anime_pos_x >= 5.0f) anime_pos_x = -5.0f;
+                    enemy_pos = new Vector3(anime_pos_x, Mathf.Cos(-speed) * 1.8f, 0);
+                    break;
+                case 2:
+                    transform.localPosition = enemy_pos;
+                    if (time < 150 && speed_regulation < 5.0f) speed_regulation += 0.04f;
+                    if (time >= 150 && speed_regulation >= 1.0f) speed_regulation -= 0.04f;
+                    speed += 0.03f * speed_regulation;
+                    enemy_pos = new Vector3(Mathf.Sin(-speed / 4) * 2, Mathf.Cos(-speed) * 1.8f, 0);
+                    break;
+                case 3:
+                    transform.localPosition = enemy_pos;
+                    if (time < 150 && speed_regulation < 5.0f) speed_regulation += 0.04f;
+                    if (time >= 150 && speed_regulation >= 1.0f) speed_regulation -= 0.04f;
+                    speed += 0.03f * speed_regulation;
+                    enemy_pos = new Vector3(Mathf.Sin(-speed / 4) * 2, Mathf.Cos(-speed) * 1.8f, 0);
+                    break;
+            }
+
             time++;
             switch (touch_count)
             {
