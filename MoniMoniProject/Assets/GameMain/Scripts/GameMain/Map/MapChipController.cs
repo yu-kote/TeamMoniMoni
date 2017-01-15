@@ -26,29 +26,32 @@ public class MapChipController : MonoBehaviour
     public int chip_num_x;
     public int chip_num_y;
 
-    const int eventlayer = (int)LayerController.Layer.EVENT;
+    public const int eventlayer = (int)LayerController.Layer.EVENT;
 
     public List<List<List<GameObject>>> blocks;
 
     public List<List<List<Block>>> blockcomponents;
 
+    public string select_stage_name;
     public string select_map_name;
 
     void Awake()
     {
-        blocks = new List<List<List<GameObject>>>();
-
         // FIXME: スプライトまとめて読む感じに失敗・・・修正予定
         // SpriteLoader loader = new SpriteLoader();
         // loader.Load("Textures/samplechip");
 
-        select_map_name = "school1";
+        //select_map_name = "school1";
+        //select_stage_name = "School";
+        select_map_name = "House1F";
+        select_stage_name = "Videl";
+        loadMap(select_stage_name, select_map_name);
 
-        loadMap(select_map_name);
-        //loadMap("test");
+        debugToEventRedColor();
+    }
 
-        chipsIsActive();
-
+    public void debugToEventRedColor()
+    {
         for (int y = 0; y < chip_num_y; y++)
         {
             for (int x = 0; x < chip_num_x; x++)
@@ -64,6 +67,7 @@ public class MapChipController : MonoBehaviour
         }
     }
 
+
     void Start()
     {
         playerPop();
@@ -77,9 +81,9 @@ public class MapChipController : MonoBehaviour
     }
 
     /// <summary>
-    /// プレイヤーをpopさせる位置を決める関数
+    /// プレイヤーをイベント0番目にpopさせる関数
     /// </summary>
-    private void playerPop()
+    public void playerPop()
     {
         for (int y = 0; y < chip_num_y; y++)
         {
@@ -92,9 +96,18 @@ public class MapChipController : MonoBehaviour
                     pop.z += -0.5f;
                     player.transform.position = pop;
                 }
-
             }
         }
+    }
+
+    /// <summary>
+    /// プレイヤーを引数で渡したセルの位置にする関数
+    /// </summary>
+    public void playerSelectCellPop(int x, int y)
+    {
+        var pop = blocks[(int)LayerController.Layer.FLOOR][y][x].transform.position;
+        pop.z += -0.5f;
+        player.transform.position = pop;
     }
 
     // プレイヤーが選んでいるブロック
@@ -104,7 +117,6 @@ public class MapChipController : MonoBehaviour
     public int player_cell_x;
     public int player_cell_y;
 
-
     /// <summary>
     /// プレイヤーがブロックを選ぶコルーチン
     /// </summary>
@@ -112,7 +124,6 @@ public class MapChipController : MonoBehaviour
     {
         while (true)
         {
-
             player_cell_x = (int)player_controller.retCell().x;
             player_cell_y = (int)player_controller.retCell().y;
             select_cell_x = player_cell_x;
@@ -139,9 +150,6 @@ public class MapChipController : MonoBehaviour
             select_cell_y = Mathf.Clamp(select_cell_y, 0, chip_num_y - 1);
             player_cell_x = Mathf.Clamp(player_cell_x, 0, chip_num_x - 1);
             player_cell_y = Mathf.Clamp(player_cell_y, 0, chip_num_y - 1);
-
-            //   blocks[0][select_cell_y][select_cell_x]
-            //.GetComponent<SpriteRenderer>().material.color = Color.red;
 
             yield return null;
         }
@@ -180,7 +188,6 @@ public class MapChipController : MonoBehaviour
                     }
                 }
 
-
                 var block = blockcomponents[eventlayer]
                     [player_cell_y]
                     [player_cell_x];
@@ -209,19 +216,21 @@ public class MapChipController : MonoBehaviour
                         is_eventstart = eventblock.event_manager.eventExecution();
                     }
                 }
-
-                var block = blockcomponents[eventlayer]
-                    [eventplayer_cell_y]
-                    [eventplayer_cell_x];
-
-                if (block.number != -1)
+                if (isOutOfRange(eventplayer_cell_x, eventplayer_cell_y) == false)
                 {
-                    if (overLapEventExists(eventplayer_cell_x, eventplayer_cell_y))
+                    var block = blockcomponents[eventlayer]
+                       [eventplayer_cell_y]
+                       [eventplayer_cell_x];
+
+
+                    if (block.number != -1)
                     {
-                        is_eventstart = block.event_manager.eventExecution();
+                        if (overLapEventExists(eventplayer_cell_x, eventplayer_cell_y))
+                        {
+                            is_eventstart = block.event_manager.eventExecution();
+                        }
                     }
                 }
-
                 if (is_eventstart == false)
                 {
                     player_controller.state = PlayerController.State.NORMAL;
@@ -237,6 +246,7 @@ public class MapChipController : MonoBehaviour
     /// </summary>
     public bool checkEventExists()
     {
+        if (isOutOfRange(select_cell_x, select_cell_y)) return false;
         var eventmanager = blockcomponents[eventlayer][select_cell_y][select_cell_x]
                 .event_manager;
         if (eventmanager.eventExists(eventmanager.event_stage) == false)
@@ -251,6 +261,7 @@ public class MapChipController : MonoBehaviour
     /// </summary>
     public bool checkEventExists(int cellx_, int celly_)
     {
+        if (isOutOfRange(cellx_, celly_)) return false;
         var eventmanager = blockcomponents[eventlayer][celly_][cellx_]
                 .event_manager;
         if (eventmanager.eventExists(eventmanager.event_stage) == false)
@@ -268,6 +279,7 @@ public class MapChipController : MonoBehaviour
     /// <returns></returns>
     public bool overLapEventExists(int cellx_, int celly_)
     {
+        if (isOutOfRange(cellx_, celly_)) return false;
         var eventmanager = blockcomponents[eventlayer][celly_][cellx_]
         .event_manager;
         if (eventmanager.eventExists(eventmanager.event_stage) == false)
@@ -283,6 +295,9 @@ public class MapChipController : MonoBehaviour
     /// <returns>イベントが終了したかどうか</returns>
     public bool isEventCompleted()
     {
+        if (isOutOfRange(eventselect_cell_x, eventselect_cell_y)) return false;
+        if (isOutOfRange(eventplayer_cell_x, eventplayer_cell_y)) return false;
+
         if (player_controller.state == PlayerController.State.EVENT ||
             player_controller.state == PlayerController.State.TALK)
         {
@@ -310,7 +325,6 @@ public class MapChipController : MonoBehaviour
         return false;
     }
 
-
     /// <summary>
     /// ブロックをオンオフするコルーチン
     /// </summary>
@@ -323,7 +337,6 @@ public class MapChipController : MonoBehaviour
             yield return null;
         }
     }
-
 
     int framecount = 0;
     int drawcount = 0;
@@ -392,6 +405,7 @@ public class MapChipController : MonoBehaviour
     /// <summary>
     /// 渡された座標が範囲外かどうか返す関数
     /// </summary>
+    /// 範囲外ならtrue
     public bool isOutOfRange(int x_, int y_)
     {
         if (x_ < 0 || y_ < 0)
@@ -402,12 +416,25 @@ public class MapChipController : MonoBehaviour
     }
 
     /// <summary>
+    /// 引数でもらったマップに切り替える関数
+    /// </summary>
+    public void mapChange(string map_name_, string stage_name_)
+    {
+        mapClear();
+        select_map_name = map_name_;
+        select_stage_name = stage_name_;
+        loadMap(select_stage_name, select_map_name);
+        debugToEventRedColor();
+    }
+
+    /// <summary>
     /// マップを読み込む関数
     /// </summary>
     /// <param name="loadname_"></param>
-    public void loadMap(string loadname_)
+    public void loadMap(string loadtexturename, string loadstagename_)
     {
-        var statustext = Resources.Load<TextAsset>("StageData/" + loadname_ + "_StatusData");
+        blocks = new List<List<List<GameObject>>>();
+        var statustext = Resources.Load<TextAsset>("StageData/" + loadstagename_ + "_StatusData");
 
         using (var sr = new StringReader(statustext.text))
         {
@@ -430,9 +457,9 @@ public class MapChipController : MonoBehaviour
         for (int i = 0; i < (int)LayerController.Layer.LAYER_MAX; i++)
         {
             string layername = LayerController.layernumToString(i);
-            Sprite[] loadsprite = Resources.LoadAll<Sprite>("Textures/MapChip/" + layername);
+            Sprite[] loadsprite = Resources.LoadAll<Sprite>("Textures/MapChip/" + loadtexturename + "/" + layername);
 
-            var stagelayertext = Resources.Load<TextAsset>("StageData/" + loadname_ + "_" + layername + "Data");
+            var stagelayertext = Resources.Load<TextAsset>("StageData/" + loadstagename_ + "_" + layername + "Data");
             using (var sr = new StringReader(stagelayertext.text))
             {
                 int index = 0;
@@ -480,8 +507,10 @@ public class MapChipController : MonoBehaviour
 
                         block.transform.localScale = new Vector2(chip_scale, chip_scale);
 
+
                         block.GetComponent<BoxCollider2D>().isTrigger = true;
-                        if (i == (int)LayerController.Layer.WALL)
+                        if (i == (int)LayerController.Layer.WALL ||
+                            i == (int)LayerController.Layer.OBJECT)
                         {
                             if (number != -1)
                             {
@@ -504,7 +533,6 @@ public class MapChipController : MonoBehaviour
                     tempblock_xy.Add(tempblock_x);
                 }
                 blocks.Add(tempblock_xy);
-
             }
         }
 
@@ -523,7 +551,6 @@ public class MapChipController : MonoBehaviour
             }
             blockcomponents.Add(component_block_temp_xy);
         }
-
     }
 
     /// <summary>

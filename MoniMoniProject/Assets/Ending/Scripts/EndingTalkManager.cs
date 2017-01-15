@@ -15,9 +15,7 @@ public class EndingTalkManager : MonoBehaviour
     Image charaimage1;
     [SerializeField]
     Image charaimage2;
-
-    [SerializeField]
-    Sprite roombackground;
+    
 
     [SerializeField]
     SpriteRenderer background;
@@ -242,7 +240,7 @@ public class EndingTalkManager : MonoBehaviour
                         return;
                     case "end":
                         talkTextClear();
-                        SceneManager.LoadScene("Scenario");
+                        SceneManager.LoadScene("Title");
                         return;
                 }
 
@@ -571,6 +569,7 @@ public class EndingTalkManager : MonoBehaviour
 
     void Start()
     {
+        talkmode = TalkMode.NORMAL;
         talkStart();
     }
 
@@ -587,11 +586,11 @@ public class EndingTalkManager : MonoBehaviour
         {
             loadtextdata = sr.ReadToEnd();
         }
-        loadTalk(loadtextpath);
         currentevent = 0;
         audiosource.clip = bgm_sound;
         audiosource.Play();
         talkTextClear();
+        rootButtonSetup();
     }
 
     void Update()

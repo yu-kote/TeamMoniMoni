@@ -452,7 +452,6 @@ public class EventTalkManager : MonoBehaviour
             {
                 Destroy(child.gameObject);
             }
-
         talkstartpos = talktext.transform.position;
         talkcurrentpos = talkstartpos;
         fontsize = font_defaultsize;

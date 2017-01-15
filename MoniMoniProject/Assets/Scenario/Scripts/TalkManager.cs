@@ -541,6 +541,8 @@ public class TalkManager : MonoBehaviour
     StagingController staging;
     [SerializeField]
     GameObject nowloadingtexture;
+    [SerializeField]
+    GameObject stagingcanvas;
 
     int currentevent;
     void eventModeUpdate()
@@ -647,6 +649,7 @@ public class TalkManager : MonoBehaviour
                 nowloadingtexture.SetActive(true);
                 talkmode = TalkMode.NORMAL;
                 currentevent++;
+                SceneManager.LoadScene("GameMain");
                 return;
             }
         }
@@ -688,11 +691,16 @@ public class TalkManager : MonoBehaviour
                     loadTalk(loadtextpath);
             }
             eventModeUpdate();
+
+            if (Input.GetKey(KeyCode.Return))
+            {
+                stagingcanvas.SetActive(true);
+                nowloadingtexture.SetActive(true);
+                talkmode = TalkMode.NORMAL;
+                SceneManager.LoadScene("GameMain");
+            }
         }
 
-        if (Input.GetKey(KeyCode.Return))
-        {
-            SceneManager.LoadScene("GameMain");
-        }
+
     }
 }
