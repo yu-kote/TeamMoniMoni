@@ -52,6 +52,7 @@ public class MapChipController : MonoBehaviour
 
     public void debugToEventRedColor()
     {
+#if DEBUG
         for (int y = 0; y < chip_num_y; y++)
         {
             for (int x = 0; x < chip_num_x; x++)
@@ -65,13 +66,12 @@ public class MapChipController : MonoBehaviour
                 }
             }
         }
+#endif
     }
-
 
     void Start()
     {
         playerPop();
-
         // StartCoroutine
         StartCoroutine(playerSelectBlock());
         StartCoroutine(blockEventUpdate());
@@ -98,6 +98,10 @@ public class MapChipController : MonoBehaviour
                 }
             }
         }
+        if (SceneInfoManager.instance.player_pos != Vector3.zero)
+        {
+            player.transform.position = SceneInfoManager.instance.player_pos;
+        }
     }
 
     /// <summary>
@@ -108,6 +112,10 @@ public class MapChipController : MonoBehaviour
         var pop = blocks[(int)LayerController.Layer.FLOOR][y][x].transform.position;
         pop.z += -0.5f;
         player.transform.position = pop;
+        if (SceneInfoManager.instance.player_pos != Vector3.zero)
+        {
+            player.transform.position = SceneInfoManager.instance.player_pos;
+        }
     }
 
     // プレイヤーが選んでいるブロック
@@ -424,6 +432,8 @@ public class MapChipController : MonoBehaviour
         select_map_name = map_name_;
         select_stage_name = stage_name_;
         loadMap(select_stage_name, select_map_name);
+        SceneInfoManager.instance.select_map_name = map_name_;
+        SceneInfoManager.instance.select_stage_name = stage_name_;
         debugToEventRedColor();
     }
 
