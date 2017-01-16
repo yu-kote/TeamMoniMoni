@@ -30,6 +30,7 @@ public class EnemyManager : MonoBehaviour
 
     public void enemySetup()
     {
+
         if (mapchip.select_map_name.IndexOf("House") != -1)
         {
             nightmare.gameObject.SetActive(false);
@@ -38,6 +39,7 @@ public class EnemyManager : MonoBehaviour
         else
         {
             nightmare.gameObject.SetActive(true);
+            enemy_num = SceneInfoManager.instance.enemy_num;
             dreamersPop(enemy_num);
             nightmareAI.aiSetup();
         }

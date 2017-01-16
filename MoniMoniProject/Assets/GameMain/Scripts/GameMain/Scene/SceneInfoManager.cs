@@ -1,16 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SceneInfoManager : MonoBehaviour
+public class SceneInfoManager
 {
-    
-    void Start()
-    {
+    public readonly static SceneInfoManager instance = new SceneInfoManager();
 
-    }
+    public string select_stage_name = null;
+    public string select_map_name = null;
 
-    void Update()
-    {
+    public Vector3 player_pos = new Vector3();
 
-    }
+    public int enemy_num = 3;
 }
