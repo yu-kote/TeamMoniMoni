@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.UI;
 using System;
 
 /// <summary>
@@ -57,7 +59,7 @@ public class PlayerController : MonoBehaviour
     bool is_pusheventkey;
     public void pushEventKey()
     {
-        is_pusheventkey = true; ;
+        is_pusheventkey = true;
     }
 
     void Start()
@@ -72,8 +74,9 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(moveMethod());
         StartCoroutine(fieldCheck());
         StartCoroutine(stateCoroutine());
-    }
+        StartCoroutine(itemCoroutine());
 
+    }
 
     /// <summary>
     /// プレイヤーの状態が変わった時だけ通るif文があるコルーチン
@@ -86,6 +89,7 @@ public class PlayerController : MonoBehaviour
             {
                 current_state = state;
                 canvascontroller.playerStateChangeCanvas();
+                skillForcedEnd();
             }
             yield return null;
         }
@@ -154,7 +158,6 @@ public class PlayerController : MonoBehaviour
     {
         while (true)
         {
-
             move();
 
             directionChange();
@@ -176,8 +179,6 @@ public class PlayerController : MonoBehaviour
         transform.Translate(vec_);
         //var rigidbody = GetComponent<Rigidbody2D>();
         //rigidbody.velocity = vec;
-
-
     }
 
     /// <summary>
@@ -363,6 +364,81 @@ public class PlayerController : MonoBehaviour
             }
             return;
         }
+    }
+
+    /// <summary>
+    /// スキルを強制終了させる関数
+    /// </summary>
+    void skillForcedEnd()
+    {
+        if (animstate == AnimationState.ATTACKSKILL_START ||
+            animstate == AnimationState.ATTACKSKILL)
+        {
+            animstate = AnimationState.ATTACKSKILLEND;
+            dashcount = 0;
+            vec = Vector2.zero;
+        }
+    }
+
+    /// <summary>
+    /// 持っているアイテムの名前
+    /// </summary>
+    public string have_item_name = "";
+    string current_have_item_name = "";
+    public bool is_use_item = false;
+
+    public void useItem()
+    {
+        is_use_item = true;
+    }
+
+    [SerializeField]
+    Image item_image;
+
+    Dictionary<string, Sprite> items = new Dictionary<string, Sprite>();
+
+    void itemsImageSetup()
+    {
+        Sprite[] loadsprite = Resources.LoadAll<Sprite>("Textures/Items");
+
+        items.Add("Item", System.Array.Find<Sprite>(
+                            loadsprite, (sprite) => sprite.name.Equals(
+                                "Item")));
+        items.Add("Boarderaser", System.Array.Find<Sprite>(
+                                    loadsprite, (sprite) => sprite.name.Equals(
+                                        "Boarderaser")));
+        items.Add("Statue", System.Array.Find<Sprite>(
+                                    loadsprite, (sprite) => sprite.name.Equals(
+                                        "Statue")));
+        items.Add("Wheelchair", System.Array.Find<Sprite>(
+                                      loadsprite, (sprite) => sprite.name.Equals(
+                                          "Wheelchair")));
+        items.Add("Easel", System.Array.Find<Sprite>(
+                                      loadsprite, (sprite) => sprite.name.Equals(
+                                          "Easel")));
+
+    }
+
+    private IEnumerator itemCoroutine()
+    {
+        itemsImageSetup();
+        while (true)
+        {
+            if (current_have_item_name != have_item_name)
+            {
+                current_have_item_name = have_item_name;
+                if (have_item_name != null)
+                    item_image.sprite = items[have_item_name];
+                else
+                    item_image.sprite = items["Item"];
+            }
+            yield return null;
+        }
+    }
+
+    public void setItem(string item_name)
+    {
+        have_item_name = item_name;
     }
 
 }
