@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class GameObjectSceneChanger : MonoBehaviour
+public class GameMainSceneChanger : MonoBehaviour
 {
 
     [SerializeField]
@@ -10,6 +10,9 @@ public class GameObjectSceneChanger : MonoBehaviour
 
     [SerializeField]
     StagingController staging;
+
+    [SerializeField]
+    EventsCreate eventcreate;
 
     void Start()
     {
@@ -22,7 +25,19 @@ public class GameObjectSceneChanger : MonoBehaviour
         if (enemymanager.is_bosshit)
         {
             if (staging.flushStart())
+            {
+                eventcreate.returnHouse();
                 SceneManager.LoadScene("Hunting");
+            }
+        }
+
+        if (enemymanager.is_enemy_hit)
+        {
+            if (staging.flushStart())
+            {
+                eventcreate.stateSave();
+                SceneManager.LoadScene("Hunting");
+            }
         }
     }
 }

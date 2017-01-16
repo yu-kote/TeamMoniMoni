@@ -43,8 +43,14 @@ public class MapChipController : MonoBehaviour
 
         //select_map_name = "school1";
         //select_stage_name = "School";
-        select_map_name = "House1F";
-        select_stage_name = "Videl";
+        if (SceneInfoManager.instance.select_map_name != null)
+            select_map_name = SceneInfoManager.instance.select_map_name;
+        else
+            select_map_name = "House1F";
+        if (SceneInfoManager.instance.select_stage_name != null)
+            select_stage_name = SceneInfoManager.instance.select_stage_name;
+        else
+            select_stage_name = "Videl";
         loadMap(select_stage_name, select_map_name);
 
         debugToEventRedColor();
@@ -53,19 +59,19 @@ public class MapChipController : MonoBehaviour
     public void debugToEventRedColor()
     {
 #if DEBUG
-        for (int y = 0; y < chip_num_y; y++)
-        {
-            for (int x = 0; x < chip_num_x; x++)
-            {
-                if (blockcomponents[eventlayer][y][x].number != -1)
-                {
-                    for (int i = 0; i < (int)LayerController.Layer.LAYER_MAX; i++)
-                    {
-                        blocks[i][y][x].GetComponent<SpriteRenderer>().material.color = Color.red;
-                    }
-                }
-            }
-        }
+        //for (int y = 0; y < chip_num_y; y++)
+        //{
+        //    for (int x = 0; x < chip_num_x; x++)
+        //    {
+        //        if (blockcomponents[eventlayer][y][x].number != -1)
+        //        {
+        //            for (int i = 0; i < (int)LayerController.Layer.LAYER_MAX; i++)
+        //            {
+        //                blocks[i][y][x].GetComponent<SpriteRenderer>().material.color = Color.red;
+        //            }
+        //        }
+        //    }
+        //}
 #endif
     }
 

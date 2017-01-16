@@ -11,4 +11,6 @@ public class SceneInfoManager
     public Vector3 player_pos = new Vector3();
 
     public int enemy_num = 3;
+
+    public bool is_stagechangeevent = false;
 }

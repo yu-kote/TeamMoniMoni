@@ -545,6 +545,7 @@ public class TalkManager : MonoBehaviour
     GameObject stagingcanvas;
 
     int currentevent;
+
     void eventModeUpdate()
     {
         if (audiosource.isPlaying == false)

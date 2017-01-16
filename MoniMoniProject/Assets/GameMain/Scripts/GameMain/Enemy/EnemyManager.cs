@@ -22,6 +22,7 @@ public class EnemyManager : MonoBehaviour
 
 
     public bool is_bosshit;
+    public bool is_enemy_hit;
 
     void Start()
     {
@@ -86,6 +87,15 @@ public class EnemyManager : MonoBehaviour
             {
                 is_bosshit = true;
             }
+
+        if (mapchip.select_map_name.IndexOf("House") != -1) return;
+        for (int i = 0; i < enemy_num; i++)
+        {
+            if (pointToCircle(player.transform.position, 0.3f, enemys[i].transform.position))
+            {
+                is_enemy_hit = true;
+            }
+        }
     }
 
     void dreamersPop(int enemy_num_)

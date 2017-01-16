@@ -40,10 +40,20 @@ public class EventsCreate : MonoBehaviour
 
     public void stateSave()
     {
-        SceneInfoManager.instance.player_pos = transform.position;
+        SceneInfoManager.instance.player_pos = player.transform.position;
         SceneInfoManager.instance.select_map_name = chipcontroller.select_map_name;
         SceneInfoManager.instance.select_stage_name = chipcontroller.select_stage_name;
         SceneInfoManager.instance.enemy_num = enemymanager.enemy_num;
+        if (SceneInfoManager.instance.enemy_num > 0)
+            SceneInfoManager.instance.enemy_num--;
+    }
+
+    public void returnHouse()
+    {
+        SceneInfoManager.instance.player_pos = player.transform.position;
+        SceneInfoManager.instance.select_map_name = "House1F";
+        SceneInfoManager.instance.select_stage_name = "Videl";
+        SceneInfoManager.instance.enemy_num = 0;
     }
 
     int upcount = 0;

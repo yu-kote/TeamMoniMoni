@@ -25,7 +25,15 @@ public class EventRepository : MonoBehaviour
     {
 
         //schoolEventSetup();
-        houseEventSetup();
+        if (SceneInfoManager.instance.select_stage_name == "Videl" ||
+            SceneInfoManager.instance.select_stage_name == null)
+        {
+            houseEventSetup();
+        }
+        if (SceneInfoManager.instance.select_stage_name == "School")
+        {
+            schoolEventSetup();
+        }
     }
 
     public void houseEventSetup()
