@@ -131,7 +131,7 @@ public class PlayerController : MonoBehaviour
     }
 
     [SerializeField]
-    MapChipController mapchip = null; // ブロックサイズを取得するため
+    MapChipController mapchip = null;
 
     /// <summary>
     /// playerの位置からcell番号(x, y)を返す
@@ -440,6 +440,5 @@ public class PlayerController : MonoBehaviour
     {
         have_item_name = item_name;
     }
-
 }
 

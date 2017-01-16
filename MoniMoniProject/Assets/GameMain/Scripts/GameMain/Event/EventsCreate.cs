@@ -38,6 +38,14 @@ public class EventsCreate : MonoBehaviour
     [SerializeField]
     EnemyManager enemymanager;
 
+    public void stateSave()
+    {
+        SceneInfoManager.instance.player_pos = transform.position;
+        SceneInfoManager.instance.select_map_name = chipcontroller.select_map_name;
+        SceneInfoManager.instance.select_stage_name = chipcontroller.select_stage_name;
+        SceneInfoManager.instance.enemy_num = enemymanager.enemy_num;
+    }
+
     int upcount = 0;
     // イベントが正常に動くかどうかのお試し関数２つ
     public int playerUpEvent()
@@ -162,6 +170,7 @@ public class EventsCreate : MonoBehaviour
             {
                 is_flush = true;
                 is_setup = false;
+                stagemoveeventcanvas.SetActive(false);
             }
             return 0;
         }
