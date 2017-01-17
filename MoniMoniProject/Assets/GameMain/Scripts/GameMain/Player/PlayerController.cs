@@ -387,20 +387,35 @@ public class PlayerController : MonoBehaviour
     string current_have_item_name = "";
     public bool is_use_item = false;
 
+    public string eventUseItem()
+    {
+        is_use_item = true;
+        string item_name_temp = have_item_name;
+        have_item_name = "Item";
+        return item_name_temp;
+    }
     public void useItem()
     {
         is_use_item = true;
+        if (not_put_item.IndexOf(have_item_name) != -1)
+        {
+            return;
+        }
+        have_item_name = "Item";
     }
+
 
     [SerializeField]
     Image item_image;
 
     Dictionary<string, Sprite> items = new Dictionary<string, Sprite>();
+    List<string> not_put_item = new List<string>();
 
     void itemsImageSetup()
     {
         Sprite[] loadsprite = Resources.LoadAll<Sprite>("Textures/Items");
 
+        //　空
         items.Add("Item", System.Array.Find<Sprite>(
                             loadsprite, (sprite) => sprite.name.Equals(
                                 "Item")));
@@ -417,6 +432,8 @@ public class PlayerController : MonoBehaviour
                                       loadsprite, (sprite) => sprite.name.Equals(
                                           "Easel")));
 
+        // 置けないアイテムを登録
+        not_put_item.Add("Boarderaser");
     }
 
     private IEnumerator itemCoroutine()
@@ -427,10 +444,10 @@ public class PlayerController : MonoBehaviour
             if (current_have_item_name != have_item_name)
             {
                 current_have_item_name = have_item_name;
-                if (have_item_name != null)
-                    item_image.sprite = items[have_item_name];
-                else
+                if (isHaveItem() == false)
                     item_image.sprite = items["Item"];
+                else
+                    item_image.sprite = items[have_item_name];
             }
             yield return null;
         }
@@ -438,7 +455,21 @@ public class PlayerController : MonoBehaviour
 
     public void setItem(string item_name)
     {
-        have_item_name = item_name;
+        if (isHaveItem() == false)
+            have_item_name = item_name;
+    }
+
+    /// <summary>
+    /// アイテムを持っているかどうか(持っていたらtrue)
+    /// </summary>
+    /// <returns></returns>
+    public bool isHaveItem()
+    {
+        if (have_item_name == null ||
+            have_item_name == "" ||
+            have_item_name == "Item")
+            return false;
+        return true;
     }
 }
 

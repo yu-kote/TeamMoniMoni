@@ -305,6 +305,7 @@ public class EventTalkManager : MonoBehaviour
                         else if (pickoutcommand == "end")
                             fontcolor = Color.black;
                     }
+                    continue;
                 }
 
                 if (chara_array[i] == '(')
@@ -335,9 +336,10 @@ public class EventTalkManager : MonoBehaviour
                 }
 
                 if (chara_array[i] == ' ' ||
+                    chara_array[i] == ' ' ||
+                    chara_array[i] == '\t' ||
                     chara_array[i] == '\r' ||
                     chara_array[i] == '\n') continue;
-
                 // 会話文に追加
                 talkCharInstance(chara_array[i], fontsize, fontcolor);
             }
@@ -535,7 +537,7 @@ public class EventTalkManager : MonoBehaviour
     AudioSource audiosource;
 
     [SerializeField]
-    GameObject talkmanager;
+    GameObject talkcanvas;
 
     void Start()
     {
@@ -543,9 +545,9 @@ public class EventTalkManager : MonoBehaviour
         sprites = Resources.LoadAll<Sprite>("Textures/Talk");
         audiosource = GetComponent<AudioSource>();
         //audiosource.clip = audioclip;
-        talkmanager.SetActive(true);
+        talkcanvas.SetActive(true);
         talkTextClear();
-        talkmanager.SetActive(false);
+        talkcanvas.SetActive(false);
     }
 
     void Update()

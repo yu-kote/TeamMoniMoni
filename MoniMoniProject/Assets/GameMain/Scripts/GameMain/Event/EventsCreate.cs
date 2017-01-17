@@ -37,6 +37,8 @@ public class EventsCreate : MonoBehaviour
 
     [SerializeField]
     EnemyManager enemymanager;
+    [SerializeField]
+    TrapController trapcontroller;
 
     public void stateSave()
     {
@@ -50,7 +52,7 @@ public class EventsCreate : MonoBehaviour
 
     public void returnHouse()
     {
-        SceneInfoManager.instance.player_pos = player.transform.position;
+        SceneInfoManager.instance.player_pos = new Vector3();
         SceneInfoManager.instance.select_map_name = "House1F";
         SceneInfoManager.instance.select_stage_name = "Videl";
         SceneInfoManager.instance.enemy_num = 0;
@@ -209,7 +211,7 @@ public class EventsCreate : MonoBehaviour
         return 2;
     }
 
-    public int schoolEvent02()//---------------------------------------------------------------------------------------
+    public int schoolEvent02()
     {
         if (is_setup == false)
         {
@@ -218,12 +220,29 @@ public class EventsCreate : MonoBehaviour
         }
         if (talkmanager.is_talknow)
             return 0;
+        if (talkmanager.selectbuttonnum == 1)
+            playercontroller.setItem("Boarderaser");
         is_setup = false;
         return 1;
     }
-    public int schoolEvent03()//------------------------------------------------------------------------------------------
+    public int schoolEvent03()
     {
-        return talkEvent("school_03");
+        if (is_setup == false)
+        {
+            talkmanager.startTalk("school_03");
+            is_setup = true;
+        }
+        if (talkmanager.is_talknow)
+            return 0;
+        if (talkmanager.selectbuttonnum == 1)
+        {
+            if (playercontroller.have_item_name == "Boarderaser")
+            {
+                trapcontroller.eventPutTrap("Boarderaser", 80, chipcontroller.eventselect_cell_x, chipcontroller.eventselect_cell_y);
+            }
+        }
+        is_setup = false;
+        return 1;
     }
     public int schoolEvent04()
     {
@@ -265,13 +284,15 @@ public class EventsCreate : MonoBehaviour
     {
         if (is_setup == false)
         {
-            talkmanager.startTalk("school_06-1");
+            talkmanager.startTalk("school_06");
             is_setup = true;
         }
         if (talkmanager.is_talknow)
             return 0;
+        if (talkmanager.selectbuttonnum == 1)
+            playercontroller.setItem("Easel");
         is_setup = false;
-        return 2;
+        return 1;
     }
     public int schoolEvent06_2()//---------------------------------------------------------------------------------------------
     {
@@ -502,24 +523,12 @@ public class EventsCreate : MonoBehaviour
     //  ヴィーデルの館イベント                                                                                                             //
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //int floor_layer = (int)LayerController.Layer.FLOOR;
-    int wall_layer = (int)LayerController.Layer.WALL;
-    int door_layer = (int)LayerController.Layer.DOOR;
-    int object_layer = (int)LayerController.Layer.OBJECT;
+    //int wall_layer = (int)LayerController.Layer.WALL;
+    //int door_layer = (int)LayerController.Layer.DOOR;
+    //int object_layer = (int)LayerController.Layer.OBJECT;
     int event_layer = (int)LayerController.Layer.EVENT;
 
-    /// <summary>
-    /// 引数のマスが壁、ドア、ものがない状態かどうかを返す関数
-    /// </summary>
-    bool isFloor(int x, int y)
-    {
-        if (chipcontroller.blockcomponents[wall_layer][y][x].number == -1 &&
-                        chipcontroller.blockcomponents[door_layer][y][x].number == -1 &&
-                        chipcontroller.blockcomponents[object_layer][y][x].number == -1)
-        {
-            return true;
-        }
-        return false;
-    }
+
 
     /// <summary>
     /// プレイヤーを引数で渡したイベントのマスに移動させる関数
@@ -535,28 +544,28 @@ public class EventsCreate : MonoBehaviour
                 {
                     if (x + 1 < chipcontroller.chip_num_x - 1 &&
                         chipcontroller.blockcomponents[event_layer][y][x + 1].number != gotoevent_ &&
-                        isFloor(x + 1, y))
+                        chipcontroller.isFloor(x + 1, y))
                     {
                         chipcontroller.playerSelectCellPop(x + 1, y);
                         return true;
                     }
                     if (x - 1 > 0 &&
                         chipcontroller.blockcomponents[event_layer][y][x - 1].number != gotoevent_ &&
-                        isFloor(x - 1, y))
+                        chipcontroller.isFloor(x - 1, y))
                     {
                         chipcontroller.playerSelectCellPop(x - 1, y);
                         return true;
                     }
                     if (y + 1 < chipcontroller.chip_num_y - 1 &&
                         chipcontroller.blockcomponents[event_layer][y + 1][x].number != gotoevent_ &&
-                        isFloor(x, y + 1))
+                        chipcontroller.isFloor(x, y + 1))
                     {
                         chipcontroller.playerSelectCellPop(x, y + 1);
                         return true;
                     }
                     if (y - 1 > 0 &&
                         chipcontroller.blockcomponents[event_layer][y - 1][x].number != gotoevent_ &&
-                        isFloor(x, y - 1))
+                        chipcontroller.isFloor(x, y - 1))
                     {
                         chipcontroller.playerSelectCellPop(x, y - 1);
                         return true;
