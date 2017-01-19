@@ -726,9 +726,10 @@ public class EnemyAI : MonoBehaviour
     {
         if (state != State.TRAP) return;
         trap_count++;
+        Debug.Log(trapstaging_start_pos + " " + transform.position);
         transform.position = trapstaging_start_pos;
         Vector3 randompos = Random.insideUnitCircle * 0.02f;
-        transform.Translate(randompos + new Vector3(0, 0, trapstaging_start_pos.z));
+        transform.Translate(randompos);
 
         if (trap_count > trap_active_time)
         {

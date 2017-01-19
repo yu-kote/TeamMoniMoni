@@ -76,7 +76,7 @@ public class TrapController : MonoBehaviour
 
                     var trap = Resources.Load<GameObject>("Prefabs/Trap");
                     trap.GetComponent<SpriteRenderer>().sprite = temptrap.sprite;
-                    trap.transform.position = mapchip.blocks[(int)LayerController.Layer.EVENT][y][x].transform.position;
+                    trap.transform.position = mapchip.blocks[(int)LayerController.Layer.EVENT][y][x].transform.position + new Vector3(0,0,-0.1f);
                     trap.transform.localScale = new Vector2(mapchip.chip_scale, mapchip.chip_scale);
 
                     trap.GetComponent<Trap>().trap_active_time = temptrap.trap_active_time;
@@ -142,9 +142,10 @@ public class TrapController : MonoBehaviour
     public void eventPutTrap(string trap_name_, int trap_active_time_, int x, int y)
     {
         var trap = Resources.Load<GameObject>("Prefabs/Trap");
-        trap.transform.position = mapchip.blocks[(int)LayerController.Layer.EVENT][y][x].transform.position;
+        trap.transform.position = mapchip.blocks[(int)LayerController.Layer.EVENT][y][x].transform.position + new Vector3(0, 0, -0.1f); ;
         trap.transform.localScale = new Vector2(mapchip.chip_scale, mapchip.chip_scale);
 
+        trap.GetComponent<SpriteRenderer>().sprite = null;
         trap.GetComponent<Trap>().trap_active_time = trap_active_time_;
         trap.GetComponent<Trap>().search_range = mapchip.chip_size;
 
