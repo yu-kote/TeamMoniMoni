@@ -81,6 +81,7 @@ public class TrapController : MonoBehaviour
 
                     trap.GetComponent<Trap>().trap_active_time = temptrap.trap_active_time;
                     trap.GetComponent<Trap>().search_range = mapchip.chip_size;
+                    trap.GetComponent<Trap>().direction = (Trap.TrapDirection)direction;
 
                     traps.Add((GameObject)Instantiate(trap, transform));
 

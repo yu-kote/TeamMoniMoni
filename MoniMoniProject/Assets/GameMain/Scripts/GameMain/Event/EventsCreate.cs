@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 /// <summary>
 /// イベントたちを作るクラス
@@ -58,6 +59,33 @@ public class EventsCreate : MonoBehaviour
         SceneInfoManager.instance.enemy_num = 0;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //  セットアップ                                                                                                                      //
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    void Start()
+    {
+        schoolBlackOutEventSetup();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //  アップデート                                                                                                                      //
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    void Update()
+    {
+        if (is_roommove)
+            if (staging.fadeInBlack())
+            {
+                is_roommove = false;
+            }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            eventrepository.houseEndEventSetup();
+            eventloader.eventRegister();
+        }
+        schoolBlackOutEvent();
+    }
+
     int upcount = 0;
     // イベントが正常に動くかどうかのお試し関数２つ
     public int playerUpEvent()
@@ -95,6 +123,7 @@ public class EventsCreate : MonoBehaviour
         return 1;
     }
 
+    // 手が出てくるイベントを作ったけど、使ってないs
     float player_z = -0.5f;
     int zombiecount = 0;
     Vector2 player_start_pos;
@@ -103,7 +132,6 @@ public class EventsCreate : MonoBehaviour
         if (is_setup)
         {
             talkmanager.startTalk("testevent");
-
             is_setup = false;
         }
 
@@ -160,6 +188,68 @@ public class EventsCreate : MonoBehaviour
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  学校イベント                                                                                                                      //
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // 停電イベントが起きたかどうか
+    bool is_blackoutevent = false;
+    bool is_blackout;
+    int blackoutstartcount;
+    int blackoutcount;
+
+    [SerializeField]
+    Image blackout_background;
+
+    void schoolBlackOutEventSetup()
+    {
+        blackoutstartcount = 4 * 60 * 60;
+        blackoutcount = 0;
+        is_blackout = false;
+    }
+    void schoolBlackOutEvent()
+    {
+        if (is_blackoutevent) return;
+
+        if (chipcontroller.select_stage_name == "School" &&
+            playercontroller.state == PlayerController.State.NORMAL)
+        {
+            blackoutcount++;
+            if (blackoutcount > blackoutstartcount &&
+                is_setup == false)
+            {
+                talkmanager.startTalk("school_10");
+                blackout_background.gameObject.SetActive(true);
+                is_blackout = true;
+                is_setup = true;
+            }
+        }
+        if (is_blackout)
+        {
+            if (talkmanager.talkmode == EventTalkManager.TalkMode.EVENT &&
+                talkmanager.event_call_count == 1)
+            {
+                SoundManager.Instance.volume.SE = 0.5f;
+                SoundManager.Instance.PlaySE(0);
+                talkmanager.talkmode = EventTalkManager.TalkMode.NORMAL;
+                return;
+            }
+            if (talkmanager.talkmode == EventTalkManager.TalkMode.EVENT &&
+                talkmanager.event_call_count == 2)
+            {
+                SoundManager.Instance.PlaySE(0);
+
+                blackout_background.gameObject.SetActive(false);
+                talkmanager.talkmode = EventTalkManager.TalkMode.NORMAL;
+            }
+        }
+        else
+            return;
+        playercontroller.state = PlayerController.State.TALK;
+        if (talkmanager.is_talknow)
+            return;
+        playercontroller.state = PlayerController.State.NORMAL;
+        is_setup = false;
+        is_blackoutevent = true;
+    }
+
 
     bool is_flush = false;
     public int schoolEvent01()
@@ -280,7 +370,7 @@ public class EventsCreate : MonoBehaviour
     {
         return talkEvent("school_05-3");
     }
-    public int schoolEvent06()//---------------------------------------------------------------------------------------------
+    public int schoolEvent06()
     {
         if (is_setup == false)
         {
@@ -322,12 +412,19 @@ public class EventsCreate : MonoBehaviour
         is_setup = false;
         return 1;
     }
-    public int schoolEvent08()//--------------------------------------------------------------------------------------
+    public int schoolEvent08()
     {
         if (is_setup == false)
         {
             talkmanager.startTalk("school_08");
             is_setup = true;
+        }
+        if (talkmanager.talkmode == EventTalkManager.TalkMode.EVENT &&
+                talkmanager.event_call_count == 1)
+        {
+            SoundManager.Instance.volume.SE = 0.5f;
+            SoundManager.Instance.PlaySE(2);
+            talkmanager.talkmode = EventTalkManager.TalkMode.NORMAL;
         }
         if (talkmanager.is_talknow)
             return 0;
@@ -362,24 +459,26 @@ public class EventsCreate : MonoBehaviour
         is_setup = false;
         return 1;
     }
-    public int schoolEvent10()//-----------------------------------------------------------------------------------
-    {
-        if (is_setup == false)
-        {
-            talkmanager.startTalk("school_10");
-            is_setup = true;
-        }
-        if (talkmanager.is_talknow)
-            return 0;
-        is_setup = false;
-        return 1;
-    }
     public int schoolEvent11()
     {
         if (is_setup == false)
         {
             talkmanager.startTalk("school_11");
             is_setup = true;
+        }
+        if (talkmanager.talkmode == EventTalkManager.TalkMode.EVENT &&
+                talkmanager.event_call_count == 1)
+        {
+            SoundManager.Instance.volume.SE = 0.5f;
+            SoundManager.Instance.PlaySE(1);
+            talkmanager.talkmode = EventTalkManager.TalkMode.NORMAL;
+        }
+        if (talkmanager.talkmode == EventTalkManager.TalkMode.EVENT &&
+                talkmanager.event_call_count == 2)
+        {
+            SoundManager.Instance.volume.SE = 0.5f;
+            SoundManager.Instance.PlaySE(1);
+            talkmanager.talkmode = EventTalkManager.TalkMode.NORMAL;
         }
         if (talkmanager.is_talknow)
             return 0;
@@ -598,21 +697,6 @@ public class EventsCreate : MonoBehaviour
                 return 1;
             }
         return 0;
-    }
-
-    void Update()
-    {
-        if (is_roommove)
-            if (staging.fadeInBlack())
-            {
-                is_roommove = false;
-            }
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            eventrepository.houseEndEventSetup();
-            eventloader.eventRegister();
-        }
     }
 
     public int houseEvent03()

@@ -11,7 +11,7 @@ public class Trap : MonoBehaviour
         UP, DOWN, RIGHT, LEFT
     }
 
-    TrapDirection direction = TrapDirection.DOWN;
+    public TrapDirection direction = TrapDirection.DOWN;
 
     Vector2 search_pos;
     public float search_range;
@@ -33,16 +33,16 @@ public class Trap : MonoBehaviour
         switch (direction)
         {
             case TrapDirection.UP:
-                search_pos = transform.position + new Vector3(0, -search_range, 0);
-                break;
-            case TrapDirection.DOWN:
                 search_pos = transform.position + new Vector3(0, search_range, 0);
                 break;
+            case TrapDirection.DOWN:
+                search_pos = transform.position + new Vector3(0, -search_range, 0);
+                break;
             case TrapDirection.RIGHT:
-                search_pos = transform.position + new Vector3(-search_range, 0, 0);
+                search_pos = transform.position + new Vector3(search_range, 0, 0);
                 break;
             case TrapDirection.LEFT:
-                search_pos = transform.position + new Vector3(search_range, 0, 0);
+                search_pos = transform.position + new Vector3(-search_range, 0, 0);
                 break;
         }
         is_trapstart = false;
@@ -57,6 +57,7 @@ public class Trap : MonoBehaviour
             if (trap_count > trap_delay_count)
             {
                 is_trapstart = false;
+                trap_count = 0;
             }
         }
         else

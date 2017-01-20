@@ -236,9 +236,37 @@ public class PlayerController : MonoBehaviour
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
+        //if (collision != null)
+        //{
+        //    if (state == State.SKILL)
+        //    {
+        //        skillHitWall();
+        //        collision = null;
+        //        switch (player_direction)
+        //        {
+        //            case PlayerDirection.UP:
+        //                transform.Translate(new Vector3(0, -0.1f, 0));
+        //                break;
+        //            case PlayerDirection.DOWN:
+        //                transform.Translate(new Vector3(0, 0.1f, 0));
+        //                break;
+        //            case PlayerDirection.RIGHT:
+        //                transform.Translate(new Vector3(-0.1f, 0, 0));
+        //                break;
+        //            case PlayerDirection.LEFT:
+        //                transform.Translate(new Vector3(0.1f, 0, 0));
+        //                break;
+        //        }
+        //    }
+        //}
+    }
+
+    public void OnCollisionStay2D(Collision2D collision)
+    {
         if (collision != null)
         {
-            if (state == State.SKILL)
+            if (state == State.SKILL &&
+                animstate != AnimationState.ATTACKSKILL_HIT)
             {
                 skillHitWall();
                 collision = null;
@@ -260,6 +288,8 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
+
 
     // ダッシュの速さ
     [SerializeField]
@@ -292,78 +322,100 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     void skillUpdate()
     {
-        if (state != State.SKILL) return;
-
-        if (animstate != currentanimstate)
+        if (state == State.SKILL)
         {
-            currentanimstate = animstate;
-            if (animstate == AnimationState.ATTACKSKILL_HIT)
+            if (animstate != currentanimstate)
             {
-                state = State.SKILL;
-                vec = Vector2.zero;
-                dashcount = 0;
-            }
-        }
-
-        if (animstate != AnimationState.ATTACKSKILL_HIT)
-        {
-            int skillendtime = dashstart_anim_frame + dash_anim_frame + dashend_anim_frame;
-            dashcount++;
-            if (dashcount > skillendtime)
-            {
-                state = State.NORMAL;
-                animstate = AnimationState.IDLE;
-                dashcount = 0;
-                vec = Vector2.zero;
-            }
-
-            // スキル発動アニメーション
-            if (dashcount < dashstart_anim_frame)
-            {
-                animstate = AnimationState.ATTACKSKILL_START;
-                return;
-            }
-
-            // スキル発動して移動するアニメーション
-            if (dashcount < dash_anim_frame + dashstart_anim_frame)
-            {
-                animstate = AnimationState.ATTACKSKILL;
-
-                switch (player_direction)
+                currentanimstate = animstate;
+                if (animstate == AnimationState.ATTACKSKILL_HIT)
                 {
-                    case PlayerDirection.UP:
-                        vec.y = speed;
-                        break;
-                    case PlayerDirection.DOWN:
-                        vec.y = -speed;
-                        break;
-                    case PlayerDirection.RIGHT:
-                        vec.x = speed;
-                        break;
-                    case PlayerDirection.LEFT:
-                        vec.x = -speed;
-                        break;
+                    state = State.SKILL;
+                    vec = Vector2.zero;
+                    dashcount = 0;
                 }
-                vec.x *= dashSpeed;
-                vec.y *= dashSpeed;
-
-                return;
             }
 
-            animstate = AnimationState.ATTACKSKILLEND;
-            return;
+            if (animstate != AnimationState.ATTACKSKILL_HIT)
+            {
+                int skillendtime = dashstart_anim_frame + dash_anim_frame + dashend_anim_frame;
+                dashcount++;
+                if (dashcount > skillendtime)
+                {
+                    state = State.NORMAL;
+                    animstate = AnimationState.IDLE;
+                    dashcount = 0;
+                    vec = Vector2.zero;
+                }
+
+                // スキル発動アニメーション
+                if (dashcount < dashstart_anim_frame)
+                {
+                    animstate = AnimationState.ATTACKSKILL_START;
+                    return;
+                }
+
+                // スキル発動して移動するアニメーション
+                if (dashcount < dash_anim_frame + dashstart_anim_frame)
+                {
+                    animstate = AnimationState.ATTACKSKILL;
+
+                    switch (player_direction)
+                    {
+                        case PlayerDirection.UP:
+                            vec.y = speed;
+                            break;
+                        case PlayerDirection.DOWN:
+                            vec.y = -speed;
+                            break;
+                        case PlayerDirection.RIGHT:
+                            vec.x = speed;
+                            break;
+                        case PlayerDirection.LEFT:
+                            vec.x = -speed;
+                            break;
+                    }
+                    vec.x *= dashSpeed;
+                    vec.y *= dashSpeed;
+
+                    return;
+                }
+
+                animstate = AnimationState.ATTACKSKILLEND;
+                return;
+            }
+            else
+            {
+                dashcount++;
+                if (dashcount > dashhit_frame)
+                {
+                    dashcount = 0;
+                    state = State.NORMAL;
+                    animstate = AnimationState.IDLE;
+                }
+                return;
+            }
         }
         else
         {
-            dashcount++;
-            if (dashcount > dashhit_frame)
+            if (animstate == AnimationState.ATTACKSKILL_START ||
+                animstate == AnimationState.ATTACKSKILL)
             {
+                animstate = AnimationState.ATTACKSKILLEND;
                 dashcount = 0;
-                state = State.NORMAL;
-                animstate = AnimationState.IDLE;
+                vec = Vector2.zero;
             }
-            return;
+            if (animstate == AnimationState.ATTACKSKILLEND)
+            {
+                dashcount++;
+                if (dashcount > dashend_anim_frame)
+                {
+                    animstate = AnimationState.IDLE;
+                    dashcount = 0;
+                    vec = Vector2.zero;
+                }
+            }
         }
+
     }
 
     /// <summary>

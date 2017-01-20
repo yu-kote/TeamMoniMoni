@@ -47,14 +47,14 @@ public class MapChipController : MonoBehaviour
             select_map_name = SceneInfoManager.instance.select_map_name;
         else
         {
-            select_map_name = "school1";
+            select_map_name = "House1F";
             SceneInfoManager.instance.select_map_name = select_map_name;
         }
         if (SceneInfoManager.instance.select_stage_name != null)
             select_stage_name = SceneInfoManager.instance.select_stage_name;
         else
         {
-            select_stage_name = "School";
+            select_stage_name = "Videl";
             SceneInfoManager.instance.select_stage_name = select_stage_name;
         }
         loadMap(select_stage_name, select_map_name);

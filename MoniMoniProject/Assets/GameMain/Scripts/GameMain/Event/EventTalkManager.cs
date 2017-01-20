@@ -92,8 +92,10 @@ public class EventTalkManager : MonoBehaviour
     {
         NORMAL,
         SELECT,
+        EVENT,
     }
     public TalkMode talkmode;
+    public int event_call_count;
 
     // テキストのパス
     string loadtextpath;
@@ -122,6 +124,7 @@ public class EventTalkManager : MonoBehaviour
             is_talknow = true;
             rootButtonSetup();
             current_read_line = 0;
+            event_call_count = 0;
 
             var eventtext = Resources.Load<TextAsset>("EventData/" + textname_);
             using (var sr = new StringReader(eventtext.text))
@@ -236,13 +239,11 @@ public class EventTalkManager : MonoBehaviour
 
             // 会話の種類 (普通の会話や選択肢など)
             if (command == "text")
-            {
                 talkmode = TalkMode.NORMAL;
-            }
             else if (command == "root")
-            {
                 talkmode = TalkMode.SELECT;
-            }
+            else if (command == "event")
+                talkmode = TalkMode.EVENT;
 
             if (talkmode == TalkMode.NORMAL)
             {
@@ -356,6 +357,12 @@ public class EventTalkManager : MonoBehaviour
                     is_selectbuttonpush = false;
                     continue;
                 }
+            }
+            if (talkmode == TalkMode.EVENT)
+            {
+                current_read_line = i;
+                event_call_count++;
+                return;
             }
         }
 

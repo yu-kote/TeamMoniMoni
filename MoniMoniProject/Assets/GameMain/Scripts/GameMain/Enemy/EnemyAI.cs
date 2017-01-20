@@ -27,15 +27,18 @@ public class EnemyAI : MonoBehaviour
 
     public enum State
     {
-        IDLE,                   // 移動しない状態
-        ROOT_NORMALMOVE,        // 移動している状態
-        ROOT_LOCATEPLAYERMOVE,  // プレイヤーを見つけて速度が上がった状態
-        ROOT_CHANGE,            // 通っていたルートを変更してる状態
-        TRAP,                   // トラップにかかった状態
+        IDLE,                       // 移動しない状態
+        ROOT_NORMALMOVE,            // 移動している状態
+        ROOT_LOCATEPLAYERBACKMOVE,  // 前方にプレイヤーを見つけて後ろに逃げる関数
+        ROOT_CHANGE,                // 通っていたルートを変更してる状態
+        TRAP,                       // トラップにかかった状態
     }
 
     public State state;
     State currentstate;
+
+    // 警戒モードかどうか
+    bool is_speedupmode;
 
     public MapChipController mapchip;
     public PlayerController player;
@@ -73,7 +76,9 @@ public class EnemyAI : MonoBehaviour
         public int type;
     }
     // 向き、y,x
+    List<List<List<PlayerSearchRect>>> front_search_rects;
     List<List<List<PlayerSearchRect>>> search_rects;
+
     Dictionary<EnemyDirection, Vector2> search_rect_enemypos;
     // 探す矩形の大きさ
     Vector2 search_range;
@@ -98,6 +103,8 @@ public class EnemyAI : MonoBehaviour
         rootsLoad();
         rootRandomDecide();
         playerSearchRectSetup();
+
+        is_speedupmode = false;
     }
 
 
@@ -107,7 +114,7 @@ public class EnemyAI : MonoBehaviour
         animationUpdate();
         rootmove();
         rootChangeMove();
-        lookForPlayer();
+        playerSearch();
         locatePlayerModeUpdate();
         trapUpdate();
     }
@@ -131,7 +138,7 @@ public class EnemyAI : MonoBehaviour
     private void rootmove()
     {
         if (state == State.ROOT_NORMALMOVE ||
-            state == State.ROOT_LOCATEPLAYERMOVE)
+            state == State.ROOT_LOCATEPLAYERBACKMOVE)
         {
             if (move_value >= mapchip.chip_size)
             {
@@ -156,7 +163,7 @@ public class EnemyAI : MonoBehaviour
             else
             {
                 float s;
-                if (state == State.ROOT_LOCATEPLAYERMOVE)
+                if (is_speedupmode)
                     s = up_speed;
                 else
                     s = speed;
@@ -341,6 +348,25 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    void directionBackChange()
+    {
+        switch (direction)
+        {
+            case EnemyDirection.UP:
+                direction = EnemyDirection.DOWN;
+                break;
+            case EnemyDirection.DOWN:
+                direction = EnemyDirection.UP;
+                break;
+            case EnemyDirection.RIGHT:
+                direction = EnemyDirection.LEFT;
+                break;
+            case EnemyDirection.LEFT:
+                direction = EnemyDirection.RIGHT;
+                break;
+        }
+    }
+
     /// <summary>
     /// もらった番号のブロックの中心位置に自分を移動させる
     /// </summary>
@@ -366,6 +392,8 @@ public class EnemyAI : MonoBehaviour
 
         return cell_i;
     }
+
+    // A*
 
     enum AstarState
     {
@@ -456,7 +484,11 @@ public class EnemyAI : MonoBehaviour
         }
         else if (astarstate == AstarState.WORK)
         {
-            float s = up_speed;
+            float s;
+            if (is_speedupmode)
+                s = up_speed;
+            else
+                s = speed;
             directionMove(s);
             move_value += s;
             if (move_value >= mapchip.chip_size)
@@ -515,7 +547,8 @@ public class EnemyAI : MonoBehaviour
             case State.ROOT_NORMALMOVE:
                 nextmovecell = nextMoveCell();
                 break;
-            case State.ROOT_LOCATEPLAYERMOVE:
+            case State.ROOT_LOCATEPLAYERBACKMOVE:
+                directionBackChange();
                 break;
             case State.ROOT_CHANGE:
                 astarSetup();
@@ -600,59 +633,58 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // プレイヤーを見つけたら警戒モードにする関数
-    void lookForPlayer()
-    {
-        if (state == State.ROOT_NORMALMOVE)
-            if (playerSearch())
-            {
-                state = State.ROOT_LOCATEPLAYERMOVE;
-            }
-    }
-
     /// <summary>
     /// プレイヤーを探索する範囲決め
     /// </summary>
     void playerSearchRectSetup()
     {
         search_range = new Vector2(mapchip.chip_size, mapchip.chip_size);
+        front_search_rects = new List<List<List<PlayerSearchRect>>>();
         search_rects = new List<List<List<PlayerSearchRect>>>();
         search_rect_enemypos = new Dictionary<EnemyDirection, Vector2>();
 
         for (int i = 0; i < (int)EnemyDirection.DIRECTION_MAX; i++)
         {
-            var readtext = Resources.Load<TextAsset>("EnemyAI/EnemyDirection" + i);
-            using (var sr = new StringReader(readtext.text))
+            front_search_rects.Add(createSearchRect("EnemyAI/EnemyFrontSearchRange" + i.ToString(), (EnemyDirection)i));
+            search_rects.Add(createSearchRect("EnemyAI/EnemySearchRange" + i.ToString(), (EnemyDirection)i));
+        }
+    }
+
+    List<List<PlayerSearchRect>> createSearchRect(string resources_readtext_, EnemyDirection direction)
+    {
+        var readtext = Resources.Load<TextAsset>(resources_readtext_);
+        using (var sr = new StringReader(readtext.text))
+        {
+            var tempsr = new StringReader(readtext.text);
+            int element_count = mapchip.stringToSpaceBoundLength(tempsr.ReadLine());
+
+            List<List<PlayerSearchRect>> temprect_xy = new List<List<PlayerSearchRect>>();
+            for (int y = 0; y < element_count; y++)
             {
-                var tempsr = new StringReader(readtext.text);
-                int element_count = mapchip.stringToSpaceBoundLength(tempsr.ReadLine());
-
-                List<List<PlayerSearchRect>> temprect_xy = new List<List<PlayerSearchRect>>();
-                for (int y = 0; y < element_count; y++)
+                string line = sr.ReadLine();
+                List<PlayerSearchRect> temprect_x = new List<PlayerSearchRect>();
+                for (int x = 0; x < element_count; x++)
                 {
-                    string line = sr.ReadLine();
-                    List<PlayerSearchRect> temprect_x = new List<PlayerSearchRect>();
-                    for (int x = 0; x < element_count; x++)
+                    PlayerSearchRect rect = new PlayerSearchRect();
+                    rect.pos = new Vector2(search_range.x * x, search_range.y * y);
+                    rect.type = mapchip.stringToInt(line, x);
+                    if (rect.type == 1)
                     {
-                        PlayerSearchRect rect = new PlayerSearchRect();
-                        rect.pos = new Vector2(search_range.x * x, search_range.y * y);
-                        rect.type = mapchip.stringToInt(line, x);
-                        if (rect.type == 1)
-                            search_rect_enemypos.Add((EnemyDirection)i, rect.pos);
-
-                        temprect_x.Add(rect);
+                        if (search_rect_enemypos.ContainsKey(direction) == false)
+                            search_rect_enemypos.Add(direction, rect.pos);
                     }
-                    temprect_xy.Add(temprect_x);
+                    temprect_x.Add(rect);
                 }
-                search_rects.Add(temprect_xy);
+                temprect_xy.Add(temprect_x);
             }
+            return temprect_xy;
         }
     }
 
     /// <summary>
-    /// プレイヤーを探す関数
+    /// プレイヤーを探して、いろいろする関数(あんまりきれいじゃない；；)
     /// </summary>
-    bool playerSearch()
+    void playerSearch()
     {
         int d = (int)direction;
         for (int y = 0; y < search_rects[d].Count; y++)
@@ -662,15 +694,30 @@ public class EnemyAI : MonoBehaviour
                 var search_pos = search_rects[d][y][x].pos +
                     new Vector2(transform.position.x, transform.position.y) -
                     search_rect_enemypos[direction];
-
-                if (mapchip.pointToCenterBoxRect(player.transform.position,
+                if (search_rects[d][y][x].type == 2 &&
+                    mapchip.pointToCenterBoxRect(player.transform.position,
                     search_pos, search_range))
                 {
-                    return true;
+                    is_speedupmode = true;
+                }
+                if (front_search_rects[d][y][x].type == 2 &&
+                mapchip.pointToCenterBoxRect(player.transform.position,
+                search_pos, search_range))
+                {
+                    if (state == State.ROOT_NORMALMOVE)
+                    {
+                        state = State.ROOT_LOCATEPLAYERBACKMOVE;
+                    }
+                    // 見つけてない状態で前方方向にプレイヤーを見つけた場合
+                    // ルートを変更する
+                    if (is_speedupmode == false &&
+                        state == State.ROOT_CHANGE)
+                    {
+                        astarSetup();
+                    }
                 }
             }
         }
-        return false;
     }
 
     /// <summary>
@@ -678,15 +725,16 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     void locatePlayerModeUpdate()
     {
-        if (state != State.ROOT_LOCATEPLAYERMOVE) return;
-
+        if (is_speedupmode) return;
         locateplayermode_count++;
         if (locateplayermode_count >= locateplayermode_maxcount)
         {
-            state = State.ROOT_NORMALMOVE;
+            is_speedupmode = false;
             locateplayermode_count = 0;
         }
     }
+
+    // 罠
 
     /// <summary>
     /// トラップを調べる
@@ -726,7 +774,6 @@ public class EnemyAI : MonoBehaviour
     {
         if (state != State.TRAP) return;
         trap_count++;
-        Debug.Log(trapstaging_start_pos + " " + transform.position);
         transform.position = trapstaging_start_pos;
         Vector3 randompos = Random.insideUnitCircle * 0.02f;
         transform.Translate(randompos);
