@@ -19,4 +19,13 @@ public class SceneInfoManager
     public int enemy_num = 3;
 
     public bool is_stagechangeevent = false;
+
+    public enum EndingStatus
+    {
+        DEFAULT,
+        SCHOOL_END,
+        HOSPITAL_END,
+    }
+
+    public EndingStatus endingstatus;
 }

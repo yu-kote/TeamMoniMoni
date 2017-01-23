@@ -20,7 +20,7 @@ public class TalkManager : MonoBehaviour
     Sprite roombackground;
 
     [SerializeField]
-    SpriteRenderer background;
+    Image background;
 
     [SerializeField]
     Button root1button;
@@ -75,9 +75,9 @@ public class TalkManager : MonoBehaviour
     [SerializeField]
     GameObject talktext;
     // 文字の基準位置
-    Vector2 talkstartpos;
+    Vector3 talkstartpos;
     // 文字の今の位置
-    Vector2 talkcurrentpos;
+    Vector3 talkcurrentpos;
 
     [SerializeField]
     int font_defaultsize;
@@ -429,9 +429,8 @@ public class TalkManager : MonoBehaviour
             talkcurrentpos.x += fontsize_ + 6;
         }
         drawchar = (GameObject)Instantiate(drawchar, talktext.transform);
-
-        drawchar.transform.position = talkcurrentpos;
-        drawchar.transform.localScale = new Vector3(1, 1, 1);
+        drawchar.transform.localPosition = talkcurrentpos;
+        drawchar.transform.localScale = new Vector3(1.3f, 1.3f, 1.3f);
     }
 
     /// <summary>
@@ -445,7 +444,8 @@ public class TalkManager : MonoBehaviour
                 Destroy(child.gameObject);
             }
 
-        talkstartpos = talktext.transform.position;
+        talktext.transform.localPosition = new Vector3(0, -230, 0);
+        talkstartpos = Vector3.zero;
         talkcurrentpos = talkstartpos;
         fontsize = font_defaultsize;
         fontcolor = Color.black;

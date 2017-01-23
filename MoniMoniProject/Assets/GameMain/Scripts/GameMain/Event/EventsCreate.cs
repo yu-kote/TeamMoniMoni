@@ -49,14 +49,23 @@ public class EventsCreate : MonoBehaviour
         SceneInfoManager.instance.enemy_num = enemymanager.enemy_num;
         if (SceneInfoManager.instance.enemy_num > 0)
             SceneInfoManager.instance.enemy_num--;
+        SceneInfoManager.instance.endingstatus = SceneInfoManager.EndingStatus.DEFAULT;
     }
 
-    public void returnHouse()
+    public void schoolEndReturnHouse()
     {
         SceneInfoManager.instance.player_pos = new Vector3();
         SceneInfoManager.instance.select_map_name = "House1F";
         SceneInfoManager.instance.select_stage_name = "Videl";
         SceneInfoManager.instance.enemy_num = 0;
+        SceneInfoManager.instance.endingstatus = SceneInfoManager.EndingStatus.SCHOOL_END;
+    }
+
+    void schoolEndSetup()
+    {
+        if (SceneInfoManager.instance.endingstatus != SceneInfoManager.EndingStatus.SCHOOL_END) return;
+        eventrepository.houseEndEventSetup();
+        eventloader.eventRegister();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,6 +75,7 @@ public class EventsCreate : MonoBehaviour
     void Start()
     {
         schoolBlackOutEventSetup();
+        schoolEndSetup();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -188,6 +198,8 @@ public class EventsCreate : MonoBehaviour
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  学校イベント                                                                                                                      //
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public bool is_schoolbossend = false;
 
     // 停電イベントが起きたかどうか
     bool is_blackoutevent = false;
@@ -1014,6 +1026,14 @@ public class EventsCreate : MonoBehaviour
     public int houseEvent49_2()
     {
         int rand = Random.Range(6, 11);
+        if (SceneInfoManager.instance.endingstatus == SceneInfoManager.EndingStatus.SCHOOL_END)
+        {
+            return talkEvent("");
+        }
+        if (talkmanager.selectbuttonnum == 1)
+        {
+            is_schoolbossend = true;
+        }
         return talkEvent("home_49-" + rand.ToString());
     }
 }

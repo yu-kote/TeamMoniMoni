@@ -447,8 +447,8 @@ public class EventTalkManager : MonoBehaviour
         }
         drawchar = (GameObject)Instantiate(drawchar, talktext.transform);
 
-        drawchar.transform.position = talkcurrentpos;
-        drawchar.transform.localScale = new Vector3(1, 1, 1);
+        drawchar.transform.localPosition = talkcurrentpos;
+        drawchar.transform.localScale = new Vector3(1.3f, 1.3f, 1.3f);
     }
 
     /// <summary>
@@ -461,7 +461,8 @@ public class EventTalkManager : MonoBehaviour
             {
                 Destroy(child.gameObject);
             }
-        talkstartpos = talktext.transform.position;
+        talktext.transform.localPosition = new Vector3(0, -240, 0);
+        talkstartpos = Vector3.zero;
         talkcurrentpos = talkstartpos;
         fontsize = font_defaultsize;
         fontcolor = Color.black;
