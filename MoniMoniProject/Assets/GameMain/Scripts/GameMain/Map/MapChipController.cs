@@ -43,6 +43,7 @@ public class MapChipController : MonoBehaviour
 
         //select_map_name = "school1";
         //select_stage_name = "School";
+
         if (SceneInfoManager.instance.select_map_name != null)
             select_map_name = SceneInfoManager.instance.select_map_name;
         else
@@ -58,7 +59,6 @@ public class MapChipController : MonoBehaviour
             SceneInfoManager.instance.select_stage_name = select_stage_name;
         }
         loadMap(select_stage_name, select_map_name);
-
         debugToEventRedColor();
     }
 
