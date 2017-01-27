@@ -18,6 +18,11 @@ public class EnemyAI : MonoBehaviour
     }
 
     public EnemyDirection direction = EnemyDirection.DOWN;
+    // 今の向き
+    public EnemyDirection current_direction = EnemyDirection.DOWN;
+    // 前向いていた方向
+    public EnemyDirection prev_direction = EnemyDirection.DOWN;
+
     public Vector2 vec;
     public float speed = 0;
     public float up_speed = 0;
@@ -159,6 +164,7 @@ public class EnemyAI : MonoBehaviour
                     }
                 }
                 directionChange(x, y, (int)nextmovecell.x, (int)nextmovecell.y);
+                directionSave();
             }
             else
             {
@@ -348,23 +354,36 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 前の方向を保存しておく
+    /// </summary>
+    void directionSave()
+    {
+        if (direction != current_direction)
+        {
+            prev_direction = current_direction;
+            current_direction = direction;
+        }
+    }
+
     void directionBackChange()
     {
-        switch (direction)
-        {
-            case EnemyDirection.UP:
-                direction = EnemyDirection.DOWN;
-                break;
-            case EnemyDirection.DOWN:
-                direction = EnemyDirection.UP;
-                break;
-            case EnemyDirection.RIGHT:
-                direction = EnemyDirection.LEFT;
-                break;
-            case EnemyDirection.LEFT:
-                direction = EnemyDirection.RIGHT;
-                break;
-        }
+        direction = prev_direction;
+        //switch (direction)
+        //{
+        //    case EnemyDirection.UP:
+        //        direction = EnemyDirection.DOWN;
+        //        break;
+        //    case EnemyDirection.DOWN:
+        //        direction = EnemyDirection.UP;
+        //        break;
+        //    case EnemyDirection.RIGHT:
+        //        direction = EnemyDirection.LEFT;
+        //        break;
+        //    case EnemyDirection.LEFT:
+        //        direction = EnemyDirection.RIGHT;
+        //        break;
+        //}
     }
 
     /// <summary>
@@ -539,16 +558,19 @@ public class EnemyAI : MonoBehaviour
     void stateChangeUpdate()
     {
         if (currentstate == state) return;
-        currentstate = state;
         switch (state)
         {
             case State.IDLE:
                 break;
             case State.ROOT_NORMALMOVE:
                 nextmovecell = nextMoveCell();
+                if (currentstate == State.ROOT_LOCATEPLAYERBACKMOVE)
+                    directionBackChange();
                 break;
             case State.ROOT_LOCATEPLAYERBACKMOVE:
-                directionBackChange();
+                nextmovecell = nextMoveCell();
+                if (currentstate == State.ROOT_NORMALMOVE)
+                    directionBackChange();
                 break;
             case State.ROOT_CHANGE:
                 astarSetup();
@@ -557,6 +579,7 @@ public class EnemyAI : MonoBehaviour
                 trapSetup();
                 break;
         }
+        currentstate = state;
     }
 
     /// <summary>
@@ -705,9 +728,9 @@ public class EnemyAI : MonoBehaviour
                 search_pos, search_range))
                 {
                     if (state == State.ROOT_NORMALMOVE)
-                    {
                         state = State.ROOT_LOCATEPLAYERBACKMOVE;
-                    }
+                    else if (state == State.ROOT_LOCATEPLAYERBACKMOVE)
+                        state = State.ROOT_NORMALMOVE;
                     // 見つけてない状態で前方方向にプレイヤーを見つけた場合
                     // ルートを変更する
                     if (is_speedupmode == false &&

@@ -14,7 +14,7 @@
 
 
 #ナイトメア#[chara'nightmare怒']
-[size'start']失礼ね！[size'end'][n]
+[size'start'] 失礼ね！[size'end'] [n]
 
 
 #ナイトメア#[chara'nightmare笑']
@@ -26,8 +26,6 @@
 あなた達も悪夢の中で[p]
 永遠にさまよえばいいわ！[n]
 
-
-[event]
 //フラッシュ（白）
 //背景をナイトメア部屋から
 //ナイトメア部屋のドアの前（2Dマップ上）へ。

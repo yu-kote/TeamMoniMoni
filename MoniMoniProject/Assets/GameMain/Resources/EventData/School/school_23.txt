@@ -41,7 +41,7 @@
 [text]
 
 #ムー#[chara'mooキリッ']
-[size'start']ブス。[size'end'][n]
+[size'start']ブス。[size'end'] [n]
 
 #ナイトメア#[chara'nightmareつまらなそう']
 ふん。なにそれ、ひがみ？[p]
@@ -61,7 +61,7 @@
 //フラッシュ後は背景を悪夢の外に変化。
 [text]
 
-#ムー＆ヴィーバ#[chara'moo驚'][chara'vi-ba驚']
+#ムー＆ヴィーバ#[chara'moo驚'] [chara'vi-ba驚']
 うわっ!![n]
 
 #ヴィーバ#[chara'vi-ba苦']
@@ -79,7 +79,7 @@
 (2){//右足を罵った場合
 [text]
 #ムー#[chara'mooキリッ']
-[size'start'][red'start']醜い右足。[size'end'][red'end']
+[size'start'] [red'start']醜い右足。[size'end'] [red'end']
 [n]
 
 #ナイトメア#[chara'nightmare驚']
@@ -92,16 +92,16 @@
 いやっ…やだ……！[n]
 
 #ムー#[chara'mooキリッ']
-[size'start']馬の足！！[size'end'][n]
+[size'start']馬の足！！[size'end'] [n]
 
 #ナイトメア#[chara'nightmare叫']
-[size'start'][red'start']いやぁあああああ！！[size'end'][red'end'][n]
+[size'start'] [red'start']いやぁあああああ！！[size'end'] [red'end'] [n]
 
 [event]
 //白フラッシュ
 
 [text]
-#ムー＆ヴィーバ#[chara'moo驚'][chara'vi-ba驚']
+#ムー＆ヴィーバ#[chara'moo驚'] [chara'vi-ba驚']
 ！！[n]
 
 #ヴィーバ#[chara'vi-ba焦']
@@ -128,7 +128,7 @@
 (3){//性格を選択
 [text]
 #ムー#[chara'mooキリッ']
-[size'start']偏屈物。意地悪。馬鹿。[size'end'][n]
+[size'start']偏屈物。意地悪。馬鹿。[size'end'] [n]
 
 #ナイトメア#[chara'nightmareつまらなそう']
 だって、悪魔ですもの。[p]
@@ -148,7 +148,7 @@
 //白フラッシュ
 
 [text]
-#ムー＆ヴィーバ#[chara'moo驚'][chara'vi-ba驚']
+#ムー＆ヴィーバ#[chara'moo驚'] [chara'vi-ba驚']
 ！[n]
 
 #ヴィーバ#[chara'vi-ba怒']

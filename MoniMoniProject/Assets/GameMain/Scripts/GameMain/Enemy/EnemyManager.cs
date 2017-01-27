@@ -53,11 +53,11 @@ public class EnemyManager : MonoBehaviour
         {
             for (int x = 0; x < mapchip.chip_num_x; x++)
             {
-                if (mapchip.blockcomponents[(int)LayerController.Layer.EVENT][y][x].number == 22)
+                if (mapchip.blockcomponents[(int)LayerController.Layer.EVENT] [y] [x].number == 22)
                 {
                     nightmare.transform.position =
-                    new Vector3(mapchip.blocks[(int)LayerController.Layer.FLOOR][y][x].transform.position.x,
-                    mapchip.blocks[(int)LayerController.Layer.FLOOR][y][x].transform.position.y,
+                    new Vector3(mapchip.blocks[(int)LayerController.Layer.FLOOR] [y] [x].transform.position.x,
+                    mapchip.blocks[(int)LayerController.Layer.FLOOR] [y] [x].transform.position.y,
                     nightmare.transform.position.z);
                     break;
                 }
