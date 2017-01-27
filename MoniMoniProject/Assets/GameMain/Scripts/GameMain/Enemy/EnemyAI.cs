@@ -10,6 +10,9 @@ public class EnemyAI : MonoBehaviour
     // エネミーの番号
     public int enemynumber = 0;
 
+    // エネミーが動けるかどうか
+    public bool can_move;
+
     Animator anim;
     // エネミーの向き
     public enum EnemyDirection
@@ -115,6 +118,7 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
+        if (can_move == false) return;
         stateChangeUpdate();
         animationUpdate();
         rootmove();

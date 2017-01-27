@@ -13,7 +13,7 @@
 …変な顔。[n]
 
 
-#ナイトメア#[chara'nightmare怒']
+#ナイトメア#[chara'nightmare叫']
 [size'start'] 失礼ね！[size'end'] [n]
 
 

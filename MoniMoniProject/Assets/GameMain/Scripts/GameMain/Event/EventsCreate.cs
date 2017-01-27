@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// イベントたちを作るクラス
@@ -41,41 +42,87 @@ public class EventsCreate : MonoBehaviour
     [SerializeField]
     TrapController trapcontroller;
 
+    [SerializeField]
+    GameObject viba_button;
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //  シーン切り替えするときに呼ばれる関数                                                                                               //
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // ドリーマーを捕まえるときに状態を保存する関数
     public void stateSave()
     {
+        SoundManager.Instance.StopBGM();
         SceneInfoManager.instance.player_pos = player.transform.position;
+        SceneInfoManager.instance.have_item_name = playercontroller.have_item_name;
+
         SceneInfoManager.instance.select_map_name = chipcontroller.select_map_name;
         SceneInfoManager.instance.select_stage_name = chipcontroller.select_stage_name;
-        SceneInfoManager.instance.enemy_num = enemymanager.enemy_num;
-        if (SceneInfoManager.instance.enemy_num > 0)
-            SceneInfoManager.instance.enemy_num--;
-        SceneInfoManager.instance.endingstatus = SceneInfoManager.EndingStatus.DEFAULT;
+        if (chipcontroller.select_stage_name == "School")
+        {
+            SceneInfoManager.instance.school_enemy_num = enemymanager.enemy_num;
+            if (SceneInfoManager.instance.school_enemy_num > 0)
+                SceneInfoManager.instance.school_enemy_num--;
+        }
+        else if (chipcontroller.select_stage_name == "Hospital")
+        {
+            SceneInfoManager.instance.hospital_enemy_num = enemymanager.enemy_num;
+            if (SceneInfoManager.instance.hospital_enemy_num > 0)
+                SceneInfoManager.instance.hospital_enemy_num--;
+        }
+
     }
 
+    // 学校のボス倒して帰ってくる関数
     public void schoolEndReturnHouse()
     {
+        SoundManager.Instance.StopBGM();
         SceneInfoManager.instance.player_pos = new Vector3();
         SceneInfoManager.instance.select_map_name = "House1F";
         SceneInfoManager.instance.select_stage_name = "Videl";
-        SceneInfoManager.instance.enemy_num = 0;
-        SceneInfoManager.instance.endingstatus = SceneInfoManager.EndingStatus.SCHOOL_END;
+        SceneInfoManager.instance.is_shoolclear = true;
+
+        //// ここをのちに病院の条件も追加する
+        //if (SceneInfoManager.instance.school_enemy_num <= 0)
+        ////&&SceneInfoManager.instance.hospital_enemy_num <= 0) 
+        //{
+        //    SceneInfoManager.instance.endingstatus = SceneInfoManager.EndingStatus.GOOD_END;
+        //}
+        //else
+        //{
+        //    SceneInfoManager.instance.endingstatus = SceneInfoManager.EndingStatus.HUNGRY_END;
+        //}
     }
 
-    void schoolEndSetup()
+    public void tutorialEndScenarioChange()
     {
-        if (SceneInfoManager.instance.endingstatus != SceneInfoManager.EndingStatus.SCHOOL_END) return;
-        eventrepository.houseEndEventSetup();
-        eventloader.eventRegister();
+        SoundManager.Instance.StopBGM();
+        SceneInfoManager.instance.select_map_name = "House1FCenter";
+        SceneInfoManager.instance.select_stage_name = "Videl";
+        SceneInfoManager.instance.is_tutorial = false;
+        SceneInfoManager.instance.is_tutorial_end = true;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  セットアップ                                                                                                                      //
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    void tutorialReturnSetup()
+    {
+        if (SceneInfoManager.instance.is_tutorial_end)
+        {
+            tutorialReturnToRoom();
+            SceneInfoManager.instance.is_tutorial_end = false;
+        }
+        if (SceneInfoManager.instance.is_tutorial == false)
+            viba_button.SetActive(true);
+
+    }
     void Start()
     {
+        SceneInfoManager.instance.is_scenechange = false;
+        tutorialReturnSetup();
         schoolBlackOutEventSetup();
-        schoolEndSetup();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,17 +130,28 @@ public class EventsCreate : MonoBehaviour
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void Update()
     {
-        if (is_roommove)
-            if (staging.fadeInBlack())
-            {
-                is_roommove = false;
-            }
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            eventrepository.houseEndEventSetup();
-            eventloader.eventRegister();
-        }
+        bgmUpdate();
+        roomMoveUpdate();
         schoolBlackOutEvent();
+    }
+
+    void bgmUpdate()
+    {
+
+        if (chipcontroller.select_stage_name == "Videl")
+        {
+            SoundManager.Instance.volume.BGM = 0.2f;
+            SoundManager.Instance.PlayBGM(0);
+        }
+        if (chipcontroller.select_stage_name == "School")
+        {
+            SoundManager.Instance.volume.BGM = 0.2f;
+            SoundManager.Instance.PlayBGM(1);
+        }
+        if (SceneInfoManager.instance.is_scenechange)
+        {
+            SoundManager.Instance.StopBGM();
+        }
     }
 
     int upcount = 0;
@@ -620,9 +678,15 @@ public class EventsCreate : MonoBehaviour
                     talkmanager.startTalk("School/school_23");
                     is_setup = true;
                 }
+                if (talkmanager.talkmode == EventTalkManager.TalkMode.EVENT &&
+                     talkmanager.event_call_count >= 1)
+                {
+                    talkmanager.talkmode = EventTalkManager.TalkMode.NORMAL;
+                }
                 if (talkmanager.is_talknow)
                     return 0;
-                enemymanager.nightmareRePop(talkmanager.selectbuttonnum);
+                if (talkmanager.selectbuttonnum == 2)
+                    enemymanager.nightmareRePop(talkmanager.selectbuttonnum);
                 is_setup = false;
                 staging.flushcount = 0;
                 return 1;
@@ -647,6 +711,19 @@ public class EventsCreate : MonoBehaviour
     int event_layer = (int)LayerController.Layer.EVENT;
 
 
+    void roomMoveUpdate()
+    {
+        if (is_roommove)
+            if (staging.fadeInBlack())
+            {
+                is_roommove = false;
+            }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            eventrepository.houseEndEventSetup();
+            eventloader.eventRegister();
+        }
+    }
 
     /// <summary>
     /// プレイヤーを引数で渡したイベントのマスに移動させる関数
@@ -695,8 +772,28 @@ public class EventsCreate : MonoBehaviour
         return false;
     }
 
-    public int houseEvent02()//-------------------------------------------------------------------------------
+    public int houseEvent02()
     {
+        if (SceneInfoManager.instance.endingstatus != SceneInfoManager.EndingStatus.NOT_END)
+        {
+            if (is_setup == false)
+            {
+                talkmanager.startTalk("Home/homeExit");
+                is_setup = true;
+            }
+            if (talkmanager.is_talknow)
+                return 0;
+            if (talkmanager.selectbuttonnum == 1)
+            {
+                if (staging.fadeOutBlack())
+                {
+                    SceneManager.LoadScene("Ending");
+                    is_setup = false;
+                    return 1;
+                }
+                return 0;
+            }
+        }
         return talkEvent("Home/home_2");
     }
 
@@ -717,9 +814,18 @@ public class EventsCreate : MonoBehaviour
             }
         return 0;
     }
+    // チュートリアルシナリオから帰ってきたときに呼ばれる関数
+    void tutorialReturnToRoom()
+    {
+        chipcontroller.mapChange("House1FCenter", "Videl");
+        eventloader.eventRegister();
+        roomMoveToPlayer(7);
+        is_roommove = true;
+    }
 
     public int houseEvent03()
     {
+        if (SceneInfoManager.instance.is_tutorial == true) return 1;
         return moveToRoom("House1FLeft", 3);
     }
     public int houseEvent04()
@@ -728,14 +834,29 @@ public class EventsCreate : MonoBehaviour
     }
     public int houseEvent05()
     {
+        if (SceneInfoManager.instance.is_tutorial == true) return 1;
         return moveToRoom("House1FRight", 5);
     }
     public int houseEvent06()
     {
         return moveToRoom("House1F", 4);
     }
+    /// <summary>
+    /// 一番最初に書斎に入る時にチュートリアルを終了する
+    /// </summary>
     public int houseEvent07()
     {
+        if (SceneInfoManager.instance.is_tutorial)
+        {
+            int event_state = moveToRoom("House1FCenter", 7);
+            if (event_state == 1)
+            {
+                tutorialEndScenarioChange();
+                SceneManager.LoadScene("Scenario");
+                return 1;
+            }
+            return event_state;
+        }
         return moveToRoom("House1FCenter", 7);
     }
     public int houseEvent08()
@@ -1027,20 +1148,64 @@ public class EventsCreate : MonoBehaviour
 
     public int houseEvent49()
     {
+        if (SceneInfoManager.instance.is_shoolclear)
+        {
+            if (is_setup == false)
+            {
+                talkmanager.startTalk("Home/ed1Nearness");
+                is_setup = true;
+            }
+            if (talkmanager.talkmode == EventTalkManager.TalkMode.EVENT &&
+                     talkmanager.event_call_count == 1)
+            {
+                SoundManager.Instance.volume.SE = 0.5f;
+                SoundManager.Instance.PlaySE(2);
+                talkmanager.talkmode = EventTalkManager.TalkMode.NORMAL;
+            }
+            if (talkmanager.is_talknow)
+                return 0;
+            if (talkmanager.selectbuttonnum == 1)
+            {
+                endingPartingpoint();
+                endEventSetup();
+                return 1;
+            }
+            is_setup = false;
+            return 1;
+        }
         int rand = Random.Range(1, 6);
         return talkEvent("Home/home_49-" + rand.ToString());
     }
     public int houseEvent49_2()
     {
-        int rand = Random.Range(6, 11);
-        if (SceneInfoManager.instance.endingstatus == SceneInfoManager.EndingStatus.SCHOOL_END)
-        {
-            return talkEvent("");
-        }
+        int rand = Random.Range(7, 11);
         if (talkmanager.selectbuttonnum == 1)
         {
             is_schoolbossend = true;
         }
         return talkEvent("Home/home_49-" + rand.ToString());
+    }
+
+    /// <summary>
+    /// ナイトメアを渡した後のイベントに変更する関数
+    /// </summary>
+    void endEventSetup()
+    {
+        eventrepository.houseEndEventSetup();
+        eventloader.eventRegister();
+    }
+    /// <summary>
+    /// どちらのエンディングか判定する関数
+    /// </summary>
+    void endingPartingpoint()
+    {
+        if (SceneInfoManager.instance.school_enemy_num <= 0)
+        {
+            SceneInfoManager.instance.endingstatus = SceneInfoManager.EndingStatus.GOOD_END;
+        }
+        else if (SceneInfoManager.instance.school_enemy_num >= 1)
+        {
+            SceneInfoManager.instance.endingstatus = SceneInfoManager.EndingStatus.HUNGRY_END;
+        }
     }
 }

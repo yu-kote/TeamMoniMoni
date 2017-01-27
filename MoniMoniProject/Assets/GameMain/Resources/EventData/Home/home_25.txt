@@ -13,7 +13,7 @@
 #ムー#[chara'moo普通']
 えっ…!?[n]
 
-#ムー#[chara'moo']
+#ムー#[chara'moo驚']
 …人の日記を読むの？…勝手に？[n]
 
 #ヴィーバ#[chara'vi-ba普通']
