@@ -69,11 +69,11 @@ public class MapChipController : MonoBehaviour
         {
             for (int x = 0; x < chip_num_x; x++)
             {
-                if (blockcomponents[eventlayer] [y] [x].number != -1)
+                if (blockcomponents[eventlayer][y][x].number != -1)
                 {
                     for (int i = 0; i < (int)LayerController.Layer.LAYER_MAX; i++)
                     {
-                        blocks[i] [y] [x].GetComponent<SpriteRenderer>().material.color = Color.red;
+                        blocks[i][y][x].GetComponent<SpriteRenderer>().material.color = Color.red;
                     }
                 }
             }
@@ -101,10 +101,10 @@ public class MapChipController : MonoBehaviour
         {
             for (int x = 0; x < chip_num_x; x++)
             {
-                var block = blockcomponents[(int)LayerController.Layer.EVENT] [y] [x];
+                var block = blockcomponents[(int)LayerController.Layer.EVENT][y][x];
                 if (block.number == 0)
                 {
-                    var pop = blocks[(int)LayerController.Layer.EVENT] [y] [x].transform.position;
+                    var pop = blocks[(int)LayerController.Layer.EVENT][y][x].transform.position;
                     pop.z += -0.5f;
                     player.transform.position = pop;
                 }
@@ -121,7 +121,7 @@ public class MapChipController : MonoBehaviour
     /// </summary>
     public void playerSelectCellPop(int x, int y)
     {
-        var pop = blocks[(int)LayerController.Layer.FLOOR] [y] [x].transform.position;
+        var pop = blocks[(int)LayerController.Layer.FLOOR][y][x].transform.position;
         pop.z += -0.5f;
         player.transform.position = pop;
         if (SceneInfoManager.instance.player_pos != Vector3.zero)
@@ -196,7 +196,7 @@ public class MapChipController : MonoBehaviour
             {
                 if (player_controller.state == PlayerController.State.EVENT)
                 {
-                    var eventblock = blockcomponents[eventlayer] [select_cell_y] [select_cell_x];
+                    var eventblock = blockcomponents[eventlayer][select_cell_y][select_cell_x];
                     if (eventblock.number != -1)
                     {
                         if (checkEventExists(select_cell_x, select_cell_y))
@@ -207,19 +207,21 @@ public class MapChipController : MonoBehaviour
                         }
                     }
                 }
-
-                var block = blockcomponents[eventlayer]
+                if (isOutOfRange(player_cell_x, player_cell_y) == false)
+                {
+                    var block = blockcomponents[eventlayer]
                     [player_cell_y]
                     [player_cell_x];
 
-                if (block.number != -1)
-                {
-                    if (overLapEventExists(player_cell_x, player_cell_y))
+                    if (block.number != -1)
                     {
-                        eventplayer_cell_x = player_cell_x;
-                        eventplayer_cell_y = player_cell_y;
-                        is_eventstart = block.event_manager.eventExecution();
-                        player_controller.state = PlayerController.State.EVENT;
+                        if (overLapEventExists(player_cell_x, player_cell_y))
+                        {
+                            eventplayer_cell_x = player_cell_x;
+                            eventplayer_cell_y = player_cell_y;
+                            is_eventstart = block.event_manager.eventExecution();
+                            player_controller.state = PlayerController.State.EVENT;
+                        }
                     }
                 }
             }
@@ -228,7 +230,7 @@ public class MapChipController : MonoBehaviour
             // イベントが原因でプレイヤーの位置がずれたとき用に処理を分ける必要があったため。
             if (is_eventstart)
             {
-                var eventblock = blockcomponents[eventlayer] [eventselect_cell_y] [eventselect_cell_x];
+                var eventblock = blockcomponents[eventlayer][eventselect_cell_y][eventselect_cell_x];
                 if (eventblock.number != -1)
                 {
                     if (checkEventExists(eventselect_cell_x, eventselect_cell_y))
@@ -267,7 +269,7 @@ public class MapChipController : MonoBehaviour
     public bool checkEventExists()
     {
         if (isOutOfRange(select_cell_x, select_cell_y)) return false;
-        var eventmanager = blockcomponents[eventlayer] [select_cell_y] [select_cell_x]
+        var eventmanager = blockcomponents[eventlayer][select_cell_y][select_cell_x]
                 .event_manager;
         if (eventmanager.eventExists(eventmanager.event_stage) == false)
             return false;
@@ -282,7 +284,7 @@ public class MapChipController : MonoBehaviour
     public bool checkEventExists(int cellx_, int celly_)
     {
         if (isOutOfRange(cellx_, celly_)) return false;
-        var eventmanager = blockcomponents[eventlayer] [celly_] [cellx_]
+        var eventmanager = blockcomponents[eventlayer][celly_][cellx_]
                 .event_manager;
         if (eventmanager.eventExists(eventmanager.event_stage) == false)
             return false;
@@ -300,7 +302,7 @@ public class MapChipController : MonoBehaviour
     public bool overLapEventExists(int cellx_, int celly_)
     {
         if (isOutOfRange(cellx_, celly_)) return false;
-        var eventmanager = blockcomponents[eventlayer] [celly_] [cellx_]
+        var eventmanager = blockcomponents[eventlayer][celly_][cellx_]
         .event_manager;
         if (eventmanager.eventExists(eventmanager.event_stage) == false)
             return false;
@@ -321,11 +323,11 @@ public class MapChipController : MonoBehaviour
         if (player_controller.state == PlayerController.State.EVENT ||
             player_controller.state == PlayerController.State.TALK)
         {
-            var is_completed = blockcomponents[eventlayer] [eventselect_cell_y] [eventselect_cell_x]
+            var is_completed = blockcomponents[eventlayer][eventselect_cell_y][eventselect_cell_x]
                 .event_manager.IsEventCompleted;
             if (is_completed)
             {
-                blockcomponents[eventlayer] [eventselect_cell_y] [eventselect_cell_x]
+                blockcomponents[eventlayer][eventselect_cell_y][eventselect_cell_x]
                 .event_manager.IsEventCompleted = false;
                 return true;
             }
@@ -333,11 +335,11 @@ public class MapChipController : MonoBehaviour
         if (player_controller.state == PlayerController.State.EVENT ||
             player_controller.state == PlayerController.State.TALK)
         {
-            var is_completed = blockcomponents[eventlayer] [eventplayer_cell_y] [eventplayer_cell_x]
+            var is_completed = blockcomponents[eventlayer][eventplayer_cell_y][eventplayer_cell_x]
               .event_manager.IsEventCompleted;
             if (is_completed)
             {
-                blockcomponents[eventlayer] [eventplayer_cell_y] [eventplayer_cell_x]
+                blockcomponents[eventlayer][eventplayer_cell_y][eventplayer_cell_x]
                 .event_manager.IsEventCompleted = false;
                 return true;
             }
@@ -392,13 +394,13 @@ public class MapChipController : MonoBehaviour
             {
                 for (int x = 0; x < chip_num_x; x++)
                 {
-                    if (pointToCenterBoxRect(blocks[i] [y] [x].transform.position, camerapos, camerasize))
+                    if (pointToCenterBoxRect(blocks[i][y][x].transform.position, camerapos, camerasize))
                     {
-                        blocks[i] [y] [x].SetActive(true);
+                        blocks[i][y][x].SetActive(true);
                     }
                     else
                     {
-                        blocks[i] [y] [x].SetActive(false);
+                        blocks[i][y][x].SetActive(false);
                     }
                 }
             }
@@ -569,7 +571,7 @@ public class MapChipController : MonoBehaviour
                 List<Block> commponent_block_temp_x = new List<Block>();
                 for (int x = 0; x < chip_num_x; x++)
                 {
-                    commponent_block_temp_x.Add(blocks[i] [y] [x].GetComponent<Block>());
+                    commponent_block_temp_x.Add(blocks[i][y][x].GetComponent<Block>());
                 }
                 component_block_temp_xy.Add(commponent_block_temp_x);
             }
@@ -588,8 +590,8 @@ public class MapChipController : MonoBehaviour
             {
                 for (int x = 0; x < chip_num_x; x++)
                 {
-                    Destroy(blocks[i] [y] [x]);
-                    Destroy(blockcomponents[i] [y] [x]);
+                    Destroy(blocks[i][y][x]);
+                    Destroy(blockcomponents[i][y][x]);
                 }
             }
         }
@@ -599,9 +601,9 @@ public class MapChipController : MonoBehaviour
 
     public bool isFloor(int x, int y)
     {
-        if (blockcomponents[(int)LayerController.Layer.WALL] [y] [x].number == -1 &&
-                blockcomponents[(int)LayerController.Layer.DOOR] [y] [x].number == -1 &&
-                blockcomponents[(int)LayerController.Layer.OBJECT] [y] [x].number == -1)
+        if (blockcomponents[(int)LayerController.Layer.WALL][y][x].number == -1 &&
+                blockcomponents[(int)LayerController.Layer.DOOR][y][x].number == -1 &&
+                blockcomponents[(int)LayerController.Layer.OBJECT][y][x].number == -1)
         {
             return true;
         }
