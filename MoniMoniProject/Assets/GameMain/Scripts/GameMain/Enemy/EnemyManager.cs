@@ -90,7 +90,6 @@ public class EnemyManager : MonoBehaviour
             nightmare.is_move = true;
             nightmare.prev_cell = nightmare.retCell();
             enemy_num = 0;
-            SceneInfoManager.instance.school_enemy_num = 0;
         }
     }
 

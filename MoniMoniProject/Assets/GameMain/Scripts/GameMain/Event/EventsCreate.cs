@@ -787,6 +787,7 @@ public class EventsCreate : MonoBehaviour
             {
                 if (staging.fadeOutBlack())
                 {
+                    SoundManager.Instance.StopBGM();
                     SceneManager.LoadScene("Ending");
                     is_setup = false;
                     return 1;
@@ -1145,7 +1146,6 @@ public class EventsCreate : MonoBehaviour
         return talkEvent("Home/home_48-2");
     }
 
-
     public int houseEvent49()
     {
         if (SceneInfoManager.instance.is_shoolclear)
@@ -1179,10 +1179,6 @@ public class EventsCreate : MonoBehaviour
     public int houseEvent49_2()
     {
         int rand = Random.Range(7, 11);
-        if (talkmanager.selectbuttonnum == 1)
-        {
-            is_schoolbossend = true;
-        }
         return talkEvent("Home/home_49-" + rand.ToString());
     }
 
