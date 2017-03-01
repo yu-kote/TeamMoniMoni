@@ -262,7 +262,9 @@ public class EventsCreate : MonoBehaviour
     // 停電イベントが起きたかどうか
     bool is_blackoutevent = false;
     bool is_blackout;
+    bool is_right_on;
     int blackoutstartcount;
+    int blackouttime;
     int blackoutcount;
 
     [SerializeField]
@@ -270,31 +272,38 @@ public class EventsCreate : MonoBehaviour
 
     void schoolBlackOutEventSetup()
     {
-        blackoutstartcount = 4 * 60 * 60;
+        blackoutstartcount = 4 * 60;// * 60;
         blackoutcount = 0;
+        blackouttime = 60 * 3;
         is_blackout = false;
+        is_right_on = false;
     }
     void schoolBlackOutEvent()
     {
         if (is_blackoutevent) return;
 
-        if (chipcontroller.select_stage_name == "School" &&
-            playercontroller.state == PlayerController.State.NORMAL)
-        {
-            blackoutcount++;
-            if (blackoutcount > blackoutstartcount &&
-                is_setup == false)
+        // 停電していないとき
+        if (is_blackout == false)
+            if (chipcontroller.select_stage_name == "School" &&
+                playercontroller.state == PlayerController.State.NORMAL)
             {
-                talkmanager.startTalk("School/school_10");
+                blackoutcount++;
+                if (blackoutcount > blackoutstartcount &&
+                    is_setup == false)
+                {
+                    talkmanager.startTalk("School/school_10");
 
-                stagemoveeventcanvas.SetActive(true);
-                blackout_background.gameObject.SetActive(true);
-                blackout_background.color = new Color(0, 0, 0);
+                    stagemoveeventcanvas.SetActive(true);
+                    blackout_background.gameObject.SetActive(true);
+                    blackout_background.color = new Color(0, 0, 0);
 
-                is_blackout = true;
-                is_setup = true;
+                    is_blackout = true;
+                    is_setup = true;
+                    blackoutcount = 0;
+                }
             }
-        }
+
+        // 停電している時
         if (is_blackout)
         {
             if (talkmanager.talkmode == EventTalkManager.TalkMode.EVENT &&
@@ -305,8 +314,14 @@ public class EventsCreate : MonoBehaviour
                 talkmanager.talkmode = EventTalkManager.TalkMode.NORMAL;
                 return;
             }
-            if (talkmanager.talkmode == EventTalkManager.TalkMode.EVENT &&
-                talkmanager.event_call_count == 2)
+
+            if (blackoutcount > blackouttime)
+            {
+                is_right_on = true;
+            }
+
+            if (is_right_on && talkmanager.talkmode == EventTalkManager.TalkMode.EVENT &&
+            talkmanager.event_call_count == 2)
             {
                 SoundManager.Instance.PlaySE(0);
 
@@ -316,6 +331,9 @@ public class EventsCreate : MonoBehaviour
 
                 talkmanager.talkmode = EventTalkManager.TalkMode.NORMAL;
             }
+            blackoutcount++;
+            if (blackoutcount < blackouttime)
+                return;
         }
         else
             return;
@@ -787,7 +805,6 @@ public class EventsCreate : MonoBehaviour
             {
                 if (staging.fadeOutBlack())
                 {
-                    SoundManager.Instance.StopBGM();
                     SceneManager.LoadScene("Ending");
                     is_setup = false;
                     return 1;
@@ -1146,6 +1163,7 @@ public class EventsCreate : MonoBehaviour
         return talkEvent("Home/home_48-2");
     }
 
+
     public int houseEvent49()
     {
         if (SceneInfoManager.instance.is_shoolclear)
@@ -1179,6 +1197,10 @@ public class EventsCreate : MonoBehaviour
     public int houseEvent49_2()
     {
         int rand = Random.Range(7, 11);
+        if (talkmanager.selectbuttonnum == 1)
+        {
+            is_schoolbossend = true;
+        }
         return talkEvent("Home/home_49-" + rand.ToString());
     }
 
