@@ -272,7 +272,7 @@ public class EventsCreate : MonoBehaviour
 
     void schoolBlackOutEventSetup()
     {
-        blackoutstartcount = 4 * 60;// * 60;
+        blackoutstartcount = 4 * 60 * 60;
         blackoutcount = 0;
         blackouttime = 60 * 3;
         is_blackout = false;
@@ -315,7 +315,7 @@ public class EventsCreate : MonoBehaviour
                 return;
             }
 
-            if (blackoutcount > blackouttime)
+            if (blackoutcount >= blackouttime)
             {
                 is_right_on = true;
             }
@@ -331,13 +331,14 @@ public class EventsCreate : MonoBehaviour
 
                 talkmanager.talkmode = EventTalkManager.TalkMode.NORMAL;
             }
-            blackoutcount++;
-            if (blackoutcount < blackouttime)
-                return;
+
         }
         else
             return;
         playercontroller.state = PlayerController.State.TALK;
+
+        if (blackoutcount++ < blackouttime)
+            return;
         if (talkmanager.is_talknow)
             return;
         playercontroller.state = PlayerController.State.NORMAL;
