@@ -26,12 +26,15 @@ public class MapChipController : MonoBehaviour
     public int chip_num_y;
 
     public const int eventlayer = (int)LayerController.Layer.EVENT;
+    public const int doorlayer = (int)LayerController.Layer.DOOR;
+
 
     public List<List<List<GameObject>>> blocks;
 
     public List<List<List<Block>>> blockcomponents;
 
     public List<EventManager> block_event_update;
+    public List<Block> door_blocks;
 
     [SerializeField]
     private string select_name;
@@ -377,10 +380,11 @@ public class MapChipController : MonoBehaviour
         {
             for (int x = 0; x < chip_num_x; x++)
             {
-                if (blocks[eventlayer][y][x].GetComponent<EventManager>().update_type == 
+                if (blocks[eventlayer][y][x].GetComponent<EventManager>().update_type ==
                     EventRepository.EventUpdateType.ALWAYS)
                 {
                     block_event_update.Add(blockcomponents[eventlayer][y][x].GetComponent<EventManager>());
+                    door_blocks.Add(blockcomponents[doorlayer][y][x]);
                 }
             }
         }
@@ -398,9 +402,24 @@ public class MapChipController : MonoBehaviour
             {
                 block_event_update[i].eventExecution();
             }
+            for (int i = 0; i < door_blocks.Count; i++)
+            {
+                if (door_blocks[i].gameObject.GetComponent<Block>().event_draw_count <= 0)
+                {
+                    door_blocks[i].gameObject.GetComponent<Block>().spriterenderer.color = new Color(1, 1, 1, 0);
+                    door_blocks[i].gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+                }
+                else
+                {
+                    door_blocks[i].gameObject.GetComponent<Block>().spriterenderer.color = new Color(1, 1, 1, 1);
+                    door_blocks[i].gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+                }
+
+                door_blocks[i].gameObject.GetComponent<Block>().event_draw_count++;
+            }
+
             yield return null;
         }
-
     }
 
 
@@ -593,7 +612,8 @@ public class MapChipController : MonoBehaviour
 
                         block.GetComponent<BoxCollider2D>().isTrigger = true;
                         if (i == (int)LayerController.Layer.WALL ||
-                            i == (int)LayerController.Layer.OBJECT)
+                            i == (int)LayerController.Layer.OBJECT ||
+                            i == (int)LayerController.Layer.DOOR)
                         {
                             if (number != -1)
                             {

@@ -21,7 +21,7 @@ public class EventManager : MonoBehaviour
     public EventStage event_stage = EventStage.ONE_STAGE;
 
     // イベントの個数を保持
-    public int event_count = 0;
+    private int event_count = 0;
 
     List<EventRepository.EventFunc> eventsfunc = new List<EventRepository.EventFunc>();
 

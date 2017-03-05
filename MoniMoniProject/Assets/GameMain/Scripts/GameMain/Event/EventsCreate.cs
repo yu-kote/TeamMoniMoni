@@ -295,7 +295,7 @@ public class EventsCreate : MonoBehaviour
 
                     stagemoveeventcanvas.SetActive(true);
                     blackout_background.gameObject.SetActive(true);
-                    blackout_background.color = new Color(0, 0, 0);
+                    blackout_background.color = new Color(0, 0, 0, 1.0f);
 
                     is_blackout = true;
                     is_setup = true;
@@ -312,6 +312,8 @@ public class EventsCreate : MonoBehaviour
                 SoundManager.Instance.volume.SE = 0.5f;
                 SoundManager.Instance.PlaySE(0);
                 talkmanager.talkmode = EventTalkManager.TalkMode.NORMAL;
+                talkmanager.is_event_call = false;
+
                 return;
             }
 
@@ -320,14 +322,15 @@ public class EventsCreate : MonoBehaviour
                 is_right_on = true;
             }
 
-            if (is_right_on && talkmanager.talkmode == EventTalkManager.TalkMode.EVENT &&
-            talkmanager.event_call_count == 2)
+            if (is_right_on == true &&
+                talkmanager.talkmode == EventTalkManager.TalkMode.EVENT &&
+                talkmanager.event_call_count == 2)
             {
                 SoundManager.Instance.PlaySE(0);
 
-                blackout_background.color = new Color(255, 255, 255);
-                stagemoveeventcanvas.SetActive(false);
+                blackout_background.color = new Color(255, 255, 255, 0.0f);
                 blackout_background.gameObject.SetActive(false);
+                stagemoveeventcanvas.SetActive(false);
 
                 talkmanager.talkmode = EventTalkManager.TalkMode.NORMAL;
             }
@@ -406,7 +409,7 @@ public class EventsCreate : MonoBehaviour
     {
         if (is_setup == false)
         {
-            talkmanager.startTalk("School/school_02");
+            talkmanager.startTalk("School/school_2");
             is_setup = true;
         }
         if (talkmanager.is_talknow)
@@ -545,8 +548,10 @@ public class EventsCreate : MonoBehaviour
         }
         if (talkmanager.is_talknow)
             return 0;
+        if (talkmanager.selectbuttonnum == 1)
+            playercontroller.setItem("Statue");
         is_setup = false;
-        return 2;
+        return 1;
     }
     public int schoolEvent09_2()
     {
@@ -749,12 +754,30 @@ public class EventsCreate : MonoBehaviour
 
     }
 
-    int testcount = 0;
-
+    int door_layer = (int)LayerController.Layer.DOOR;
     public int schoolEvent24()
     {
-        if (testcount >= 100)
+        // プレイヤーの位置と前方を取得
+        int px = chipcontroller.player_cell_x,
+            py = chipcontroller.player_cell_y,
+            sx = chipcontroller.select_cell_x,
+            sy = chipcontroller.select_cell_y;
+
+        if (chipcontroller.blockcomponents[door_layer][sy][sx].number != -1 ||
+            chipcontroller.blockcomponents[door_layer][py][px].number != -1)
         {
+            if (chipcontroller.blockcomponents[door_layer][sy + 1][sx].number != -1)
+                chipcontroller.blockcomponents[door_layer][sy + 1][sx].event_draw_count = 0;
+            if (chipcontroller.blockcomponents[door_layer][sy - 1][sx].number != -1)
+                chipcontroller.blockcomponents[door_layer][sy - 1][sx].event_draw_count = 0;
+
+            if (chipcontroller.blockcomponents[door_layer][py + 1][px].number != -1)
+                chipcontroller.blockcomponents[door_layer][py + 1][px].event_draw_count = 0;
+            if (chipcontroller.blockcomponents[door_layer][py - 1][px].number != -1)
+                chipcontroller.blockcomponents[door_layer][py - 1][px].event_draw_count = 0;
+
+            chipcontroller.blockcomponents[door_layer][sy][sx].event_draw_count = 0;
+            chipcontroller.blockcomponents[door_layer][py][px].event_draw_count = 0;
         }
         return 0;
     }
@@ -774,7 +797,6 @@ public class EventsCreate : MonoBehaviour
     //int door_layer = (int)LayerController.Layer.DOOR;
     //int object_layer = (int)LayerController.Layer.OBJECT;
     int event_layer = (int)LayerController.Layer.EVENT;
-
 
     void roomMoveUpdate()
     {

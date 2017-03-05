@@ -18,8 +18,12 @@ public class Block : MonoBehaviour
     public EventManager event_manager = null;
 
     [SerializeField]
-    SpriteRenderer spriterenderer;
+    public SpriteRenderer spriterenderer;
 
+    // 画像の判定をするための番号
     public int number;
+    // Astarで使う一次元配列番号
     public int index;
+    // イベントで使うカウント
+    public int event_draw_count;
 }

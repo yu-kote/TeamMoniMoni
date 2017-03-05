@@ -176,6 +176,8 @@ public class EventRepository : MonoBehaviour
         eventAdd(7, new List<EventFunc> { events.schoolEvent08, events.schoolEvent08_2 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
         eventAdd(8, new List<EventFunc> { events.schoolEvent09, events.schoolEvent09_2 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
 
+        eventAdd(9, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+
         eventAdd(10, new List<EventFunc> { events.schoolEvent11, events.schoolEvent11_2, events.schoolEvent11_3 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
         eventAdd(11, new List<EventFunc> { events.schoolEvent12 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
         eventAdd(12, new List<EventFunc> { events.schoolEvent13 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
@@ -190,6 +192,18 @@ public class EventRepository : MonoBehaviour
         eventAdd(21, new List<EventFunc> { events.schoolEvent22 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
         eventAdd(22, new List<EventFunc> { events.schoolEvent23 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
         eventAdd(23, new List<EventFunc> { events.schoolEvent24 }, EventTriggerType.FRONT_WARD, EventUpdateType.ALWAYS);
+        eventAdd(24, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(25, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(26, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(27, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(28, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(29, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(30, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(31, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(32, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(33, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(34, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+
     }
 
     /// <summary>
