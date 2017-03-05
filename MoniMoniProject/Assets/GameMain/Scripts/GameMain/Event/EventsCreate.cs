@@ -414,8 +414,8 @@ public class EventsCreate : MonoBehaviour
         }
         if (talkmanager.is_talknow)
             return 0;
-        if (talkmanager.selectbuttonnum == 1)
-            playercontroller.setItem("Boarderaser");
+        //if (talkmanager.selectbuttonnum == 1)
+        //    playercontroller.setItem("Boarderaser");
         is_setup = false;
         return 1;
     }
@@ -601,6 +601,7 @@ public class EventsCreate : MonoBehaviour
     }
     public int schoolEvent12()
     {
+        SceneInfoManager.instance.door_open_flag_12 = true;
         return talkEvent("School/school_12");
     }
     public int schoolEvent13()
@@ -628,6 +629,7 @@ public class EventsCreate : MonoBehaviour
         }
         if (talkmanager.is_talknow)
             return 0;
+        SceneInfoManager.instance.is_event_20_open = true;
         is_setup = false;
         return 1;
     }
@@ -659,31 +661,133 @@ public class EventsCreate : MonoBehaviour
     {
         return talkNextEvent("School/school_20");
     }
+
     public int schoolEvent20_2()//------------------------------------------------------------------------------------------
     {
         if (is_setup == false)
         {
-            talkmanager.startTalk("School/school_20_2");
+            if (SceneInfoManager.instance.is_event_20_open == false)
+                talkmanager.startTalk("School/school_20-2");
+            if (SceneInfoManager.instance.is_event_20_open)
+                talkmanager.startTalk("School/school_20-3");
             is_setup = true;
+        }
+        if (talkmanager.talkmode == EventTalkManager.TalkMode.EVENT &&
+            talkmanager.event_call_count == 1)
+        {
+            SoundManager.Instance.volume.SE = 0.5f;
+            SoundManager.Instance.PlaySE(2);
+            talkmanager.talkmode = EventTalkManager.TalkMode.NORMAL;
+
+            int sx = chipcontroller.select_cell_x, sy = chipcontroller.select_cell_y;
+            chipcontroller.blockcomponents[door_layer][sy][sx].spriterenderer.color = new Color(1, 1, 1, 0);
+            chipcontroller.blockcomponents[door_layer][sy][sx].gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+            chipcontroller.blockcomponents[door_layer][sy + 1][sx].spriterenderer.color = new Color(1, 1, 1, 0);
+            chipcontroller.blockcomponents[door_layer][sy + 1][sx].gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+            chipcontroller.blockcomponents[door_layer][sy - 1][sx].spriterenderer.color = new Color(1, 1, 1, 0);
+            chipcontroller.blockcomponents[door_layer][sy - 1][sx].gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
         }
         if (talkmanager.is_talknow)
             return 0;
         is_setup = false;
+        if (talkmanager.selectbuttonnum == 1)
+        {
+            return 2;
+        }
         return 1;
     }
+
     public int schoolEvent21()
     {
         return talkEvent("School/school_21");
     }
+
+    public void returnHouse()
+    {
+        eventrepository.houseEventSetup();
+        chipcontroller.mapChange("House1F", "Videl");
+        eventloader.eventRegister();
+        chipcontroller.playerPop();
+        chipcontroller.updateBlockSetup();
+        enemymanager.enemyClear();
+    }
+
+    void doorOpen(int event_number)
+    {
+        // 扉開ける
+        for (int y = 0; y < chipcontroller.chip_num_y; y++)
+        {
+            for (int x = 0; x < chipcontroller.chip_num_x; x++)
+            {
+                if (chipcontroller.blockcomponents[event_layer][y][x].number == event_number)
+                {
+                    chipcontroller.blockcomponents[door_layer][y][x].spriterenderer.color = new Color(1, 1, 1, 0);
+                    chipcontroller.blockcomponents[door_layer][y][x].gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+                }
+            }
+        }
+    }
+
+    // ボス部屋入る処理
     public int schoolEvent22()//----------------------------------------------------------------------------------------------
     {
         if (is_setup == false)
         {
-            talkmanager.startTalk("School/school_22");
+            if (SceneInfoManager.instance.is_boss_area_open == false)
+            {
+                talkmanager.startTalk("School/school_22");
+            }
+            if (SceneInfoManager.instance.is_boss_area_open)
+            {
+                talkmanager.startTalk("School/school_22-2");
+            }
             is_setup = true;
         }
+
         if (talkmanager.is_talknow)
             return 0;
+
+        if (SceneInfoManager.instance.is_boss_area_open == false)
+        {
+            if (talkmanager.selectbuttonnum == 1)
+            {
+                if (is_roommove == false)
+                    if (staging.fadeOutBlack())
+                    {
+                        returnHouse();
+                        is_setup = false;
+                        is_roommove = true;
+                        return 2;
+                    }
+                return 0;
+            }
+        }
+
+        if (SceneInfoManager.instance.is_boss_area_open)
+        {
+            // 扉開ける
+            if (talkmanager.selectbuttonnum == 1)
+            {
+                // 扉開ける
+                doorOpen(21);
+                SoundManager.Instance.PlaySE(0);
+                return 2;
+            }
+            // 館に帰る
+            if (talkmanager.selectbuttonnum == 3)
+            {
+                if (is_roommove == false)
+                    if (staging.fadeOutBlack())
+                    {
+                        returnHouse();
+                        is_setup = false;
+                        is_roommove = true;
+                        return 2;
+                    }
+                return 0;
+            }
+        }
+
         is_setup = false;
         return 1;
     }
@@ -783,6 +887,82 @@ public class EventsCreate : MonoBehaviour
     }
 
 
+    public int schoolEvent25()
+    {
+        int flag_count = 0;
+
+        if (SceneInfoManager.instance.door_open_flag_12)
+            flag_count++;
+        if (SceneInfoManager.instance.door_open_flag_26)
+            flag_count++;
+        if (SceneInfoManager.instance.door_open_flag_27)
+            flag_count++;
+        if (SceneInfoManager.instance.door_open_flag_28)
+            flag_count++;
+        if (SceneInfoManager.instance.door_open_flag_29)
+            flag_count++;
+        if (SceneInfoManager.instance.door_open_flag_30)
+            flag_count++;
+
+        if (is_setup == false)
+        {
+            if (flag_count >= 3)
+            {
+                SceneInfoManager.instance.is_boss_area_open = true;
+                doorOpen(24);
+                SoundManager.Instance.PlaySE(2);
+            }
+            else
+            {
+                talkmanager.startTalk("School/school_25");
+            }
+            is_setup = true;
+        }
+        if (talkmanager.is_talknow)
+            return 0;
+
+        if (flag_count >= 3)
+        {
+
+        }
+        is_setup = false;
+        return 1;
+    }
+    public int schoolEvent26()
+    {
+        SceneInfoManager.instance.door_open_flag_26 = true;
+        return talkEvent("School/school_26");
+    }
+    public int schoolEvent27()
+    {
+        SceneInfoManager.instance.door_open_flag_27 = true;
+        return talkEvent("School/school_27");
+    }
+    public int schoolEvent28()
+    {
+        SceneInfoManager.instance.door_open_flag_28 = true;
+        return talkEvent("School/school_28");
+    }
+    public int schoolEvent29()
+    {
+        SceneInfoManager.instance.door_open_flag_29 = true;
+        return talkEvent("School/school_29");
+    }
+    public int schoolEvent30()
+    {
+        SceneInfoManager.instance.door_open_flag_30 = true;
+        return talkEvent("School/school_30");
+    }
+    public int schoolEvent31()
+    {
+        return talkEvent("School/school_31");
+    }
+    public int schoolEvent32()
+    {
+        return talkEvent("School/school_32");
+    }
+
+
 
     /// イベントの作り方
     /// 各関数ごとにintの返り値がある
@@ -804,6 +984,7 @@ public class EventsCreate : MonoBehaviour
             if (staging.fadeInBlack())
             {
                 is_roommove = false;
+                playercontroller.state = PlayerController.State.NORMAL;
             }
         if (Input.GetKeyDown(KeyCode.C))
         {
@@ -1021,6 +1202,7 @@ public class EventsCreate : MonoBehaviour
                     chipcontroller.mapChange("school1", "School");
                     eventloader.eventRegister();
                     chipcontroller.playerPop();
+                    chipcontroller.updateBlockSetup();
                     enemymanager.enemySetup();
                     is_setup = false;
                     is_roommove = true;

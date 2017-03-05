@@ -374,8 +374,10 @@ public class MapChipController : MonoBehaviour
     /// <summary>
     /// イベントのタイプが常にアップデートを回すブロックのバッファを作っておく
     /// </summary>
-    void updateBlockSetup()
+    public void updateBlockSetup()
     {
+        block_event_update.Clear();
+        door_blocks.Clear();
         for (int y = 0; y < chip_num_y; y++)
         {
             for (int x = 0; x < chip_num_x; x++)

@@ -65,6 +65,7 @@ public class EventTalkManager : MonoBehaviour
         root3button.gameObject.SetActive(false);
         root4button.gameObject.SetActive(false);
         is_selectbuttonpush = true;
+
     }
     void rootSelectSoundPlay()
     {
@@ -132,6 +133,7 @@ public class EventTalkManager : MonoBehaviour
             current_read_line = 0;
             event_call_count = 0;
             is_event_call = false;
+            selectbuttonnum = 0;
 
             var eventtext = Resources.Load<TextAsset>("EventData/" + textname_);
             using (var sr = new StringReader(eventtext.text))

@@ -82,16 +82,21 @@ public class EnemyManager : MonoBehaviour
 
             nightmareAI.state = EnemyAI.State.ROOT_CHANGE;
             nightmareAI.can_move = true;
-            for (int i = 0; i < enemy_num; i++)
-            {
-                Destroy(enemys[i]);
-            }
-            enemys.Clear();
+            enemyClear();
             nightmare.is_move = true;
             nightmare.prev_cell = nightmare.retCell();
             enemy_num = 0;
             SceneInfoManager.instance.school_enemy_num = 0;
         }
+    }
+
+    public void enemyClear()
+    {
+        for (int i = 0; i < enemy_num; i++)
+        {
+            Destroy(enemys[i]);
+        }
+        enemys.Clear();
     }
 
     /// <summary>

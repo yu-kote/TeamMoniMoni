@@ -83,7 +83,6 @@ public class PlayerController : MonoBehaviour
 
     public void LateUpdate()
     {
-        vec = vec * (Time.deltaTime * 60.0f);
         rigidbody.velocity = vec;
     }
 

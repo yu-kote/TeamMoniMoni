@@ -35,7 +35,6 @@ public class EventRepository : MonoBehaviour
 
     void Awake()
     {
-
         //schoolEventSetup();
         if (SceneInfoManager.instance.select_stage_name == "Videl" ||
             SceneInfoManager.instance.select_stage_name == null)
@@ -187,19 +186,19 @@ public class EventRepository : MonoBehaviour
         eventAdd(16, new List<EventFunc> { events.schoolEvent17 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
         eventAdd(17, new List<EventFunc> { events.schoolEvent18 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
         eventAdd(18, new List<EventFunc> { events.schoolEvent19 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
-        eventAdd(19, new List<EventFunc> { events.schoolEvent20 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(19, new List<EventFunc> { events.schoolEvent20, events.schoolEvent20_2 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
         eventAdd(20, new List<EventFunc> { events.schoolEvent21 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
         eventAdd(21, new List<EventFunc> { events.schoolEvent22 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
         eventAdd(22, new List<EventFunc> { events.schoolEvent23 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
         eventAdd(23, new List<EventFunc> { events.schoolEvent24 }, EventTriggerType.FRONT_WARD, EventUpdateType.ALWAYS);
-        eventAdd(24, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
-        eventAdd(25, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
-        eventAdd(26, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
-        eventAdd(27, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
-        eventAdd(28, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
-        eventAdd(29, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
-        eventAdd(30, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
-        eventAdd(31, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(24, new List<EventFunc> { events.schoolEvent25 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(25, new List<EventFunc> { events.schoolEvent26 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(26, new List<EventFunc> { events.schoolEvent27 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(27, new List<EventFunc> { events.schoolEvent28 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(28, new List<EventFunc> { events.schoolEvent29 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(29, new List<EventFunc> { events.schoolEvent30 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(30, new List<EventFunc> { events.schoolEvent31 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
+        eventAdd(31, new List<EventFunc> { events.schoolEvent32 }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
         eventAdd(32, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
         eventAdd(33, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
         eventAdd(34, new List<EventFunc> { events.emptyEvent }, EventTriggerType.CHECK, EventUpdateType.TEMPORARY);
@@ -262,5 +261,6 @@ public class EventRepository : MonoBehaviour
     {
         eventdic.Clear();
         event_trigger_type.Clear();
+        event_update_type.Clear();
     }
 }

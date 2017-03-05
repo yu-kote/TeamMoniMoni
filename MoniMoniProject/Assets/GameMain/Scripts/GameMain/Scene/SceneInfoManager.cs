@@ -41,6 +41,16 @@ public class SceneInfoManager
     // ステージに入った時のシナリオを見たかどうか
     public bool is_scenario_end = false;
 
+    // ゴリラ
+    public bool is_event_20_open = false;
+    public bool is_boss_area_open = false;
+    public bool door_open_flag_12 = false;
+    public bool door_open_flag_26 = false;
+    public bool door_open_flag_27 = false;
+    public bool door_open_flag_28 = false;
+    public bool door_open_flag_29 = false;
+    public bool door_open_flag_30 = false;
+
     public enum EndingStatus
     {
         NOT_END,
