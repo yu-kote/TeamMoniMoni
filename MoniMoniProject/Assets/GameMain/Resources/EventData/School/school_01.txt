@@ -1,9 +1,9 @@
 ﻿[text]
 #ヴィーバ#[chara'vi-ba驚']
-[size'start'] うわっ！[size'end'] [n]
+[size'start']うわっ！[size'end'][n]
 
 
-#ヴィーバ#[chara'vi-ba苦']
+#ヴィーバ#[chara'vi-ba'苦]
 いてて…。[n]
 
 

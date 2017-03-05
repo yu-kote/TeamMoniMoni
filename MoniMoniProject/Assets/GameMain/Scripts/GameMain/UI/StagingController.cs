@@ -39,36 +39,31 @@ public class StagingController : MonoBehaviour
         }
     }
 
-    public int flushcount = 0;
     public bool flushStart()
     {
-        if (flushcount < 80)
+        stagingcanvas.SetActive(true);
+        var color = fadewhite.color;
+        color.a += 0.02f;
+        if (color.a <= 1.0f)
         {
-            stagingcanvas.SetActive(true);
-            var color = fadewhite.color;
-            color.a += 0.05f;
-            if (color.a >= 1.0f)
-                color.a = 1.0f;
             fadewhite.color = color;
-            flushcount++;
             return false;
         }
-        flushcount = 0;
+        color.a = 1.0f;
+        fadewhite.color = color;
         return true;
     }
     public bool flushEnd()
     {
-        if (flushcount < 80)
+        var color = fadewhite.color;
+        color.a -= 0.02f;
+        if (color.a >= 0.0f)
         {
-            var color = fadewhite.color;
-            color.a -= 0.05f;
-            if (color.a <= 0.0f)
-                color.a = 0.0f;
             fadewhite.color = color;
-            flushcount++;
             return false;
         }
-        flushcount = 0;
+        color.a = 0.0f;
+        fadewhite.color = color;
         stagingcanvas.SetActive(false);
         return true;
     }
@@ -83,7 +78,7 @@ public class StagingController : MonoBehaviour
             fadeblack.color = color;
             return false;
         }
-        color.a = 1;
+        color.a = 1.0f;
         return true;
     }
 

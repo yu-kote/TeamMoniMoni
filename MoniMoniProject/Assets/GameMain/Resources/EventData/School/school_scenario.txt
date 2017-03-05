@@ -14,7 +14,7 @@
 
 
 #ナイトメア#[chara'nightmare叫']
-[size'start'] 失礼ね！[size'end'] [n]
+[size'start']失礼ね！[size'end'][n]
 
 
 #ナイトメア#[chara'nightmare笑']

@@ -31,6 +31,8 @@ public class EventManager : MonoBehaviour
     /// </summary>
     public EventRepository.EventTriggerType trigger_type;
 
+    public EventRepository.EventUpdateType update_type;
+
     void Start()
     {
         event_count = eventsfunc.Count;
@@ -52,10 +54,12 @@ public class EventManager : MonoBehaviour
     /// <param name="add_event">イベントの関数</param>
     public void addEvent(
         List<EventRepository.EventFunc> add_event,
-        EventRepository.EventTriggerType trigger_type_)
+        EventRepository.EventTriggerType trigger_type_,
+        EventRepository.EventUpdateType update_type_)
     {
         eventsfunc = add_event;
         trigger_type = trigger_type_;
+        update_type = update_type_;
     }
 
     /// <summary>

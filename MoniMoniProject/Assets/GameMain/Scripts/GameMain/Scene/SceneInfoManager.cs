@@ -38,6 +38,9 @@ public class SceneInfoManager
     public bool is_shoolclear = false;
     public bool is_hospitalclear = false;
 
+    // ステージに入った時のシナリオを見たかどうか
+    public bool is_scenario_end = false;
+
     public enum EndingStatus
     {
         NOT_END,

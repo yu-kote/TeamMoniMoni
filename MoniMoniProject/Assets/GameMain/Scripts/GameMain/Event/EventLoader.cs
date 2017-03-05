@@ -30,14 +30,15 @@ public class EventLoader : MonoBehaviour
         {
             for (int x = 0; x < mapcontroller.chip_num_x; x++)
             {
-                Block block = mapcontroller.blocks[(int)LayerController.Layer.EVENT] [y] [x].GetComponent<Block>();
+                Block block = mapcontroller.blocks[(int)LayerController.Layer.EVENT][y][x].GetComponent<Block>();
 
                 if (block.number != -1)
                 {
-                    mapcontroller.blocks[(int)LayerController.Layer.EVENT] [y] [x].GetComponent<Block>().
+                    mapcontroller.blocks[(int)LayerController.Layer.EVENT][y][x].GetComponent<Block>().
                         event_manager.addEvent(
                         eventrepository.getEvent(block.number),
-                        eventrepository.getEventTriggerType(block.number));
+                        eventrepository.getEventTriggerType(block.number),
+                        eventrepository.getEventUpdateType(block.number));
                 }
             }
         }

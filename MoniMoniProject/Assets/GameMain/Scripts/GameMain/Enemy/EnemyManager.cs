@@ -79,7 +79,7 @@ public class EnemyManager : MonoBehaviour
     {
         if (selectnum_ == 2)
         {
-            nightmare.animationChange();
+
             nightmareAI.state = EnemyAI.State.ROOT_CHANGE;
             nightmareAI.can_move = true;
             for (int i = 0; i < enemy_num; i++)
@@ -92,6 +92,14 @@ public class EnemyManager : MonoBehaviour
             enemy_num = 0;
             SceneInfoManager.instance.school_enemy_num = 0;
         }
+    }
+
+    /// <summary>
+    /// ナイトメアの画像を弱い方変える
+    /// </summary>
+    public void nightmareWeek()
+    {
+        nightmare.animationChange();
     }
 
     void Update()

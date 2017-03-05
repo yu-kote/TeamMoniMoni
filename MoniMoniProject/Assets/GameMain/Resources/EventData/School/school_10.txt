@@ -5,7 +5,7 @@
 [text]
 
 #ヴィーバ#[chara'vi-ba驚']
-[size'start'] うわっ！[size'end'] [n]
+[size'start'] うわっ！[size'end'][n]
 
 [event]
 

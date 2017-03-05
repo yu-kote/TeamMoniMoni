@@ -350,6 +350,8 @@ public class EventsCreate : MonoBehaviour
     bool is_flush = false;
     public int schoolEvent01()
     {
+        if (SceneInfoManager.instance.is_scenario_end)
+            return 2;
         if (is_flush == false)
         {
             if (is_setup == false)
@@ -384,6 +386,8 @@ public class EventsCreate : MonoBehaviour
 
     public int schoolEvent01_2()
     {
+        if (SceneInfoManager.instance.is_scenario_end)
+            return 2;
         if (is_setup == false)
         {
             talkmanager.startTalk("School/school_01");
@@ -394,6 +398,7 @@ public class EventsCreate : MonoBehaviour
             return 0;
         playercontroller.state = PlayerController.State.NORMAL;
         is_setup = false;
+        SceneInfoManager.instance.is_scenario_end = true;
         return 2;
     }
 
@@ -677,42 +682,83 @@ public class EventsCreate : MonoBehaviour
         is_setup = false;
         return 1;
     }
-    bool is_enemypop = false;
-    public int schoolBossEvent()
+
+
+    bool is_event_flush = false;
+
+    // フラッシュして関数実行する関数
+    bool flushEvent(System.Action func)
     {
-        if (is_enemypop == false)
+        if (is_event_flush == false)
         {
             if (staging.flushStart())
             {
-                is_enemypop = true;
+                func();
+                is_event_flush = true;
             }
-            return 0;
         }
         else
         {
             if (staging.flushEnd())
             {
-                if (is_setup == false)
-                {
-                    talkmanager.startTalk("School/school_23");
-                    is_setup = true;
-                }
-                if (talkmanager.talkmode == EventTalkManager.TalkMode.EVENT &&
-                     talkmanager.event_call_count >= 1)
+                is_event_flush = false;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int schoolEvent23()
+    {
+        if (is_setup == false)
+        {
+            talkmanager.startTalk("School/school_23");
+            is_setup = true;
+        }
+        if (talkmanager.selectbuttonnum == 1 ||
+            talkmanager.selectbuttonnum == 3)
+        {
+            if (talkmanager.talkmode == EventTalkManager.TalkMode.EVENT &&
+             talkmanager.event_call_count == 1)
+            {
+                if (flushEvent(() => { chipcontroller.playerRestart(); }))
                 {
                     talkmanager.talkmode = EventTalkManager.TalkMode.NORMAL;
+                    talkmanager.eventCallEnd();
                 }
-                if (talkmanager.is_talknow)
-                    return 0;
-                if (talkmanager.selectbuttonnum == 2)
-                    enemymanager.nightmareRePop(talkmanager.selectbuttonnum);
-                is_setup = false;
-                staging.flushcount = 0;
-                return 1;
             }
-            return 0;
         }
+        if (talkmanager.selectbuttonnum == 2)
+        {
+            if (talkmanager.talkmode == EventTalkManager.TalkMode.EVENT &&
+                talkmanager.event_call_count == 1)
+            {
+                if (flushEvent(() => { enemymanager.nightmareWeek(); }))
+                {
+                    talkmanager.talkmode = EventTalkManager.TalkMode.NORMAL;
+                    talkmanager.eventCallEnd();
+                }
+            }
+        }
+        if (talkmanager.is_talknow)
+            return 0;
+        if (talkmanager.selectbuttonnum == 2)
+            enemymanager.nightmareRePop(talkmanager.selectbuttonnum);
+        is_setup = false;
+        return 1;
+
     }
+
+    int testcount = 0;
+
+    public int schoolEvent24()
+    {
+        if (testcount >= 100)
+        {
+        }
+        return 0;
+    }
+
 
 
     /// イベントの作り方

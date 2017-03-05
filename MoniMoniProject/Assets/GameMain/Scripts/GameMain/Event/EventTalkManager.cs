@@ -96,6 +96,12 @@ public class EventTalkManager : MonoBehaviour
     }
     public TalkMode talkmode;
     public int event_call_count;
+    public bool is_event_call;
+
+    public void eventCallEnd()
+    {
+        is_event_call = false;
+    }
 
     // テキストのパス
     string loadtextpath;
@@ -125,6 +131,7 @@ public class EventTalkManager : MonoBehaviour
             rootButtonSetup();
             current_read_line = 0;
             event_call_count = 0;
+            is_event_call = false;
 
             var eventtext = Resources.Load<TextAsset>("EventData/" + textname_);
             using (var sr = new StringReader(eventtext.text))
@@ -214,7 +221,9 @@ public class EventTalkManager : MonoBehaviour
             {
                 command = commandSearch(loadtext_, i);
                 if (command != "end")
-                    i += command.Length + 2;
+                {
+                    i += command.Length + 1;
+                }
             }
             // 名前開始
             else if (chara_array[i] == '#')
@@ -340,7 +349,8 @@ public class EventTalkManager : MonoBehaviour
                     chara_array[i] == ' ' ||
                     chara_array[i] == '\t' ||
                     chara_array[i] == '\r' ||
-                    chara_array[i] == '\n') continue;
+                    chara_array[i] == '\n' ||
+                    chara_array[i] == ']') continue;
                 // 会話文に追加
                 talkCharInstance(chara_array[i], fontsize, fontcolor);
             }
@@ -361,7 +371,11 @@ public class EventTalkManager : MonoBehaviour
             if (talkmode == TalkMode.EVENT)
             {
                 current_read_line = i;
-                event_call_count++;
+                if (is_event_call == false)
+                {
+                    event_call_count++;
+                    is_event_call = true;
+                }
                 return;
             }
         }

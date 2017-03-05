@@ -50,6 +50,8 @@ public class PlayerController : MonoBehaviour
 
     public AnimationState animstate;
 
+    public Rigidbody2D rigidbody;
+
     public Vector2 vec;
 
     [SerializeField]
@@ -68,6 +70,7 @@ public class PlayerController : MonoBehaviour
         state = State.NORMAL;
         transform.position = new Vector3(0, 0, -1.0f);
 
+        rigidbody = GetComponent<Rigidbody2D>();
         vec = new Vector2(0, 0);
         is_pusheventkey = false;
 
@@ -77,6 +80,19 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(itemCoroutine());
 
     }
+
+    public void LateUpdate()
+    {
+        vec = vec * (Time.deltaTime * 60.0f);
+        rigidbody.velocity = vec;
+    }
+
+    public void FixedUpdate()
+    {
+        
+
+    }
+    
 
     /// <summary>
     /// プレイヤーの状態が変わった時だけ通るif文があるコルーチン
@@ -111,13 +127,7 @@ public class PlayerController : MonoBehaviour
                     state = State.EVENT;
                     mapchip.isEventCompleted();
                 }
-
-            if (Input.GetKeyDown(KeyCode.Return))
-                // 選択しているブロックにイベントがあるかどうか
-                if (mapchip.checkEventExists())
-                {
-                    state = State.EVENT;
-                }
+            
 
             if (mapchip.isEventCompleted())
             {
@@ -175,10 +185,8 @@ public class PlayerController : MonoBehaviour
         vecChange();
         skillUpdate();
 
-        Vector3 vec_ = new Vector3(vec.x * 0.05f, vec.y * 0.05f, 0);
-        transform.Translate(vec_);
-        //var rigidbody = GetComponent<Rigidbody2D>();
-        //rigidbody.velocity = vec;
+        //Vector3 vec_ = new Vector3(vec.x * 0.05f, vec.y * 0.05f, 0);
+        //transform.Translate(vec_);
     }
 
     /// <summary>
