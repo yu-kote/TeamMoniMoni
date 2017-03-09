@@ -1,109 +1,145 @@
 fileFormatVersion: 2
-guid: 55a9d798e03a6ce4c9753243de9d1f95
-timeCreated: 1485524752
+guid: bd85c89b8ede9fc49be5bc38adb95d70
+timeCreated: 1488771774
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: Floor_0
-    21300002: Floor_1
-    21300004: Floor_2
-    21300006: Floor_3
-    21300008: Floor_4
-    21300010: Floor_5
-    21300012: Floor_6
-    21300014: Floor_7
-    21300016: Floor_8
-    21300018: Floor_9
-    21300020: Floor_10
-    21300022: Floor_11
-    21300024: Floor_12
-    21300026: Floor_13
-    21300028: Floor_14
-    21300030: Floor_15
-    21300032: Floor_16
-    21300034: Floor_17
-    21300036: Floor_18
-    21300038: Floor_19
-    21300040: Floor_20
-    21300042: Floor_21
-    21300044: Floor_22
-    21300046: Floor_23
-    21300048: Floor_24
-    21300050: Floor_25
-    21300052: Floor_26
-    21300054: Floor_27
-    21300056: Floor_28
-    21300058: Floor_29
-    21300060: Floor_30
-    21300062: Floor_31
-    21300064: Floor_32
-    21300066: Floor_33
-    21300068: Floor_34
-    21300070: Floor_35
-    21300072: Floor_36
-    21300074: Floor_37
-    21300076: Floor_38
-    21300078: Floor_39
-    21300080: Floor_40
-    21300082: Floor_41
-    21300084: Floor_42
-    21300086: Floor_43
-    21300088: Floor_44
-    21300090: Floor_45
-    21300092: Floor_46
-    21300094: Floor_47
-    21300096: Floor_48
-    21300098: Floor_49
-    21300100: Floor_50
-    21300102: Floor_51
-    21300104: Floor_52
-    21300106: Floor_53
-    21300108: Floor_54
-    21300110: Floor_55
-    21300112: Floor_56
-    21300114: Floor_57
-    21300116: Floor_58
-    21300118: Floor_59
-    21300120: Floor_60
-    21300122: Floor_61
-    21300124: Floor_62
-    21300126: Floor_63
-    21300128: Floor_64
-    21300130: Floor_65
-    21300132: Floor_66
-    21300134: Floor_67
-    21300136: Floor_68
-    21300138: Floor_69
-    21300140: Floor_70
-    21300142: Floor_71
-    21300144: Floor_72
-    21300146: Floor_73
-    21300148: Floor_74
-    21300150: Floor_75
-    21300152: Floor_76
-    21300154: Floor_77
-    21300156: Floor_78
-    21300158: Floor_79
-    21300160: Floor_80
-    21300162: Floor_81
-    21300164: Floor_82
-    21300166: Floor_83
-    21300168: Floor_84
-    21300170: Floor_85
-    21300172: Floor_86
-    21300174: Floor_87
-    21300176: Floor_88
-    21300178: Floor_89
-    21300180: Floor_90
-    21300182: Floor_91
-    21300184: Floor_92
-    21300186: Floor_93
-    21300188: Floor_94
-    21300190: Floor_95
+    21300000: Floor 1_0
+    21300002: Floor 1_1
+    21300004: Floor 1_2
+    21300006: Floor 1_3
+    21300008: Floor 1_4
+    21300010: Floor 1_5
+    21300012: Floor 1_6
+    21300014: Floor 1_7
+    21300016: Floor 1_8
+    21300018: Floor 1_9
+    21300020: Floor 1_10
+    21300022: Floor 1_11
+    21300024: Floor 1_12
+    21300026: Floor 1_13
+    21300028: Floor 1_14
+    21300030: Floor 1_15
+    21300032: Floor 1_16
+    21300034: Floor 1_17
+    21300036: Floor 1_18
+    21300038: Floor 1_19
+    21300040: Floor 1_20
+    21300042: Floor 1_21
+    21300044: Floor 1_22
+    21300046: Floor 1_23
+    21300048: Floor 1_24
+    21300050: Floor 1_25
+    21300052: Floor 1_26
+    21300054: Floor 1_27
+    21300056: Floor 1_28
+    21300058: Floor 1_29
+    21300060: Floor 1_30
+    21300062: Floor 1_31
+    21300064: Floor 1_32
+    21300066: Floor 1_33
+    21300068: Floor 1_34
+    21300070: Floor 1_35
+    21300072: Floor 1_36
+    21300074: Floor 1_37
+    21300076: Floor 1_38
+    21300078: Floor 1_39
+    21300080: Floor 1_40
+    21300082: Floor 1_41
+    21300084: Floor 1_42
+    21300086: Floor 1_43
+    21300088: Floor 1_44
+    21300090: Floor 1_45
+    21300092: Floor 1_46
+    21300094: Floor 1_47
+    21300096: Floor 1_48
+    21300098: Floor 1_49
+    21300100: Floor 1_50
+    21300102: Floor 1_51
+    21300104: Floor 1_52
+    21300106: Floor 1_53
+    21300108: Floor 1_54
+    21300110: Floor 1_55
+    21300112: Floor 1_56
+    21300114: Floor 1_57
+    21300116: Floor 1_58
+    21300118: Floor 1_59
+    21300120: Floor 1_60
+    21300122: Floor 1_61
+    21300124: Floor 1_62
+    21300126: Floor 1_63
+    21300128: Floor 1_64
+    21300130: Floor 1_65
+    21300132: Floor_0
+    21300134: Floor_1
+    21300136: Floor_2
+    21300138: Floor_3
+    21300140: Floor_4
+    21300142: Floor_5
+    21300144: Floor_6
+    21300146: Floor_7
+    21300148: Floor_8
+    21300150: Floor_9
+    21300152: Floor_10
+    21300154: Floor_11
+    21300156: Floor_12
+    21300158: Floor_13
+    21300160: Floor_14
+    21300162: Floor_15
+    21300164: Floor_16
+    21300166: Floor_17
+    21300168: Floor_18
+    21300170: Floor_19
+    21300172: Floor_20
+    21300174: Floor_21
+    21300176: Floor_22
+    21300178: Floor_23
+    21300180: Floor_24
+    21300182: Floor_25
+    21300184: Floor_26
+    21300186: Floor_27
+    21300188: Floor_28
+    21300190: Floor_29
+    21300192: Floor_30
+    21300194: Floor_31
+    21300196: Floor_32
+    21300198: Floor_33
+    21300200: Floor_34
+    21300202: Floor_35
+    21300204: Floor_36
+    21300206: Floor_37
+    21300208: Floor_38
+    21300210: Floor_39
+    21300212: Floor_40
+    21300214: Floor_41
+    21300216: Floor_42
+    21300218: Floor_43
+    21300220: Floor_44
+    21300222: Floor_45
+    21300224: Floor_46
+    21300226: Floor_47
+    21300228: Floor_48
+    21300230: Floor_49
+    21300232: Floor_50
+    21300234: Floor_51
+    21300236: Floor_52
+    21300238: Floor_53
+    21300240: Floor_54
+    21300242: Floor_55
+    21300244: Floor_56
+    21300246: Floor_57
+    21300248: Floor_58
+    21300250: Floor_59
+    21300252: Floor_60
+    21300254: Floor_61
+    21300256: Floor_62
+    21300258: Floor_63
+    21300260: Floor_64
+    21300262: Floor_65
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 1
+    enableMipMap: 0
     sRGBTexture: 1
     linearTexture: 0
     fadeOut: 0
@@ -120,11 +156,11 @@ TextureImporter:
   generateCubemap: 6
   cubemapConvolution: 0
   seamlessCubemap: 0
-  textureFormat: -1
+  textureFormat: 1
   maxTextureSize: 2048
   textureSettings:
     filterMode: -1
-    aniso: 16
+    aniso: -1
     mipBias: -1
     wrapMode: 1
   nPOTScale: 0
@@ -156,12 +192,12 @@ TextureImporter:
     overridden: 0
   - buildTarget: Standalone
     maxTextureSize: 2048
-    textureFormat: -1
+    textureFormat: 10
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
-    overridden: 0
+    overridden: 1
   - buildTarget: iPhone
     maxTextureSize: 2048
     textureFormat: -1
@@ -1024,396 +1060,6 @@ TextureImporter:
         serializedVersion: 2
         x: 640
         y: 640
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_66
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 512
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_67
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 512
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_68
-      rect:
-        serializedVersion: 2
-        x: 256
-        y: 512
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_69
-      rect:
-        serializedVersion: 2
-        x: 384
-        y: 512
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_70
-      rect:
-        serializedVersion: 2
-        x: 512
-        y: 512
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_71
-      rect:
-        serializedVersion: 2
-        x: 640
-        y: 512
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_72
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 384
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_73
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 384
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_74
-      rect:
-        serializedVersion: 2
-        x: 256
-        y: 384
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_75
-      rect:
-        serializedVersion: 2
-        x: 384
-        y: 384
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_76
-      rect:
-        serializedVersion: 2
-        x: 512
-        y: 384
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_77
-      rect:
-        serializedVersion: 2
-        x: 640
-        y: 384
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_78
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 256
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_79
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 256
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_80
-      rect:
-        serializedVersion: 2
-        x: 256
-        y: 256
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_81
-      rect:
-        serializedVersion: 2
-        x: 384
-        y: 256
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_82
-      rect:
-        serializedVersion: 2
-        x: 512
-        y: 256
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_83
-      rect:
-        serializedVersion: 2
-        x: 640
-        y: 256
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_84
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 128
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_85
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 128
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_86
-      rect:
-        serializedVersion: 2
-        x: 256
-        y: 128
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_87
-      rect:
-        serializedVersion: 2
-        x: 384
-        y: 128
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_88
-      rect:
-        serializedVersion: 2
-        x: 512
-        y: 128
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_89
-      rect:
-        serializedVersion: 2
-        x: 640
-        y: 128
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_90
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_91
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 0
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_92
-      rect:
-        serializedVersion: 2
-        x: 256
-        y: 0
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_93
-      rect:
-        serializedVersion: 2
-        x: 384
-        y: 0
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_94
-      rect:
-        serializedVersion: 2
-        x: 512
-        y: 0
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Floor_95
-      rect:
-        serializedVersion: 2
-        x: 640
-        y: 0
         width: 128
         height: 128
       alignment: 0

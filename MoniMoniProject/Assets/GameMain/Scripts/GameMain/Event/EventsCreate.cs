@@ -1055,6 +1055,7 @@ public class EventsCreate : MonoBehaviour
             {
                 if (staging.fadeOutBlack())
                 {
+                    SoundManager.Instance.StopBGM();
                     SceneManager.LoadScene("Ending");
                     is_setup = false;
                     return 1;

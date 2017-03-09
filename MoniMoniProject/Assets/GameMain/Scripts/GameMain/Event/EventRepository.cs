@@ -35,7 +35,6 @@ public class EventRepository : MonoBehaviour
 
     void Awake()
     {
-        //schoolEventSetup();
         if (SceneInfoManager.instance.select_stage_name == "Videl" ||
             SceneInfoManager.instance.select_stage_name == null)
         {
